@@ -1,0 +1,189 @@
+*, ::before, ::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Lato', sans-serif;
+    height: 100vh;
+    padding: 0 16px;
+    color: #00171f;
+    font-size: 16px;
+}
+
+h1, h2, h3 { font-weight: 700; }
+h1 { font-size: 26px; margin-bottom: 8px;}
+h2 { font-size: 22px; }
+h3 { font-size: 18px; }
+p { margin: 0; line-height: 26px;}
+a { color: #003F88; text-decoration: none;}
+a:hover { color: #FF5A1F;}
+ul { list-style-type: none; }
+.text-xs { font-size: 12px; }
+.light-text { color: #7A8290; }
+.logo { text-align: center; }
+
+@media screen and (min-width: 620px)  {
+    .logo { text-align: left; }
+    h1 { font-size: 32px; margin-bottom: 16px;}
+    h2 { font-size: 28px; }
+    h3 { font-size: 22px; }
+    body { font-size: 18px; padding: 0 32px; }
+    .text-xs { font-size: 14px; }
+}
+
+header { margin-bottom: 64px; padding-top: 32px}
+footer { position: absolute; bottom: 16px; }
+footer p { line-height: 20px; }
+
+/* Formulaire */ 
+input {
+    height: 54px;
+    border: 2px solid #DEE1E6;
+    border-radius: 8px;
+    width: 100%;
+    margin-top: 8px;
+    font-size: inherit;
+    text-indent: 16px; 
+}
+label { color: #7A8290; font-weight: bold; }
+input::placeholder { color: #BABABA; font-size: inherit; }
+form > div:not(:first-child) { margin-top: 16px; }
+
+/* Boutons */
+.button-primary {
+    height: 54px;
+    background-color: #003F88;
+    border: none;
+    border-radius: 8px;
+    color: #FFF;
+    font-weight: 700;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 32px;
+    cursor: pointer;
+    text-transform: uppercase;   
+}
+.button-secondary { background-color: #FF5A1F; }
+button:hover { opacity: 0.92; transition-duration: 600ms;}
+
+
+/* LAYOUT GENERAL */
+/* Header (logo, menu hamburger et photo utilisateur */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+.user-header { display: flex; align-items: center; }
+.welcome-user { display: none; }
+.user-picture img{ border-radius: 100%; border: 2px solid #FFF; object-fit: cover; }
+.bg-picture-header {
+    position: absolute;
+    top: 0;
+    right: 0px;
+    z-index: -10;
+    background-image: url('/images/bg-picture.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 130px;
+    width: 90px;
+}
+
+/* Retire le fond de la photo de profil du header pour les petits écran */
+@media screen and (max-width: 350px) {
+    .bg-picture-header { display: none;}
+}
+
+/* Modification du header pour le desktop */
+@media screen and (min-width: 620px)  {
+    .hamburger-menu { display: none; }
+    .welcome-user { display:block; margin-right: 64px; text-align: right; }
+    .user-picture img{ height: 64px; width: 64px; }
+    .bg-picture-header { width: 132px; }
+}
+
+/* MENU */
+.menu-navigation {
+    background-color: #00171f;
+    padding: 32px 16px;
+    color: #7A8290;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+}
+.bolt { color: #FF5A1F; font-size: 28px; vertical-align: middle; }
+.technician-menu { margin-top: 64px; }
+.menu-navigation h3 { margin-bottom: 64px; }
+
+.menu-navigation li {
+    margin-top: 24px;
+    font-weight: 700;
+    color: #7A8290;
+    cursor: pointer;
+}
+.menu-navigation li:hover { color: #FFF; transition-duration: 400ms; }
+.fa-regular, .fa-solid{ font-size: 22px; vertical-align: text-bottom; }
+
+.logout { position: absolute; bottom: 16px; }
+
+/* Entre 620px et 970px, afficher uniquement les icons du menu */
+@media screen and (min-width: 620px) and (max-width: 970px) {
+    .menu-navigation { display: block; }
+    .contain { padding-left: 56px; }
+    /* Alignement des icons du menu */
+    .menu-navigation ul { display: flex; flex-direction: column; align-items: center; }
+}
+
+
+/* Affiche la totalité du menu */
+@media screen and (min-width: 970px) {
+    .contain { padding-left: 300px; }
+    .menu-navigation { display: block; min-width: 300px;}
+
+}
+
+ /* Affiche le menu au click sur le hamburger */
+@media screen and (max-width: 620px) {
+    .display-menu-mobile { display: none;}
+    .menu-navigation { min-width: 80vw;}
+}
+
+
+/* MAIN */
+.border-h1 { border: 3px solid #FF5A1F; width: 175px; border-radius: 10px; margin-bottom: 16px;}
+
+
+
+/* PAGE LOGIN ET MOT DE PASSE OUBLIÉ */
+.block-login, .footer-login { max-width: 475px; }
+.block-form-login { margin-top: 64px; }
+.block-form-login a{
+    display: block;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 8px;
+}
+
+@media screen and (min-width: 970px) {
+    .background-login {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 780px;
+        height: 780px;
+        z-index: -10;
+        background-image: url('/images/background-login.jpg');
+        background-repeat: no-repeat;
+        background-position: right;
+        background-size: contain;
+        width: 100vh;
+        height: 100vh;
+    }
+}
+

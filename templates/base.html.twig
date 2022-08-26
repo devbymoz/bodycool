@@ -1,19 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}BodyCool{% endblock %}</title>
+
+        <link rel="icon" type="image/x-icon" href="{{ asset('/images/icons/favicon-bodycool.ico') }}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+            <link rel="stylesheet" href="{{ asset('/css/style.css') }}">
         {% endblock %}
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
+
+
     <body>
-        {% block body %}{% endblock %}
+    {% block header %}
+        <div class="contain">
+            <nav class="menu-navigation display-menu-mobile">
+                <h3><i class="bolt fa-solid fa-bolt"></i>{# Franchise #}</h3>
+                <div class="user-menu">
+                    {# <h4 class="light-text">MENU</h4> #}
+                        <ul>
+                            <li><i class="fa-regular fa-circle-user"></i>{# Mon profil #}</li>
+                            <li><i class="fa-regular fa-address-card"></i></i>{# Ma franchise #}</li>
+                            <li><i class="fa-regular fa-building"></i>{# Mes structures #}</li>
+                        </ul>
+                </div>
+                <div class="technician-menu">
+                    {# <h4 class="light-text">TECHNICIEN</h4> #}
+                        <ul>
+                            <li><i class="fa-regular fa-address-book"></i>{# Les franchises #}</li>
+                            <li><i class="fa-regular fa-square-plus"></i>{# Ajouter une franchise #}</li>
+                            <li><i class="fa-regular fa-rectangle-list"></i>{# Les structures #}</li>
+                            <li><i class="fa-regular fa-square-plus"></i>{# Ajouter une structure #}</li>
+                            <li><i class="fa-regular fa-paste"></i>{# Les fonctionnalités #}</li>
+                            <li><i class="fa-regular fa-pen-to-square"></i>{# Ajouter une fonctionnalité #}</li>
+                        </ul>
+                </div>
+
+                <div class="logout">
+                    <a href=""><i class="fa-solid fa-right-from-bracket"></i>{# Deconnexion #}</a>
+                </div>
+            </nav>
+
+            <header class="main-header">
+                <div class="hamburger-menu">
+                    <img src="{{ asset('/images/icons/menu.svg') }}" alt="Icon du menu mobile" height=32 width=32>
+                </div>
+                <div class="logo">
+                    <img src="{{ asset('/images/logo-bodycool.svg') }}" alt="Logo bodycool" height=42>
+                </div>
+                <div class="user-header">
+                    <div class="welcome-user">
+                        <h3>Bienvenue</h3>
+                        <span class="light-text" >John Doe</span>
+                    </div>
+                    <div class="user-picture">
+                        <img src="{{ asset('/images/john.jpg') }}" alt="Photo de profil" height=48 width=48>
+                        <div class="bg-picture-header"></div>
+                    </div>
+                </div> 
+            </header>
+    {% endblock %}
+
+            <main>
+                <h1>{% block title_h1 %}{% endblock %}</h1>
+                <div class="border-h1"></div>
+
+                {% block body %}{% endblock %}
+            </main>
+        </div>
+
+{#         {% block footer %}
+            <footer class="main-footer">
+                <p class="text-xs light-text">Tous droits réservés © BodyCool <span>Version 1.0</span></p> 
+            </footer>
+        {% endblock %} #}
+
     </body>
 </html>
+
