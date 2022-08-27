@@ -15,9 +15,6 @@
             <link rel="stylesheet" href="{{ asset('/css/style.css') }}">
         {% endblock %}
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
     </head>
 
 
@@ -25,30 +22,41 @@
     {% block header %}
         <div class="contain">
             <nav class="menu-navigation display-menu-mobile">
-                <h3><i class="bolt fa-solid fa-bolt"></i>{# Franchise #}</h3>
+                <div class="top-menu">
+                    <i class="fa-solid fa-bolt bolt"></i><h3>Franchise</h3>
+                    <i class="close-menu fa-regular fa-circle-xmark"></i>
+                </div>
                 <div class="user-menu">
-                    {# <h4 class="light-text">MENU</h4> #}
-                        <ul>
-                            <li><i class="fa-regular fa-circle-user"></i>{# Mon profil #}</li>
-                            <li><i class="fa-regular fa-address-card"></i></i>{# Ma franchise #}</li>
-                            <li><i class="fa-regular fa-building"></i>{# Mes structures #}</li>
+                    <h4 class="light-text">MON COMPTE</h4>
+                        <ul>              
+                            <li><i class="fa-regular fa-circle-user"></i><a href="#">Profil</a></li>
+                            <li><i class="fa-regular fa-address-card"></i><a href="#">Franchise</a></li>
+                            <li><i class="fa-regular fa-building"></i><a href="#">Structures</a></li>
                         </ul>
                 </div>
                 <div class="technician-menu">
-                    {# <h4 class="light-text">TECHNICIEN</h4> #}
-                        <ul>
-                            <li><i class="fa-regular fa-address-book"></i>{# Les franchises #}</li>
-                            <li><i class="fa-regular fa-square-plus"></i>{# Ajouter une franchise #}</li>
-                            <li><i class="fa-regular fa-rectangle-list"></i>{# Les structures #}</li>
-                            <li><i class="fa-regular fa-square-plus"></i>{# Ajouter une structure #}</li>
-                            <li><i class="fa-regular fa-paste"></i>{# Les fonctionnalités #}</li>
-                            <li><i class="fa-regular fa-pen-to-square"></i>{# Ajouter une fonctionnalité #}</li>
+                    <h4 class="light-text">TECHNICIEN</h4>
+                        <ul>              
+                            <li><i class="fa-regular fa-address-book"></i><a href="#">Les franchises</a></li>
+                            <li><i class="fa-regular fa-square-plus"></i><a href="#">Ajouter une franchise</a></li>
+                            <li><i class="fa-regular fa-rectangle-list"></i><a href="#">Mes structures</a></li>
+                            <li><i class="fa-regular fa-square-plus"></i><a href="#">Ajouter une structure</a></li>
+                            <li><i class="fa-regular fa-paste"></i><a href="#">Les fonctionnalités</a></li>
+                            <li><i class="fa-regular fa-pen-to-square"></i><a href="#">Ajouter une fonctionnalité</a></li>
                         </ul>
                 </div>
 
                 <div class="logout">
-                    <a href=""><i class="fa-solid fa-right-from-bracket"></i>{# Deconnexion #}</a>
+                    <a href="#"><button class="button-primary"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</button></a>
                 </div>
+                <div class="logout-mobile">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </div>
+                <footer class="footer-menu">
+                    <p class="text-xs light-text">Tous droits réservés © BodyCool</p>
+                    <p class="text-xs light-text">Version 1.0</p> 
+                </footer>
+
             </nav>
 
             <header class="main-header">
@@ -79,12 +87,8 @@
             </main>
         </div>
 
-{#         {% block footer %}
-            <footer class="main-footer">
-                <p class="text-xs light-text">Tous droits réservés © BodyCool <span>Version 1.0</span></p> 
-            </footer>
-        {% endblock %} #}
 
+        <script src="{{ asset('/js/menu-mobile.js') }}"></script>
     </body>
 </html>
 
