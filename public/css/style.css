@@ -1,14 +1,8 @@
-*, ::before, ::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+*, ::before, ::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     -webkit-font-smoothing: antialiased;
     font-family: 'Lato', sans-serif;
-    height: 100vh;
-    padding: 0 16px;
     color: #00171f;
     font-size: 16px;
 }
@@ -23,18 +17,15 @@ a:hover { color: #FF5A1F;}
 ul { list-style-type: none; }
 .text-xs { font-size: 12px; }
 .light-text { color: #7A8290; }
-.logo { text-align: center; }
+.container { padding: 0 16px }
 
-@media screen and (min-width: 620px)  {
-    .logo { text-align: left; }
+@media screen and (min-width: 620px) {
     h1 { font-size: 32px; margin-bottom: 16px;}
     h2 { font-size: 28px; }
     h3 { font-size: 22px; }
-    body { font-size: 18px; padding: 0 32px; }
+    body { font-size: 18px; }
+    .container { padding: 0 32px }
 }
-
-header { margin-bottom: 64px; padding-top: 16px}
-footer p { line-height: 20px; }
 
 /* Formulaire */ 
 input {
@@ -51,7 +42,7 @@ input::placeholder { color: #BABABA; font-size: inherit; }
 form > div:not(:first-child) { margin-top: 16px; }
 
 /* Boutons */
-.button-primary {
+.btn-primary {
     height: 49px;
     background-color: #003F88;
     border: none;
@@ -60,23 +51,23 @@ form > div:not(:first-child) { margin-top: 16px; }
     font-weight: 700;
     width: 100%;
     font-size: 18px;
-    margin-top: 32px;
     cursor: pointer;
-
 }
-.button-secondary { background-color: #FF5A1F; }
-button:hover { opacity: 0.92; transition-duration: 600ms;}
+.btn-secondary { background-color: #FF5A1F; }
+button:hover { opacity: 0.8; transition-duration: 400ms;}
 
 
 /* LAYOUT GENERAL */
 /* Header (logo, menu hamburger et photo utilisateur */
 .main-header {
+    padding: 16px; 
+    margin-bottom: 34px; 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 32px;
+    gap: 16px;
 }
+.logo { text-align: center; }
 .user-header { display: flex; align-items: center; }
 .welcome-user { display: none; }
 .user-picture img{ border-radius: 100%; border: 2px solid #FFF; object-fit: cover; }
@@ -92,7 +83,7 @@ button:hover { opacity: 0.92; transition-duration: 600ms;}
     width: 90px;
 }
 
-/* Retire le fond de la photo de profil du header pour les petits écran */
+/* Retire le background de la photo de profil du header pour les petits écran */
 @media screen and (max-width: 350px) {
     .bg-picture-header { display: none;}
 }
@@ -100,17 +91,18 @@ button:hover { opacity: 0.92; transition-duration: 600ms;}
 /* Modification du header pour le desktop */
 @media screen and (min-width: 620px)  {
     .hamburger-menu { display: none; }
-    .welcome-user { display:block; margin-right: 64px; text-align: right; }
+    .main-header { padding: 16px 32px 0;}
+    .logo { text-align: left; }
+    .welcome-user { display:block; margin-right: 48px; text-align: right; }
     .user-picture img{ height: 64px; width: 64px; }
-    .bg-picture-header { width: 132px; }
-    
+    .bg-picture-header { width: 120px; }
 }
 
-/* MENU */
+
+/* MENU DE GAUCHE*/
 .menu-navigation {
     background-color: #00171f;
-    padding: 32px 16px 16px;
-    color: #7A8290;
+    padding: 32px 16px 8px;
     position: fixed;
     top: 0;
     left: 0;
@@ -120,51 +112,64 @@ button:hover { opacity: 0.92; transition-duration: 600ms;}
     grid-template-rows: auto auto auto 1fr;
 }
 .bolt { color: #FF5A1F; font-size: 32px; vertical-align: middle; }
+.top-menu { margin-bottom: 64px; }
+.technician-menu { margin-top: 32px;}
 .top-menu h3 { display: inline-block; color: #FFF;}
 .close-menu, .logout-mobile { display: none;}
 
-.technician-menu { margin-top: 64px; }
-.top-menu { margin-bottom: 64px; }
-
-.menu-navigation ul > li, .menu-navigation a{
-    margin-top: 24px;
+/* Liste des menus */
+.menu-navigation ul a > li {
+    display: inline-block;
     font-weight: 700;
-    color: #7A8290;
     cursor: pointer;
+    position: relative;
 }
-.menu-navigation li:hover, .menu-navigation a:hover { color: #FFF; transition-duration: 400ms; }
-.fa-regular, .fa-solid:not(.bolt){ font-size: 22px; vertical-align: text-bottom; }
+.menu-navigation ul > a { display: block; color: #7A8290; margin: 24px 0;}
+.menu-navigation ul > a:hover { color:#FFF; transition-duration: 400ms;}
 .menu-navigation i { margin-right: 16px; width: 34px;}
-.footer-menu { display: none;}
-
-.logout { 
-    color: #FFF;
-    cursor: pointer;
-    align-self: flex-end;
+/* Ajoute un élement sur le menu actif */
+.menu-navigation ul .active-menu::after {
+    content: '';
+    background-color: #FF5A1F;
+    position: absolute;
+    right: 0;
+    min-width: 12px;
+    border-radius: 20px 0 0 20px;
+    padding: 6px 0;
+    min-height: 54px;
+    margin-top: -16px;
 }
-
+.fa-regular, .fa-solid:not(.bolt){ font-size: 22px; vertical-align: text-bottom; }
+.logout { align-self: flex-end; }
+.footer-menu { display: none;}
 
 /* Entre 620px et 970px, afficher uniquement les icons du menu */
 @media screen and (min-width: 620px) and (max-width: 970px) {
+    .menu-navigation { max-width: 58px;}
     .menu-navigation i { margin-right: 0; width: auto;}
-    .contain { padding-left: 56px; }
-    /* Alignement des icons du menu */
-    .menu-navigation ul { display: flex; flex-direction: column; align-items: center; }
-    .menu-navigation h3 { text-align: center; }
-    .menu-navigation a:not(.logout), .menu-navigation h3, .menu-navigation h4 { display: none; }
-    .logout-mobile { display: block; align-self: flex-end; color: #003F88; }
+    /* Déplace le header et le container principal vers la droite */
+    .main-header, .container { margin-left: 58px; }
+    .menu-navigation ul { display: flex; flex-direction: column; align-items: center;}
+    .menu-navigation ul > a { margin: 16px 0; }
+    /* Cache les titres des menus, la description des menus, le bouton deconnexion et la description "deconnexion*/
+    .menu-navigation ul a > li, .menu-navigation h3, .menu-navigation h4, .logout-mobile a > p, .logout { display: none; }
+    .logout-mobile { display: inherit; align-self: flex-end;}
+    .logout-mobile i { color: #FF5A1F;}
+    /* Cache l'élément qui indique qu'un menu est Active */
+    .menu-navigation ul .active-menu::after { display: none;}
 }
 
-
-/* Affiche la totalité du menu */
-@media screen and (min-width: 970px) {
-    .contain { padding-left: 300px; }
+/* Affiche la totalité du menu pour les grands écrans */
+@media screen and (min-width: 971px) {
+    /* Déplace le header et le container principal vers la droite */
+    .main-header, .container { margin-left: 300px; }
     .menu-navigation {  min-width: 300px; }
     .footer-menu { display: flex; justify-content: space-between; margin-top: 16px; }
 }
 
- /* Affiche le menu au click sur le hamburger */
-@media screen and (max-width: 620px) {
+ /* Affiche le menu au click sur le hamburger (JavaScript) */
+@media screen and (max-width: 619px) {
+    /* Le display est retiré avec du JavaScript */
     .display-menu-mobile { display: none;}
     .menu-navigation { min-width: 80vw; animation: shutter-in-left 300ms ease 0s 1 normal forwards;}
     .close-menu { 
@@ -177,10 +182,7 @@ button:hover { opacity: 0.92; transition-duration: 600ms;}
         cursor: pointer;
     }    
 }
-
-
-
-/* Animation d'entrée menu mobile */
+/* Animation d'entrée du menu lors du clique sur l'hamburger */
 @keyframes shutter-in-left {
     0%{
       transform: rotateY(100deg);
@@ -194,27 +196,46 @@ button:hover { opacity: 0.92; transition-duration: 600ms;}
     }
 }
 
-
-
-
-
-/* MAIN */
-.border-h1 { border: 3px solid #FF5A1F; width: 175px; border-radius: 10px; margin-bottom: 16px;}
-
-
-
+/* Info bulle lors du passage de la souris sur une icone du menu (JavaScript) */
+.bulle-menu {
+    padding: 4px 32px 4px 16px;
+    border-radius: 4px 64px 4px 4px;
+    background-color: #ed5018f0;
+    color: #FFF;
+    position: fixed;
+    left: 52px;
+    margin-top: -20px;
+}
+.menu-mobile-overlay {
+    background-color: rgba(17, 21, 24, 0.45);
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
 
 
 /* PAGE LOGIN ET MOT DE PASSE OUBLIÉ */
+.format-page-login { margin-left: 0; }
+.container-login, .footer-login { padding: 0 16px }
 .block-login, .footer-login { max-width: 475px; }
-.block-form-login { margin-top: 64px; }
+.block-form-login { margin-top: 32px; }
 .block-form-login a{
     display: block;
     font-weight: bold;
     text-align: right;
     margin-top: 8px;
 }
-
+.footer-login { position: absolute; bottom: 16px; }
+.footer-login p { line-height: 18px;}
+@media screen and (max-height: 660px){
+    .footer-login { position: static; margin-top: 16px;}
+}
+.block-form-login button { margin-top: 32px;}
+@media screen and (min-width: 620px)  {
+    .container-login, .footer-login { padding: 0 32px }
+}
 @media screen and (min-width: 970px) {
     .background-login {
         position: absolute;
@@ -231,4 +252,11 @@ button:hover { opacity: 0.92; transition-duration: 600ms;}
         height: 100vh;
     }
 }
+
+
+/* MAIN */
+.border-h1 { border: 3px solid #FF5A1F; width: 175px; border-radius: 10px; margin-bottom: 16px;}
+
+
+
 

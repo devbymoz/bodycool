@@ -1,20 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Connectez-vous{% endblock %}
-{% block title_h1 %}Connectez-vous{% endblock %}
-
 
 {% block header %}
-    <header class="header-login">
+    <header class="main-header format-page-login">
         <div class="logo">
             <img src="{{ asset('/images/logo-bodycool.svg') }}" alt="Logo bodycool" height=42 width=auto>
         </div>    
     </header>
 {% endblock %}
 
-{% block body %}
-    <main>
-        <div class="block-login">
+{% block main %}           
+    <main class="container-login">
+        <div class="main-title-page">
+            <h1>{% block title_h1 %}Connectez-vous{% endblock %}</h1>
+                <div class="border-h1"></div> 
+            </div>
+        {% block content %}
+            <div class="block-login">
             <p class="light-text">Cette plateforme est dédiée aux franchisés de la marque BodyCool</p>
             
             <div class="block-form-login">
@@ -28,16 +31,18 @@
                         <input type="text" name="mdp" id="mdp" placeholder="Entrez votre mot de passe">
                     </div>
                     <a href="http://">Mot de passe oublié ?</a>
-                    <button class="button-primary" type="submit">Se connecter</button>
+                    <button class="btn-primary" type="submit">Se connecter</button>
                 </form>
             </div>
-        </div>
-        <div class="background-login"></div>
-    </main>
-{% endblock %}
-
-{% block footer %}
+            </div>
+            <div class="background-login"></div>        
+        {% endblock %} 
+    </main> 
     <footer class="footer-login">
         <p class="text-xs light-text">Si vous rencontrez un problème pour vous connecter, merci de contacter votre conseiller technique</p>
-    </footer>
-{% endblock %}
+    </footer>    
+
+{% endblock %} 
+
+{% block js_after %}{% endblock %}   
+
