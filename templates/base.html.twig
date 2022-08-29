@@ -14,81 +14,111 @@
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('/css/style.css') }}">
         {% endblock %}
-
     </head>
 
-
     <body>
-    {% block header %}
-        <div class="contain">
-            <nav class="menu-navigation display-menu-mobile">
-                <div class="top-menu">
-                    <i class="fa-solid fa-bolt bolt"></i><h3>Franchise</h3>
-                    <i class="close-menu fa-regular fa-circle-xmark"></i>
-                </div>
-                <div class="user-menu">
-                    <h4 class="light-text">MON COMPTE</h4>
-                        <ul>              
-                            <li><i class="fa-regular fa-circle-user"></i><a href="#">Profil</a></li>
-                            <li><i class="fa-regular fa-address-card"></i><a href="#">Franchise</a></li>
-                            <li><i class="fa-regular fa-building"></i><a href="#">Structures</a></li>
-                        </ul>
-                </div>
-                <div class="technician-menu">
-                    <h4 class="light-text">TECHNICIEN</h4>
-                        <ul>              
-                            <li><i class="fa-regular fa-address-book"></i><a href="#">Les franchises</a></li>
-                            <li><i class="fa-regular fa-square-plus"></i><a href="#">Ajouter une franchise</a></li>
-                            <li><i class="fa-regular fa-rectangle-list"></i><a href="#">Mes structures</a></li>
-                            <li><i class="fa-regular fa-square-plus"></i><a href="#">Ajouter une structure</a></li>
-                            <li><i class="fa-regular fa-paste"></i><a href="#">Les fonctionnalités</a></li>
-                            <li><i class="fa-regular fa-pen-to-square"></i><a href="#">Ajouter une fonctionnalité</a></li>
-                        </ul>
-                </div>
-
-                <div class="logout">
-                    <a href="#"><button class="button-primary"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</button></a>
-                </div>
-                <div class="logout-mobile">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </div>
-                <footer class="footer-menu">
-                    <p class="text-xs light-text">Tous droits réservés © BodyCool</p>
-                    <p class="text-xs light-text">Version 1.0</p> 
-                </footer>
-
-            </nav>
-
-            <header class="main-header">
-                <div class="hamburger-menu">
-                    <img src="{{ asset('/images/icons/menu.svg') }}" alt="Icon du menu mobile" height=32 width=32>
-                </div>
-                <div class="logo">
-                    <img src="{{ asset('/images/logo-bodycool.svg') }}" alt="Logo bodycool" height=42>
-                </div>
-                <div class="user-header">
-                    <div class="welcome-user">
-                        <h3>Bienvenue</h3>
-                        <span class="light-text" >John Doe</span>
+        {% block header %}
+                <nav class="menu-navigation display-menu-mobile">
+                    <div class="top-menu">
+                        <i class="fa-solid fa-bolt bolt"></i><h3>Franchise</h3>
+                        <i class="close-menu fa-regular fa-circle-xmark"></i>
                     </div>
-                    <div class="user-picture">
-                        <img src="{{ asset('/images/john.jpg') }}" alt="Photo de profil" height=48 width=48>
-                        <div class="bg-picture-header"></div>
+                    <div class="user-menu">
+                        <h4 class="light-text">MON COMPTE</h4>
+                            <ul>
+                                <a href="{{ path('app_profil') }}">
+                                    <i class="fa-regular fa-circle-user"></i>
+                                    <li>Profil</li>
+                                </a>
+                                <a href="#">
+                                    <i class="fa-regular fa-address-card"></i>
+                                    <li>Franchise</li>
+                                </a>
+                                <a href="#">
+                                    <i class="fa-regular fa-building"></i>
+                                    <li>Structures</li>
+                                </a>
+                            </ul>
                     </div>
-                </div> 
-            </header>
-    {% endblock %}
+                    <div class="technician-menu">
+                        <h4 class="light-text">TECHNICIEN</h4>
+                            <ul> 
+                                <a href="profi">
+                                    <i class="fa-regular fa-address-book"></i>
+                                    <li>Les franchises</li>
+                                </a>
+                                <a href="profi">
+                                    <i class="fa-regular fa-square-plus"></i>
+                                    <li>Ajouter une franchise</li>
+                                </a>
+                                <a href="profi">
+                                    <i class="fa-regular fa-rectangle-list"></i>
+                                    <li>Les structures</li>
+                                </a>
+                                <a href="profi">
+                                    <i class="fa-regular fa-square-plus"></i>
+                                    <li>Ajouter une structure</li>
+                                </a>
+                                <a href="profi">
+                                    <i class="fa-regular fa-paste"></i>
+                                    <li>Les fonctionnalités</li>
+                                </a>
+                                <a href="profi">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                    <li>Ajouter une fonctionnalité</li>
+                                </a>
+                            </ul>
+                    </div>
 
-            <main>
-                <h1>{% block title_h1 %}{% endblock %}</h1>
-                <div class="border-h1"></div>
+                    <div class="logout">
+                        <a href="#" ><button class="btn-primary"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</button></a>
+                    </div>
+                    <div class="logout-mobile">
+                        <a href="profi">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p>Déconnexion</p>
+                        </a>
+                    </div>
+                    
+                    <footer class="footer-menu">
+                        <p class="text-xs light-text">Tous droits réservés © BodyCool</p>
+                        <p class="text-xs light-text">Version 1.0</p> 
+                    </footer>
+                </nav>
 
-                {% block body %}{% endblock %}
-            </main>
-        </div>
+                <header class="main-header">
+                    <div class="hamburger-menu">
+                        <img src="{{ asset('/images/icons/menu.svg') }}" alt="Icon du menu mobile" height=32 width=32>
+                    </div>
+                    <div class="logo">
+                        <img src="{{ asset('/images/logo-bodycool.svg') }}" alt="Logo bodycool" height=42>
+                    </div>
+                    <div class="user-header">
+                        <div class="welcome-user">
+                            <h3>Bienvenue</h3>
+                            <span class="light-text" >John Doe</span>
+                        </div>
+                        <div class="user-picture">
+                            <img src="{{ asset('/images/john.jpg') }}" alt="Photo de profil" height=48 width=48>
+                            <div class="bg-picture-header"></div>
+                        </div>
+                    </div> 
+                </header>
+        {% endblock %}
 
+            {% block main %}
+                <main class="container">
+                    <div class="main-title-page">
+                        <h1>{% block title_h1 %}{% endblock %}</h1>
+                        <div class="border-h1"></div> 
+                    </div>
+                {% block content %}{% endblock %} 
+                </main>  
+            {% endblock %} 
 
-        <script src="{{ asset('/js/menu-mobile.js') }}"></script>
+        {% block js_after %}
+            <script src="{{ asset('/js/app.js') }}"></script>
+        {% endblock %}                          
     </body>
 </html>
 
