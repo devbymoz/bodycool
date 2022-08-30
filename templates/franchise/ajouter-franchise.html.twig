@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une franchise{% endblock %}
+{% block title_h1 %}Ajouter une franchise{% endblock %}
+
+
+{% block content %}
+    <div class="add-franchise">
+        {{ form_start(formUser) }}
+            <div class="form-owner-franchise">
+                <div class="user-infos">
+                    <h3>Détails sur le propriétaire</h3>
+                    {{ form_widget(formUser)}}
+                </div>
+
+                <div class="franchise-infos">
+                    <input type="text">
+                </div>
+        
+        
+        
+        
+            </div>
+
+
+            <input class="btn-primary" type="submit" value="Créer une franchise">
+        {{ form_end(formUser) }}
+
+    </div>
+{% endblock %} 

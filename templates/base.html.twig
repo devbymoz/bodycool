@@ -47,7 +47,7 @@
                                     <i class="fa-regular fa-address-book"></i>
                                     <li>Les franchises</li>
                                 </a>
-                                <a href="profi">
+                                <a href="{{ path('app_ajouter.franchise') }}">
                                     <i class="fa-regular fa-square-plus"></i>
                                     <li>Ajouter une franchise</li>
                                 </a>
@@ -112,6 +112,18 @@
                         <h1>{% block title_h1 %}{% endblock %}</h1>
                         <div class="border-h1"></div> 
                     </div>
+
+                    {% for message in app.flashes('notice') %}
+                        <div class="flash-notice notice">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('success') %}
+                        <div class="flash-notice success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
                 {% block content %}{% endblock %} 
                 </main>  
             {% endblock %} 
