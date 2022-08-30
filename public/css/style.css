@@ -17,7 +17,7 @@ a:hover { color: #FF5A1F;}
 ul { list-style-type: none; }
 .text-xs { font-size: 12px; }
 .light-text { color: #7A8290; }
-.container { padding: 0 16px }
+.container { padding: 0 16px; }
 
 @media screen and (min-width: 620px) {
     h1 { font-size: 32px; margin-bottom: 16px;}
@@ -37,9 +37,9 @@ input {
     font-size: inherit;
     text-indent: 16px; 
 }
-label { color: #7A8290; font-weight: bold; }
+label { color: #7A8290; font-weight: bold;}
 input::placeholder { color: #BABABA; font-size: inherit; }
-form > div:not(:first-child) { margin-top: 16px; }
+form  div:not(:first-child) { margin-top: 16px; }
 
 /* Boutons */
 .btn-primary {
@@ -254,9 +254,38 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
 }
 
 
+/* FLASH MESSAGE */
+.flash-notice {
+    border-radius: 8px;
+    padding: 16px 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.flash-notice::before {
+    font-family: "Font Awesome 5 Free"; 
+    font-weight: 700;
+    margin-right: 16px;
+    font-size: 24px;
+    vertical-align: text-top;
+}
+.notice { background-color: #fdeeef; }
+.notice::before { content: '\f06a'; color: #f04d62;}
+.success { background-color: #ebfbf6; }
+.success::before { content: '\f058'; color: #34d39e;}
+
+
 /* MAIN */
 .border-h1 { border: 3px solid #FF5A1F; width: 175px; border-radius: 10px; margin-bottom: 16px;}
 
+.form-owner-franchise {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto;
+}
 
-
+.user-infos {
+    max-width: 350px;
+    grid-row: 1 / span 3;
+    grid-column: 1 / span 3;
+}
 
