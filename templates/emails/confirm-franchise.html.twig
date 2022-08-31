@@ -1,0 +1,14 @@
+{% extends "base-email.html.twig" %}
+
+{% block titre %}Confirmez votre compte franchisé{% endblock %}
+
+{% block content %}
+    <p>Bonjour {{ user.getFirstname }}, nous vous confirmons la création de votre espace franchisé sur la plateforme Body Cool.</p>
+    <p>Pour confirmer votre compte, vous devez cliquer sur le bouton ci-dessous, vous serez invité à enregistrer votre mot de passe.</p>
+
+    <a href="{{ absolute_url(path('app_creer.mot.de.passe', {'token' : user.getActivationToken})) }}" ><button type="submit">Créer mon mot de passe</button></a>
+    <br>
+    <p>Si le bouton ne fonctionne pas, vous pouvez cliquer sur le lien suivant : </p> 
+    <a href="{{ absolute_url(path('app_creer.mot.de.passe', {'token' : user.getActivationToken})) }}">{{ absolute_url(path('app_creer.mot.de.passe', {'token' : user.getActivationToken})) }}</a>
+{% endblock %}
+

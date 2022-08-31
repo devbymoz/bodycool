@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -11,26 +13,47 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+
+    /**
+     * À l'instanciation de chaque nouvel utilisateur, on initialise ces propriétés.
+     */
+    public function __construct()
+    {
+        $this->createAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
+        $this->active = 0;
+        $this->activationToken = md5(uniqid());
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email(
         message: 'Cet email n\' est pas valide',
     )]
-    private ?string $email = null;
+    private string $email;
 
     #[ORM\Column]
-    private array $roles = [];
+    private ?array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column(nullable: true)]
     private ?string $password = null;
+
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 8,
+        max: 4096,
+        minMessage: 'Votre mot de passe doit comporter 8 caractères minimum',
+        maxMessage: 'Votre mot de passe doit comporter 4096 caractères minimum',
+    )]
+
+    private $plainPassword;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
@@ -40,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         minMessage: 'Votre nom doit comporter au moins {{ limit }} caractères.',
         maxMessage: 'Votre nom ne peut pas dépasser {{ limit }} caractères.',
     )]
-    private ?string $lastname = null;
+    private string $lastname;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
@@ -50,21 +73,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         minMessage: 'Votre prénom doit comporter au moins {{ limit }} caractères.',
         maxMessage: 'Votre prénom ne peut pas dépasser {{ limit }} caractères.',
     )]
-    private ?string $firstname = null;
+    private string $firstname;
 
     #[ORM\Column(length: 20, nullable: true)]
-    private ?string $phone = null;
+    #[Assert\NotBlank]
+    #[Assert\Regex('/^((\+|00)33\s?|0)[67](\s?\d{2}){4}$/')]
+    #[Assert\Length(
+        min: 8,
+        max: 20,
+        minMessage: 'Le numéro de téléphone semble trop court.',
+        maxMessage: 'Le numéro de téléphone semble trop long.',
+    )]
+    private string $phone;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createAt = null;
+    private \DateTimeImmutable $createAt;
 
     #[ORM\Column]
     private ?bool $active = null;
 
+    #[ORM\Column(length: 255, nullable: true, unique: true)]
+    private ?string $activationToken = null;
 
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -98,8 +132,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -203,6 +235,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActive(bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getActivationToken(): ?string
+    {
+        return $this->activationToken;
+    }
+
+    public function setActivationToken(?string $activationToken): self
+    {
+        $this->activationToken = $activationToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of plainPassword
+     */ 
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set the value of plainPassword
+     *
+     * @return  self
+     */ 
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }

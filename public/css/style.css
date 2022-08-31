@@ -39,7 +39,7 @@ input {
 }
 label { color: #7A8290; font-weight: bold;}
 input::placeholder { color: #BABABA; font-size: inherit; }
-form  div:not(:first-child) { margin-top: 16px; }
+form  div { margin-top: 16px; }
 
 /* Boutons */
 .btn-primary {
@@ -218,8 +218,7 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
 
 /* PAGE LOGIN ET MOT DE PASSE OUBLIÉ */
 .format-page-login { margin-left: 0; }
-.container-login, .footer-login { padding: 0 16px }
-.block-login, .footer-login { max-width: 475px; }
+.container-login, .footer-login { padding: 0 16px; max-width: 475px;}
 .block-form-login { margin-top: 32px; }
 .block-form-login a{
     display: block;
@@ -233,9 +232,7 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
     .footer-login { position: static; margin-top: 16px;}
 }
 .block-form-login button { margin-top: 32px;}
-@media screen and (min-width: 620px)  {
-    .container-login, .footer-login { padding: 0 32px }
-}
+
 @media screen and (min-width: 970px) {
     .background-login {
         position: absolute;
@@ -277,15 +274,31 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
 /* MAIN */
 .border-h1 { border: 3px solid #FF5A1F; width: 175px; border-radius: 10px; margin-bottom: 16px;}
 
-.form-owner-franchise {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: auto auto;
+
+/* Page Ajouter une franchise */
+@media screen and (min-width: 900px)  {
+    .form-owner { 
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        column-gap: 16px;
+    }
+    .form-owner h3 {
+        grid-column: 1 / -1;
+    }
 }
 
-.user-infos {
-    max-width: 350px;
-    grid-row: 1 / span 3;
-    grid-column: 1 / span 3;
+@media screen and (min-width: 1400px)  {
+    .form-owner-franchise { 
+        display: grid;
+        grid-template-columns: 1fr 33%;
+        grid-template-rows: auto auto auto;
+        column-gap: 16px;
+    }
+
+    .form-owner-franchise h3 {
+        grid-column: 1 / span 2;
+    }
 }
+
 
