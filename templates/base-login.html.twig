@@ -1,0 +1,43 @@
+{# Template de base pour les pages en lien avec la connexion #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block header %}
+    <header class="main-header format-page-login">
+        <div class="logo">
+            <img src="{{ asset('/images/logo-bodycool.svg') }}" alt="Logo bodycool" height=42 width=auto>
+        </div>    
+    </header>
+{% endblock %}
+
+{% block main %}           
+    <main class="container-login">
+        <div class="main-title-page">
+            <h1>{% block title_h1 %}{% endblock %}</h1>
+                <div class="border-h1"></div> 
+        </div>
+
+        {% for message in app.flashes('notice') %}
+            <div class="flash-notice notice">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="flash-notice success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="block-login">           
+            {% block content %}{% endblock %} 
+        </div>
+        <div class="background-login"></div>        
+    </main> 
+    <footer class="footer-login">
+        <p class="text-xs light-text">Si vous rencontrez un problème pour vous connecter, merci de contacter votre conseiller technique</p>
+    </footer>    
+{% endblock %} 
+
+{% block js_after %}{% endblock %}   
+

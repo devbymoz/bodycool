@@ -3,25 +3,24 @@
 {% block title %}Ajouter une franchise{% endblock %}
 {% block title_h1 %}Ajouter une franchise{% endblock %}
 
-
 {% block content %}
     <div class="add-franchise">
-        {{ form_start(formUser) }}
+        {{ form_start(formUser, { 'attr': {'class': 'form-add-franchise'} }) }}
             <div class="form-owner-franchise">
-                <div class="user-infos">
+                <div class="form-owner">
                     <h3>Détails sur le propriétaire</h3>
-                    {{ form_widget(formUser)}}
+                    {{ form_row(formUser.firstname)}}
+                    {{ form_row(formUser.lastname)}}
+                    {{ form_row(formUser.phone)}}             
+                    {{ form_row(formUser.email)}} 
+                    {{ form_row(formUser._token)}}
                 </div>
-
                 <div class="franchise-infos">
+                    <h3>Détails sur la franchise</h3>
+                    <label for="text">Nom de la franchise</label>
                     <input type="text">
                 </div>
-        
-        
-        
-        
             </div>
-
 
             <input class="btn-primary" type="submit" value="Créer une franchise">
         {{ form_end(formUser) }}
