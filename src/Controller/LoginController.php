@@ -8,11 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use App\Form\CreatePasswordType;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
  * Gère les routes à prendre si l'utilisateur n'est pas connecté
+ * Connexion, deconnexion, création du mot de passe, mot de passe perdu
  */
 class LoginController extends AbstractController
 {
@@ -21,9 +26,19 @@ class LoginController extends AbstractController
      * @return Response
      */
     #[Route('/connexion', name: 'app_connexion')]
-    public function login(): Response
-    {
-        return $this->render('login/connexion.html.twig');
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {   
+        if($this->getUser()) {
+            return $this->redirectToRoute('app_ajouter.franchise');
+        }
+
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastAuthenticationError();   
+        
+        return $this->render('login/connexion.html.twig', [
+            'last_username' => $lastUsername,
+            'error'         => $error,
+        ]);
     }
 
 
@@ -37,8 +52,11 @@ class LoginController extends AbstractController
         $token, 
         Request $request,
         UserPasswordHasherInterface $passwordHasher
-    ): Response 
+        ): Response 
     {
+        if($this->getUser()) {
+            return $this->redirectToRoute('app_ajouter.franchise');
+        }
 
         $em = $doctrine->getManager();
         $repo = $doctrine->getRepository(User::class);
@@ -79,7 +97,86 @@ class LoginController extends AbstractController
         ]);
     }
 
+    /**
+     * Deconnecte l'utilisateur et le renvoi vers la page de connexion
+     * @return void
+     */
+    #[Route('/deconnexion', name: 'app_logout', methods: ['GET'])]
+    public function logout()
+    {
 
+    }
+
+
+    /**
+     * Renvoi un lien à l'utilisateur pour modifier son mot de passe
+     */
+    #[Route('/mot-de-passe-perdu', name: 'app_mot.de.passe.perdu')]
+    public function resetPassword(
+        Request $request, 
+        ManagerRegistry $doctrine,
+        MailerInterface $mailer, 
+        ): Response 
+    {
+        if($this->getUser()) {
+            return $this->redirectToRoute('app_ajouter.franchise');
+        }
+
+        $repo = $doctrine->getRepository(User::class);
+        $em = $doctrine->getManager();
+
+        $formResetPassword = $this->createFormBuilder()
+            ->add('email', EmailType::class, [
+                'label' => 'Renseignez votre adresse email de connexion',
+                'attr' => array(
+                    'placeholder' => 'Indiquez votre adresse email'
+                )
+            ])
+            ->getForm();
+
+        $formResetPassword->handleRequest($request);
+
+        if ($formResetPassword->isSubmitted() && $formResetPassword->isValid()) {
+            $data = $formResetPassword->getData();
+            $email = $data['email'];
+            $user = $repo->findOneBy(['email' => $email, 'active' => true]);
+
+            // Si l'adresse email existe et que le compte est bien activé
+            if($user != [] ) {   
+                // On crée un nouveau token en BDD
+                $user->setActivationToken(md5(uniqid()));
+
+                $em->persist($user);
+                $em->flush();
+
+                // Envoi d'un email avec un lien pour changer le mot de passe
+                $sendEmail = new TemplatedEmail();
+                    $sendEmail->from('noreply@bodycool.com');
+                    $sendEmail->to($email);
+                    $sendEmail->replyTo('noreply@bodycool.com');
+                    $sendEmail->subject('Modifier votre mot de passe');
+                    $sendEmail->context([
+                        'user' => $user,
+                    ]);
+                    $sendEmail->htmlTemplate('emails/reset-password.html.twig');
+                $mailer->send($sendEmail);
+
+                $this->addFlash(
+                    'success',
+                    'Vous allez recevoir un mail pour réinitialiser votre mot de passe'
+                );
+            } else {
+                $this->addFlash(
+                    'notice',
+                    'Ce compte est désactivé ou inexistant'
+                );
+            }
+        }
+
+        return $this->render('login/reset-password.html.twig', [
+            'formResetPassword' => $formResetPassword->createView()
+        ]);
+    }
 
 
     

@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 
 /**
@@ -27,12 +28,14 @@ class FranchiseController extends AbstractController
      * @return Response
      */
     #[Route('/ajouter-franchise', name: 'app_ajouter.franchise')]
+    ##[IsGranted('ROLE_FRANCHISE')]
     public function addFranchise(
         Request $request, 
         ManagerRegistry $doctrine, 
         MailerInterface $mailer, 
-    ): Response
+        ): Response
     {
+        
         $em = $doctrine->getManager();
         $user = new User();
         $repo = $doctrine->getRepository(User::class);
