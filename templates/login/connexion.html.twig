@@ -3,22 +3,27 @@
 {% block title %}Connectez-vous{% endblock %}
 {% block title_h1 %}Connectez-vous{% endblock %}
 
+
 {% block content %}            
     <p class="light-text">Cette plateforme est dédiée aux franchisés de la marque BodyCool</p>
-            
+
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}        
     <div class="block-form-login">
-        <form action="" method="get">
+        <form action="{{ path('app_connexion') }}" method="post">
             <div>
-                <label for="email">Email</label>
-                <input type="text" name="email" id="email" placeholder="Entrez votre email">
+                <label for="username">Email</label>
+                <input type="text" id="username" name="_username" value="{{ last_username }}" placeholder="Entrez votre email"/>
             </div>
             <div>
-                <label for="mdp">Mot de passe</label>
-                <input type="text" name="mdp" id="mdp" placeholder="Entrez votre mot de passe">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="_password"/ placeholder="Entrez votre mot de passe">
             </div>
-            <a href="http://">Mot de passe oublié ?</a>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <a href="{{ path('app_mot.de.passe.perdu') }}">Mot de passe oublié ?</a>
             <button class="btn-primary" type="submit">Se connecter</button>
         </form>
     </div>  
 {% endblock %}
-

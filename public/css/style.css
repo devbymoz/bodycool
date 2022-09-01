@@ -226,6 +226,10 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
     text-align: right;
     margin-top: 8px;
 }
+@media screen and (min-width: 620px){
+    .container-login, .footer-login {padding: 0 32px;}
+}
+
 .footer-login { position: absolute; bottom: 16px; }
 .footer-login p { line-height: 18px;}
 @media screen and (max-height: 660px){
@@ -257,13 +261,14 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
     padding: 16px 32px;
     font-weight: 700;
     margin-bottom: 16px;
+    display: flex;
+    align-items: center;
 }
 .flash-notice::before {
     font-family: "Font Awesome 5 Free"; 
     font-weight: 700;
     margin-right: 16px;
     font-size: 24px;
-    vertical-align: text-top;
 }
 .notice { background-color: #fdeeef; }
 .notice::before { content: '\f06a'; color: #f04d62;}

@@ -13,6 +13,7 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
             provider: app_user_provider
@@ -23,16 +24,34 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+            form_login:
+                login_path: app_connexion
+                check_path: app_connexion
+                default_target_path: app_ajouter.franchise
+                enable_csrf: true
+                
+            #pattern: ^/
+            #user_checker: App\Security\UserChecker
+                
+           # http_basic:
+                #realm: Secured Area
+
+            login_throttling: null
+
+            logout:
+                path: app_logout
+                target: app_connexion
+                
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        #- { path: /franchise, roles: ROLE_GESTIONNAIRE }
+
     role_hierarchy:
         ROLE_GESTIONNAIRE: ROLE_GESTIONNAIRE;
-        ROLE_FRANCHISE: ROLE_GESTIONNAIRE;
-        ROLE_ADMIN: ROLE_FRANCHISE;
-        ROLE_SUPER_ADMIN: ROLE_ADMIN;
+        ROLE_FRANCHISE: [ROLE_FRANCHISE, ROLE_GESTIONNAIRE];
+        ROLE_ADMIN: [ROLE_ADMIN, ROLE_FRANCHISE];
+        ROLE_SUPER_ADMIN: [ROLE_SUPER_ADMIN, ROLE_ADMIN];
 
 when@test:
     security:
