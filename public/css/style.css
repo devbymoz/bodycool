@@ -29,7 +29,7 @@ ul { list-style-type: none; }
 }
 
 /* Formulaire */ 
-input:not(input[type="file"]) {
+input:not(input[type="file"]), textarea {
     height: 54px;
     border: 2px solid #DEE1E6;
     border-radius: 8px;
@@ -41,10 +41,10 @@ input:not(input[type="file"]) {
 }
 
 label { color: #7A8290; font-weight: bold;}
-.input::placeholder { color: #BABABA; font-size: inherit; }
+input::placeholder, textarea::placeholder { color: #BABABA; font-size: inherit; }
 /* form > div { margin-top: 16px; } */
 input:disabled {background-color: #F4F7FC;}
-
+textarea { min-height: 200px; padding: 16px; font-family: inherit; text-indent: unset;} 
 /* Boutons */
 button {
     height: 49px;
@@ -380,6 +380,6 @@ button:hover, .input-file:hover { opacity: 0.85; transition-duration: 400ms; }
 .edit-profil p { margin-bottom: 16px; }
 
 
-
-
+/* Page ajouter une permission */
+.block-add-permission {max-width: 400px;}
 

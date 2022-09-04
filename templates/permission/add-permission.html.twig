@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une nouvelle permission{% endblock %}
+{% block title_h1 %}Nouvelle permission{% endblock %}
+
+{% block content %}
+    <div class="block-add-permission">
+        {{ form_start(formAddPermission) }}
+            {{ form_row(formAddPermission.name)}}
+            {{ form_row(formAddPermission.description)}}
+            <button class="btn-primary" type="submit">Créer la permission</button>
+        {{ form_end(formAddPermission) }}
+    </div>
+{% endblock %}
+
