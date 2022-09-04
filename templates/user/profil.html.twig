@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block js_after %}<script src="{{ asset('/js/user.js') }}"></script>{% endblock %}     
+{% block title %}Mon profil{% endblock %}
+{% block title_h1 %}Mon profil{% endblock %}
+
+{% block content %}
+    <div class="block-profil">
+        <h2>Inscrit en tant que : {{ app.user.roles|first|slice(5)|capitalize}}</h2>
+        {{ form_start(formEditUser) }}
+            {{ form_errors(formEditUser.avatar) }}
+            <div class="change-avatar-profil">
+                <div>
+                    <img class="user-picture" src="{{ asset('/images/avatar/' ~ user.avatar) }}" alt="Photo de profil" height=130 width=130>
+                    <p class="text-light text-xs detail-select-avatar">Taille maximale 2Mo</p>
+                </div>
+                <div class="btn-change-delete-picture-profil">
+                    <div class="input-file select-avatar">
+                        {{ form_label(formEditUser.avatar) }}
+                        {{ form_widget(formEditUser.avatar) }}
+                        <span>Séléctionner une photo</span>
+                    </div>
+                    {{ form_widget(formEditUser.removeAvatar) }}
+                </div>
+            </div>
+            <div class="dividing-border"></div>
+
+            <div class="edit-profil">
+                <p class="light-text text-light">Merci de contacter l’équipe technique pour modifier les informations suivantes</p>
+                <div>
+                    <label for="firstname">Prénom</label>
+                    <input type="text" name="" value="{{ user.firstname}}" disabled>
+                </div>
+                <div>
+                    <label for="lastname">Nom</label>
+                    <input type="text" name="" value="{{ user.lastname}}" disabled>
+                </div>
+                <div>
+                    <label for="lastname">Numéro de téléphone</label>
+                    <input type="text" name="" value="{{ user.phone}}" disabled>
+                </div>
+                    <div>
+                    <label for="email">Email</label>
+                    <input type="email" name="" value="{{ user.email}}" disabled>
+                </div>
+            </div>
+
+            {{ form_widget(formEditUser.save) }}
+        {{ form_end(formEditUser) }} 
+    </div>
+{% endblock %} 

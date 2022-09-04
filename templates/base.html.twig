@@ -21,34 +21,41 @@
         {% block header %}
                 <nav class="menu-navigation display-menu-mobile">
                     <div class="top-menu">
-                        <i class="fa-solid fa-bolt bolt"></i><h3>Franchise</h3>
+                        <i class="fa-solid fa-bolt bolt"></i><h3>{{ app.user.roles|first|slice(5)|capitalize}}</h3>
                         <i class="close-menu fa-regular fa-circle-xmark"></i>
                     </div>
                     <div class="user-menu">
-                        <h4 class="light-text">MON COMPTE</h4>
+                        <h4 class="text-light">MON COMPTE</h4>
                             <ul>
-                                <a href="">
+                                <a href="{{ path('app_profil') }}">
                                     <i class="fa-regular fa-circle-user"></i>
                                     <li>Profil</li>
                                 </a>
-                                <a href="#">
-                                    <i class="fa-regular fa-address-card"></i>
-                                    <li>Franchise</li>
-                                </a>
-                                <a href="#">
-                                    <i class="fa-regular fa-building"></i>
-                                    <li>Structures</li>
-                                </a>
+                                {% if 'ROLE_FRANCHISE' in app.user.roles %}
+                                    <a href="#">
+                                        <i class="fa-regular fa-address-card"></i>
+                                        <li>Franchise</li>
+                                    </a>
+                                {% endif %}   
+                                {% if 'ROLE_FRANCHISE' in app.user.roles or 'ROLE_GESTIONNAIRE' in app.user.roles %}
+                                    <a href="#">
+                                        <i class="fa-regular fa-building"></i>
+                                        <li>{{ ('ROLE_FRANCHISE' in app.user.roles|first) ? 
+                                        'Structures' : 'Structure' }}</li>
+                                    </a>
+                                {% endif %}
+
                             </ul>
                     </div>
                     <div class="technician-menu">
-                        <h4 class="light-text">TECHNICIEN</h4>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <h4 class="text-light">TECHNICIEN</h4>
                             <ul> 
                                 <a href="profi">
                                     <i class="fa-regular fa-address-book"></i>
                                     <li>Les franchises</li>
                                 </a>
-                                <a href="{{ path('app_ajouter.franchise') }}">
+                                <a href="{{ path('app_ajouter_franchise') }}">
                                     <i class="fa-regular fa-square-plus"></i>
                                     <li>Ajouter une franchise</li>
                                 </a>
@@ -69,10 +76,10 @@
                                     <li>Ajouter une fonctionnalité</li>
                                 </a>
                             </ul>
+                        {% endif %}
                     </div>
-
                     <div class="logout">
-                        <a href="{{ path('app_logout') }}" ><button class="btn-primary"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</button></a>
+                        <a href="{{ path('app_logout') }}" ><button class="btn-primary">Déconnexion</button></a>
                     </div>
                     <div class="logout-mobile">
                         <a href="{{ path('app_logout') }}">
@@ -82,8 +89,8 @@
                     </div>
                     
                     <footer class="footer-menu">
-                        <p class="text-xs light-text">Tous droits réservés © BodyCool</p>
-                        <p class="text-xs light-text">Version 1.0</p> 
+                        <p class="text-xs text-light">Tous droits réservés © BodyCool</p>
+                        <p class="text-xs text-light">Version 1.0</p> 
                     </footer>
                 </nav>
 
@@ -91,16 +98,18 @@
                     <div class="hamburger-menu">
                         <img src="{{ asset('/images/icons/menu.svg') }}" alt="Icon du menu mobile" height=32 width=32>
                     </div>
-                    <div class="logo">
-                        <img src="{{ asset('/images/logo-bodycool.svg') }}" alt="Logo bodycool" height=42>
-                    </div>
+                    <a href="{{ path('app_profil') }}" class="logo">
+                        <img src="{{ asset('/images/others/logo-bodycool.svg') }}" alt="Logo bodycool" height=42>
+                    </a>
                     <div class="user-header">
                         <div class="welcome-user">
                             <h3>Bienvenue</h3>
-                            <span class="light-text" >John Doe</span>
+                            <span class="text-light" >{{ app.user.firstname|capitalize }} {{ app.user.lastname|capitalize }}</span>
                         </div>
                         <div class="user-picture">
-                            <img src="{{ asset('/images/john.jpg') }}" alt="Photo de profil" height=48 width=48>
+                            <a href="{{ path('app_profil') }}">
+                                <img src="{{ asset('/images/avatar/' ~ app.user.avatar) }}" alt="Photo de profil" height=48 width=48>
+                            </a>
                             <div class="bg-picture-header"></div>
                         </div>
                     </div> 
@@ -129,9 +138,8 @@
                 </main>  
             {% endblock %} 
 
-        {% block js_after %}
-            <script src="{{ asset('/js/app.js') }}"></script>
-        {% endblock %}                          
+        <script src="{{ asset('/js/app.js') }}"></script>
+        {% block js_after %}{% endblock %}                          
     </body>
 </html>
 

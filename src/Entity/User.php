@@ -45,15 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
-    #[Assert\NotBlank]
-    #[Assert\Length(
-        min: 8,
-        max: 4096,
-        minMessage: 'Votre mot de passe doit comporter 8 caractères minimum',
-        maxMessage: 'Votre mot de passe doit comporter 4096 caractères minimum',
-    )]
-
-    private $plainPassword;
+    private ?string $plainPassword = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
@@ -86,8 +78,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private string $phone;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $avatar = null;
+    #[ORM\Column(length: 255)]
+    private string $avatar;
 
     #[ORM\Column]
     private \DateTimeImmutable $createAt;

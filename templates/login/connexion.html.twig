@@ -5,25 +5,26 @@
 
 
 {% block content %}            
-    <p class="light-text">Cette plateforme est dédiée aux franchisés de la marque BodyCool</p>
+    <p class="light-text">Cette plateforme est dédiée aux franchisés de la marque BodyCool.</p>
 
     {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}        
+        <div class="flash-notice notice">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
     <div class="block-form-login">
         <form action="{{ path('app_connexion') }}" method="post">
             <div>
                 <label for="username">Email</label>
-                <input type="text" id="username" name="_username" value="{{ last_username }}" placeholder="Entrez votre email"/>
+                <input type="email" id="username" name="_username" value="{{ last_username }}" placeholder="Entrez votre email" required/>
             </div>
             <div>
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="_password"/ placeholder="Entrez votre mot de passe">
+                <input type="password" id="password" name="_password" placeholder="Entrez votre mot de passe" required />
             </div>
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-            <a href="{{ path('app_mot.de.passe.perdu') }}">Mot de passe oublié ?</a>
+            <a href="{{ path('app_mot_de_passe_perdu') }}">Mot de passe oublié ?</a>
             <button class="btn-primary" type="submit">Se connecter</button>
         </form>
-    </div>  
+    </div>   
 {% endblock %}

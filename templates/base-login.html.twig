@@ -5,9 +5,12 @@
 
 {% block header %}
     <header class="main-header format-page-login">
-        <div class="logo">
-            <img src="{{ asset('/images/logo-bodycool.svg') }}" alt="Logo bodycool" height=42 width=auto>
-        </div>    
+        <a href="{{ path('app_connexion') }}" class="logo">
+            <img src="{{ asset('/images/others/logo-bodycool.svg') }}" alt="Logo bodycool" height=42 width=auto>
+        </a> 
+        {% if app.request.uri != absolute_url(path('app_connexion')) %}
+            <a class="back-connexion" href="{{ path('app_connexion') }}"></a>
+        {% endif %}
     </header>
 {% endblock %}
 
