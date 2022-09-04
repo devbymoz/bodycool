@@ -27,8 +27,8 @@ class FranchiseController extends AbstractController
      * Les permissions globales sont associées à la franchise
      * @return Response
      */
-    #[Route('/ajouter-franchise', name: 'app_ajouter.franchise')]
-    ##[IsGranted('ROLE_FRANCHISE')]
+    #[Route('/ajouter-franchise', name: 'app_ajouter_franchise')]
+    #[IsGranted('ROLE_ADMIN')]
     public function addFranchise(
         Request $request, 
         ManagerRegistry $doctrine, 
@@ -56,8 +56,9 @@ class FranchiseController extends AbstractController
                     'Cet email existe déjà'
                 );
             } else {
-                // On défini le role Franchise à l'utilisateur
+                // On défini le role Franchise à l'utilisateur et la photo de profil
                 $user->setRoles(['ROLE_FRANCHISE']);
+                $user->setAvatar('avatar-defaut.jpg');
                         
                 $em->persist($data);
                 $em->flush();

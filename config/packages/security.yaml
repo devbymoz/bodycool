@@ -18,29 +18,25 @@ security:
             lazy: true
             provider: app_user_provider
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-            form_login:
-                login_path: app_connexion
-                check_path: app_connexion
-                default_target_path: app_ajouter.franchise
-                enable_csrf: true
-                
-            #pattern: ^/
-            #user_checker: App\Security\UserChecker
-                
-           # http_basic:
-                #realm: Secured Area
+            pattern: ^/
+            user_checker: App\Security\UserChecker
 
             login_throttling: null
 
+            form_login:
+                check_path: app_connexion
+                login_path: app_connexion
+                enable_csrf: true
+                default_target_path: app_profil
+                                
             logout:
                 path: app_logout
                 target: app_connexion
+
+           # http_basic:
+                #realm: Secured Area
+
+
                 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
@@ -48,7 +44,8 @@ security:
         #- { path: /franchise, roles: ROLE_GESTIONNAIRE }
 
     role_hierarchy:
-        ROLE_GESTIONNAIRE: ROLE_GESTIONNAIRE;
+        ROLE_USER: ROLE_USER;
+        ROLE_GESTIONNAIRE: [ROLE_GESTIONNAIRE, ROLE_USER];
         ROLE_FRANCHISE: [ROLE_FRANCHISE, ROLE_GESTIONNAIRE];
         ROLE_ADMIN: [ROLE_ADMIN, ROLE_FRANCHISE];
         ROLE_SUPER_ADMIN: [ROLE_SUPER_ADMIN, ROLE_ADMIN];

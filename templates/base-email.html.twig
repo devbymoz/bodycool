@@ -1,7 +1,7 @@
 {# Template de base pour les emails #}
 {% apply inline_css(source('@css/email.css')) %}
     <body>
-        <img class="logo" src="{{ email.image('@images/logo-bodycool.svg') }}" alt="logo bodycool" height=38px>
+        <img class="logo" src="{{ email.image('@images/others/logo-bodycool.svg') }}" alt="logo bodycool" height=38px>
 
         <h1>{% block titre %}{% endblock %}</h1>
         {% block content %}{% endblock %}

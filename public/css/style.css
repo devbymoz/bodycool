@@ -11,40 +11,43 @@ h1, h2, h3 { font-weight: 700; }
 h1 { font-size: 26px; margin-bottom: 8px;}
 h2 { font-size: 22px; }
 h3 { font-size: 18px; }
-p { margin: 0; line-height: 26px;}
+p { margin: 0;}
 a { color: #003F88; text-decoration: none;}
 a:hover { color: #FF5A1F;}
 ul { list-style-type: none; }
-.text-xs { font-size: 12px; }
-.light-text { color: #7A8290; }
-.container { padding: 0 16px; }
+.text-xs { font-size: 12px; margin-top: 4px;}
+.text-light { color: #7A8290; }
+.container { padding: 0 16px 32px; }
+.dividing-border { border: 1px solid #DEE1E6; margin: 16px 0;}
 
 @media screen and (min-width: 620px) {
     h1 { font-size: 32px; margin-bottom: 16px;}
     h2 { font-size: 28px; }
     h3 { font-size: 22px; }
     body { font-size: 18px; }
-    .container { padding: 0 32px }
+    .container { padding: 0 32px 32px}
 }
 
 /* Formulaire */ 
-input {
+input:not(input[type="file"]) {
     height: 54px;
     border: 2px solid #DEE1E6;
     border-radius: 8px;
     width: 100%;
     margin-top: 8px;
+    margin-bottom: 16px;
     font-size: inherit;
     text-indent: 16px; 
 }
+
 label { color: #7A8290; font-weight: bold;}
-input::placeholder { color: #BABABA; font-size: inherit; }
-form  div { margin-top: 16px; }
+.input::placeholder { color: #BABABA; font-size: inherit; }
+/* form > div { margin-top: 16px; } */
+input:disabled {background-color: #F4F7FC;}
 
 /* Boutons */
-.btn-primary {
+button {
     height: 49px;
-    background-color: #003F88;
     border: none;
     border-radius: 8px;
     color: #FFF;
@@ -53,9 +56,38 @@ form  div { margin-top: 16px; }
     font-size: 18px;
     cursor: pointer;
 }
+.btn-xs { height: 41px; font-size: 14px;}
+.btn-primary { background-color: #003F88;}
 .btn-secondary { background-color: #FF5A1F; }
-button:hover { opacity: 0.8; transition-duration: 400ms;}
+.btn-white { background-color: #FFF; border: 1px solid #DEE1E6; color: #00171f;}
+button:hover, .input-file:hover { opacity: 0.85; transition-duration: 400ms; }
 
+/* Donne le style d'un bouton à un input de type file */
+.input-file input { position: absolute; visibility: hidden;}
+.input-file {
+    background-color: #003F88;
+    position: relative;
+    height: 43px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: initial;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.input-file label{ 
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    cursor: pointer;
+}
+.input-file span {
+    color: #FFF;
+    font-weight: 700;
+    text-align: center;
+}
 
 /* LAYOUT GENERAL */
 /* Header (logo, menu hamburger et photo utilisateur */
@@ -76,7 +108,7 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
     top: 0;
     right: 0px;
     z-index: -10;
-    background-image: url('/images/bg-picture.svg');
+    background-image: url('/images/others/bg-picture.svg');
     background-repeat: no-repeat;
     background-size: contain;
     height: 130px;
@@ -163,7 +195,7 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
 @media screen and (min-width: 971px) {
     /* Déplace le header et le container principal vers la droite */
     .main-header, .container { margin-left: 300px; }
-    .menu-navigation {  min-width: 300px; }
+    .menu-navigation {  min-width: 300px; max-width: 330px;}
     .footer-menu { display: flex; justify-content: space-between; margin-top: 16px; }
 }
 
@@ -171,7 +203,7 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
 @media screen and (max-width: 619px) {
     /* Le display est retiré avec du JavaScript */
     .display-menu-mobile { display: none;}
-    .menu-navigation { min-width: 80vw; animation: shutter-in-left 300ms ease 0s 1 normal forwards;}
+    .menu-navigation { min-width: 80vw; animation: shutter-in-left 300ms ease 0s 1 normal forwards; z-index: 10000;}
     .close-menu { 
         display: block; 
         color: #FFF;
@@ -195,7 +227,6 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
       opacity: 1;
     }
 }
-
 /* Info bulle lors du passage de la souris sur une icone du menu (JavaScript) */
 .bulle-menu {
     padding: 4px 32px 4px 16px;
@@ -217,7 +248,7 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
 
 
 /* PAGE LOGIN ET MOT DE PASSE OUBLIÉ */
-.format-page-login { margin-left: 0; }
+.format-page-login { margin-left: 0; max-width: 475px;}
 .container-login, .footer-login { padding: 0 16px; max-width: 475px;}
 .block-form-login { margin-top: 32px; }
 .block-form-login a{
@@ -230,12 +261,27 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
     .container-login, .footer-login {padding: 0 32px;}
 }
 
+.back-connexion {
+    background-color: #00296B;
+    height: 32px;
+    width: 32px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.back-connexion::before {
+    content: '\f060';
+    font-family: "Font Awesome 5 Free"; 
+    font-weight: 700;
+    color: #FFF;
+}
+
 .footer-login { position: absolute; bottom: 16px; }
 .footer-login p { line-height: 18px;}
 @media screen and (max-height: 660px){
     .footer-login { position: static; margin-top: 16px;}
 }
-.block-form-login button { margin-top: 32px;}
 
 @media screen and (min-width: 970px) {
     .background-login {
@@ -245,7 +291,7 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
         width: 780px;
         height: 780px;
         z-index: -10;
-        background-image: url('/images/background-login.jpg');
+        background-image: url('/images/others/background-login.jpg');
         background-repeat: no-repeat;
         background-position: right;
         background-size: contain;
@@ -259,6 +305,8 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
 .flash-notice {
     border-radius: 8px;
     padding: 16px 32px;
+    margin-top: 16px;
+    font-size: 16px;
     font-weight: 700;
     margin-bottom: 16px;
     display: flex;
@@ -305,5 +353,33 @@ button:hover { opacity: 0.8; transition-duration: 400ms;}
         grid-column: 1 / span 2;
     }
 }
+
+
+/* Page Mon profil */
+.block-profil {max-width: 400px;}
+.change-avatar-profil {
+    margin: 32px 0 0; 
+    display: flex; 
+    align-items: center;
+    gap: 32px; 
+}
+.user-picture {
+    border-radius: 100%;
+    object-fit: cover;
+}
+.btn-change-delete-picture-profil {
+    width: 100%;
+}
+.btn-change-delete-picture-profil > button::before  {
+    font-family: "Font Awesome 5 Free"; 
+    font-weight: 400;
+    content: '\f2ed';
+    margin-right: 8px;
+    color: #FD0606;
+}
+.edit-profil p { margin-bottom: 16px; }
+
+
+
 
 

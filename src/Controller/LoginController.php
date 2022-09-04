@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Gère les routes à prendre si l'utilisateur n'est pas connecté
@@ -29,24 +30,24 @@ class LoginController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {   
         if($this->getUser()) {
-            return $this->redirectToRoute('app_ajouter.franchise');
+            return $this->redirectToRoute('app_profil');
         }
-
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastAuthenticationError();   
         
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastAuthenticationError();        
+
         return $this->render('login/connexion.html.twig', [
             'last_username' => $lastUsername,
             'error'         => $error,
         ]);
     }
-
+    
 
     /**
      * Permet à l'utilisateur de créer son mot de passe et d'activer son compte
      * @return Response
      */
-    #[Route('/creer-mot-de-passe/{token}', name: 'app_creer.mot.de.passe')]
+    #[Route('/creer-mot-de-passe/{token}', name: 'app_creer_mot_de_passe')]
     public function activationUser(
         ManagerRegistry $doctrine, 
         $token, 
@@ -55,7 +56,7 @@ class LoginController extends AbstractController
         ): Response 
     {
         if($this->getUser()) {
-            return $this->redirectToRoute('app_ajouter.franchise');
+            return $this->redirectToRoute('app_profil');
         }
 
         $em = $doctrine->getManager();
@@ -111,7 +112,7 @@ class LoginController extends AbstractController
     /**
      * Renvoi un lien à l'utilisateur pour modifier son mot de passe
      */
-    #[Route('/mot-de-passe-perdu', name: 'app_mot.de.passe.perdu')]
+    #[Route('/mot-de-passe-perdu', name: 'app_mot_de_passe_perdu')]
     public function resetPassword(
         Request $request, 
         ManagerRegistry $doctrine,
@@ -119,7 +120,7 @@ class LoginController extends AbstractController
         ): Response 
     {
         if($this->getUser()) {
-            return $this->redirectToRoute('app_ajouter.franchise');
+            return $this->redirectToRoute('app_profil');
         }
 
         $repo = $doctrine->getRepository(User::class);
@@ -130,10 +131,13 @@ class LoginController extends AbstractController
                 'label' => 'Renseignez votre adresse email de connexion',
                 'attr' => array(
                     'placeholder' => 'Indiquez votre adresse email'
-                )
+                ),
+                'constraints' => [
+                    new NotBlank()
+                ]
             ])
             ->getForm();
-
+ 
         $formResetPassword->handleRequest($request);
 
         if ($formResetPassword->isSubmitted() && $formResetPassword->isValid()) {
@@ -151,7 +155,7 @@ class LoginController extends AbstractController
 
                 // Envoi d'un email avec un lien pour changer le mot de passe
                 $sendEmail = new TemplatedEmail();
-                    $sendEmail->from('noreply@bodycool.com');
+                    $sendEmail->from('BodyCool <noreply@bodycool.com>');
                     $sendEmail->to($email);
                     $sendEmail->replyTo('noreply@bodycool.com');
                     $sendEmail->subject('Modifier votre mot de passe');
