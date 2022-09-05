@@ -65,7 +65,7 @@ class FranchiseController extends AbstractController
 
                 //Envoi d'un email au franchisé pour confirmer son compte
                 $sendEmail = new TemplatedEmail();
-                    $sendEmail->from('noreply@bodycool.com');
+                    $sendEmail->from('BodyCool <noreply@bodycool.com>');
                     $sendEmail->to($email);
                     $sendEmail->replyTo('noreply@bodycool.com');
                     $sendEmail->subject('Confirmer votre compte Franchise BodyCool');

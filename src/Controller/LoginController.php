@@ -79,7 +79,7 @@ class LoginController extends AbstractController
             );
             $user->setPassword($hashedPassword);
             $user->setActive(true);
-            $user->setActivationToken('');
+            $user->setActivationToken(null);
     
             $em->persist($user);
             $em->flush();

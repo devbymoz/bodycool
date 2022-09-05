@@ -32,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email(
-        message: 'Cet email n\' est pas valide',
+        message: 'Cet email n\'est pas valide',
     )]
     private string $email;
 
@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 20, nullable: true)]
     #[Assert\NotBlank]
-    #[Assert\Regex('/^((\+|00)33\s?|0)[67](\s?\d{2}){4}$/')]
+    ##[Assert\Regex('/^((\+|00)33\s?|0)[67](\s?\d{2}){4}$/')]
     #[Assert\Length(
         min: 8,
         max: 20,
