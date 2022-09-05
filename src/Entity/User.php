@@ -90,6 +90,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true, unique: true)]
     private ?string $activationToken = null;
 
+    #[ORM\OneToOne(mappedBy: 'userOwner', cascade: ['persist', 'remove'])]
+    private ?Franchise $franchise = null;
+
     
     public function getId(): ?int
     {
@@ -261,6 +264,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getFranchise(): ?Franchise
+    {
+        return $this->franchise;
+    }
+
+    public function setFranchise(?Franchise $franchise): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($franchise === null && $this->franchise !== null) {
+            $this->franchise->setUserOwner(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($franchise !== null && $franchise->getUserOwner() !== $this) {
+            $franchise->setUserOwner($this);
+        }
+
+        $this->franchise = $franchise;
 
         return $this;
     }
