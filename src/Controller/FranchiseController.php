@@ -3,7 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserType;
+use App\Entity\Franchise;
+use App\Form\AddFranchiseType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,17 +15,12 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 
-/**
- * Tout ce qui concerne une franchise
- * - L'ajout d'une franchise
- */
 #[Route('/franchise')]
 class FranchiseController extends AbstractController
 {
     /**
-     * Ajoute un nouveau franchisé en BDD
-     * Une franchise lui est associée
-     * Les permissions globales sont associées à la franchise
+     * Ajoute une nouvelle franchise en BDD avec son propriétaire et les permissions globales associées à la franchise.
+     * 
      * @return Response
      */
     #[Route('/ajouter-franchise', name: 'app_ajouter_franchise')]
@@ -35,35 +31,50 @@ class FranchiseController extends AbstractController
         MailerInterface $mailer, 
         ): Response
     {
-        
+
         $em = $doctrine->getManager();
+
+        $franchise = new Franchise();
         $user = new User();
-        $repo = $doctrine->getRepository(User::class);
 
-        $formUser = $this->createForm(UserType::class, $user);
-        $formUser->handleRequest($request);
+        $repoUser = $doctrine->getRepository(User::class);
+        $repoFranchise = $doctrine->getRepository(Franchise::class);
 
-        if($formUser->isSubmitted() && $formUser->isValid()) {
-            $data = $formUser->getData();
-            $email = $data->getEmail();
+        $formFranchise = $this->createForm(AddFranchiseType::class, $franchise);
+        $formFranchise->handleRequest($request);
+
+        if($formFranchise->isSubmitted() && $formFranchise->isValid()) {
+            $data = $formFranchise->getData();
+            $user = $data->getUserOwner();
+
             
-            // Vérifie si un email existe déja en BDD
-            $checkEmail = $repo->findBy(['email' => $email]);
-
+            // Vérifie si l'email existe déja en BDD
+            $email = $user->getEmail();
+            $checkEmail = $repoUser->findBy(['email' => $email]);
+            
+            // Vérifie si le nom de la franchise existe déja en BDD
+            $nameFranchise = $data->getName();
+            $checkNameFranchise = $repoFranchise->findOneBy(['name' => $nameFranchise]);
+            
             if($checkEmail != []) {
                 $this->addFlash(
                     'notice',
                     'Cet email existe déjà'
                 );
+            } elseif ($checkNameFranchise != []) {
+                $this->addFlash(
+                    'notice',
+                    'Cette franchise existe déjà'
+                );
             } else {
                 // On défini le role Franchise à l'utilisateur et la photo de profil
                 $user->setRoles(['ROLE_FRANCHISE']);
                 $user->setAvatar('avatar-defaut.jpg');
-                        
+                
                 $em->persist($data);
                 $em->flush();
 
-                //Envoi d'un email au franchisé pour confirmer son compte
+                // Envoi d'un email au franchisé pour qu'il confirme son compte
                 $sendEmail = new TemplatedEmail();
                     $sendEmail->from('BodyCool <noreply@bodycool.com>');
                     $sendEmail->to($email);
@@ -83,7 +94,7 @@ class FranchiseController extends AbstractController
         }
         
         return $this->render('franchise/add-franchise.html.twig', [
-            'formUser' => $formUser->createView()
+            'formFranchise' => $formFranchise->createView()
         ]);
     }
 }

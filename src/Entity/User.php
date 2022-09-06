@@ -8,14 +8,15 @@ use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-
     /**
-     * À l'instanciation de chaque nouvel utilisateur, on initialise ces propriétés.
+     * À l'instanciation d'un nouvel utilisateur, on initialise : 
+     * - La date de création
+     * - l'activation du compte à false
+     * - le token pour la création du mot de passe
      */
     public function __construct()
     {
@@ -30,10 +31,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private int $id;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank]
-    #[Assert\Email(
-        message: 'Cet email n\'est pas valide',
-    )]
     private string $email;
 
     #[ORM\Column]
@@ -48,34 +45,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank]
-    #[Assert\Length(
-        min: 2,
-        max: 50,
-        minMessage: 'Votre nom doit comporter au moins {{ limit }} caractères.',
-        maxMessage: 'Votre nom ne peut pas dépasser {{ limit }} caractères.',
-    )]
     private string $lastname;
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank]
-    #[Assert\Length(
-        min: 2,
-        max: 50,
-        minMessage: 'Votre prénom doit comporter au moins {{ limit }} caractères.',
-        maxMessage: 'Votre prénom ne peut pas dépasser {{ limit }} caractères.',
-    )]
     private string $firstname;
 
-    #[ORM\Column(length: 20, nullable: true)]
-    #[Assert\NotBlank]
-    ##[Assert\Regex('/^((\+|00)33\s?|0)[67](\s?\d{2}){4}$/')]
-    #[Assert\Length(
-        min: 8,
-        max: 20,
-        minMessage: 'Le numéro de téléphone semble trop court.',
-        maxMessage: 'Le numéro de téléphone semble trop long.',
-    )]
+    #[ORM\Column(length: 10)]
     private string $phone;
 
     #[ORM\Column(length: 255)]

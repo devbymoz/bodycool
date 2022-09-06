@@ -14,21 +14,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-/**
- * Gère les routes à prendre si l'utilisateur n'est pas connecté
- * Connexion, deconnexion, création du mot de passe, mot de passe perdu
- */
+
 class LoginController extends AbstractController
 {
     /**
-     * Connexion de l'utilisateur
+     * Permet à l'utilisateur de se connecter.
+     * Complément de vérification dans la class UserChecker
+     * 
      * @return Response
      */
     #[Route('/connexion', name: 'app_connexion')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {   
+        // Si l'utilisateur est connecté, on le redirige vers la page profil
         if($this->getUser()) {
             return $this->redirectToRoute('app_profil');
         }
@@ -42,9 +43,11 @@ class LoginController extends AbstractController
         ]);
     }
     
-
+    
     /**
-     * Permet à l'utilisateur de créer son mot de passe et d'activer son compte
+     * Permet à l'utilisateur de créer ou réinitaliser son mot de passe.
+     * Active le compte de l'utilisateur après avoir crée son mot de passe.
+     * 
      * @return Response
      */
     #[Route('/creer-mot-de-passe/{token}', name: 'app_creer_mot_de_passe')]
@@ -55,6 +58,7 @@ class LoginController extends AbstractController
         UserPasswordHasherInterface $passwordHasher
         ): Response 
     {
+        // Si l'utilisateur est connecté, on le redirige vers la page profil
         if($this->getUser()) {
             return $this->redirectToRoute('app_profil');
         }
@@ -77,6 +81,7 @@ class LoginController extends AbstractController
                 $user,
                 $plaintextPassword
             );
+
             $user->setPassword($hashedPassword);
             $user->setActive(true);
             $user->setActivationToken(null);
@@ -86,7 +91,7 @@ class LoginController extends AbstractController
     
             $this->addFlash(
                 'success',
-                'Vous pouvez vous connecter maintenant'
+                'Vous pouvez vous connecter 💪'
             );
     
             return $this->redirectToRoute('app_connexion');
@@ -110,7 +115,9 @@ class LoginController extends AbstractController
 
 
     /**
-     * Renvoi un lien à l'utilisateur pour modifier son mot de passe
+     * Permet à l'utilisateur de réinitialiser son mot de passe.
+     *
+     * @return Response
      */
     #[Route('/mot-de-passe-perdu', name: 'app_mot_de_passe_perdu')]
     public function resetPassword(
@@ -119,6 +126,7 @@ class LoginController extends AbstractController
         MailerInterface $mailer, 
         ): Response 
     {
+        // Si l'utilisateur est connecté, on le redirige vers la page profil
         if($this->getUser()) {
             return $this->redirectToRoute('app_profil');
         }
@@ -126,14 +134,17 @@ class LoginController extends AbstractController
         $repo = $doctrine->getRepository(User::class);
         $em = $doctrine->getManager();
 
+        // Formulaire de réinitialisation du mot de passe
         $formResetPassword = $this->createFormBuilder()
             ->add('email', EmailType::class, [
                 'label' => 'Renseignez votre adresse email de connexion',
                 'attr' => array(
-                    'placeholder' => 'Indiquez votre adresse email'
+                    'placeholder' => 'Indiquez votre adresse email', 
+                    'class' => 'input'
                 ),
                 'constraints' => [
-                    new NotBlank()
+                    new NotBlank(),
+                    new Email()
                 ]
             ])
             ->getForm();
@@ -181,8 +192,5 @@ class LoginController extends AbstractController
             'formResetPassword' => $formResetPassword->createView()
         ]);
     }
-
-
-    
 
 }

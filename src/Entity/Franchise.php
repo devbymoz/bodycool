@@ -6,14 +6,14 @@ use App\Repository\FranchiseRepository;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FranchiseRepository::class)]
 class Franchise
 {
-
     /**
-     * À l'instanciation de chaque nouvel utilisateur, on initialise ces propriétés.
+     * À l'instanciation d'une nouvelle franchise, on initialise :
+     * - la date de création
+     * - on active la franchise
      */
     public function __construct()
     {
@@ -27,13 +27,6 @@ class Franchise
     private ?int $id = null;
 
     #[ORM\Column(length: 50, unique: true)]
-    #[Assert\NotBlank]
-    #[Assert\Length(
-        min: 2,
-        max: 50,
-        minMessage: 'Le nom doit comporter au moins {{ limit }} caractères.',
-        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.',
-    )]
     private ?string $name = null;
 
     #[ORM\Column]
@@ -43,7 +36,6 @@ class Franchise
     private ?bool $active = null;
 
     #[ORM\OneToOne(inversedBy: 'franchise', cascade: ['persist', 'remove'])]
-    #[Assert\NotBlank]
     private ?User $userOwner = null;
 
     public function getId(): ?int

@@ -5,24 +5,78 @@
 
 {% block content %}
     <div class="add-franchise">
-        {{ form_start(formUser, { 'attr': {'class': 'form-add-franchise'} }) }}
+        {{ form_start(formFranchise, { 'attr': {'class': 'form-add-franchise'} }) }}
             <div class="form-owner-franchise">
                 <div class="form-owner">
-                    <h3>Détails sur le propriétaire</h3>
-                    {{ form_row(formUser.firstname)}}
-                    {{ form_row(formUser.lastname)}}
-                    {{ form_row(formUser.phone)}}             
-                    {{ form_row(formUser.email)}} 
-                    {{ form_row(formUser._token)}}
+                    <h2>Détails sur le propriétaire</h2>
+                    <div class="block-input">
+                        {{ form_label(formFranchise.userOwner.firstname)}}
+                        {{ form_widget(formFranchise.userOwner.firstname)}}
+                        <div class="error-form">
+                            {{ form_errors(formFranchise.userOwner.firstname) }}
+                        </div>
+                    </div>
+                    <div class="block-input">
+                        {{ form_label(formFranchise.userOwner.lastname)}}
+                        {{ form_widget(formFranchise.userOwner.lastname)}}
+                        <div class="error-form">
+                            {{ form_errors(formFranchise.userOwner.lastname) }}
+                        </div>
+                    </div>
+                    <div class="block-input">
+                        {{ form_label(formFranchise.userOwner.phone)}}
+                        {{ form_widget(formFranchise.userOwner.phone)}}
+                        <div class="error-form">
+                            {{ form_errors(formFranchise.userOwner.phone) }}
+                        </div>
+                    </div>
+                    <div class="block-input">
+                        {{ form_label(formFranchise.userOwner.email)}}
+                        {{ form_widget(formFranchise.userOwner.email)}}
+                        <div class="error-form">
+                            {{ form_errors(formFranchise.userOwner.email) }}
+                        </div>
+                    </div>   
                 </div>
+                <div class="dividing-border"></div>
                 <div class="franchise-infos">
-                    <h3>Détails sur la franchise</h3>
-                    <label for="text">Nom de la franchise</label>
-                    <input type="text">
+                    <h2>Détails sur la franchise</h2>
+                    <div class="block-input">
+                        {{ form_label(formFranchise.name)}}
+                        {{ form_widget(formFranchise.name)}}
+                        <div class="error-form">
+                            {{ form_errors(formFranchise.name) }}
+                        </div>
+                    </div>   
+                    {{ form_row(formFranchise._token)}}
                 </div>
             </div>
-            <button class="btn-primary" type="submit">Créer une franchise</button>
-        {{ form_end(formUser) }}
-
+            <div class="dividing-border"></div>
+                
+            <div class="add-global-permission">
+                <h2>Permissions globales</h2>
+                <p class="text-light">Sélectionnez les permissions globales que pourront avoir les structures appartenant à cette franchise.</p>
+                <section class="block-cards-permission">
+                    {% for i in 0..6 %}
+                        <div class="card-permission">
+                            <div class="permission-top-card">
+                                <h3>Gestion planning d'équipe</h3>
+                                <p class="text-light">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                            </div>
+                            <div class="permission-bottom-card">
+                                <span>Active</span>
+                                <div class="check-toggle">
+                                    <input type="checkbox" id="active-permission-{{ i }}" name="active-permission">
+                                    <label class="toggle-label" for="active-permission-{{ i }}">
+                                        <span class="btn-toggle"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </section>
+            </div>                
+            <button class="btn-primary form-btn" type="submit">Créer une franchise</button>
+        {{ form_end(formFranchise) }}
     </div>
 {% endblock %} 

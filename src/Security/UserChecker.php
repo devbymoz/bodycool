@@ -3,13 +3,16 @@
 namespace App\Security;
 
 use App\Entity\User as AppUser;
-use Symfony\Component\Security\Core\Exception\AccountExpiredException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 
+/**
+ * Vérification supplémentaire pour la connexion de l'utilisateur
+ * 
+ */
 class UserChecker implements UserCheckerInterface
 {
     public function checkPreAuth(UserInterface $user): void
@@ -22,7 +25,12 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        // On vérifie que les champs sont bien remplie et que le compte est activé
+        /**
+         * Condition pour que l'utilisateur puisse se connecter :
+         * - Entrez un mot de passe valide.
+         * - Entrez un email valide.
+         * - Le compte doit etre activé.
+         */
         if($password === '' ) {
             throw new CustomUserMessageAccountStatusException('Vous devez entrer un mot de passe');
         } elseif ($email === '') {

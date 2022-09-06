@@ -8,7 +8,6 @@
     <div class="block-profil">
         <h2>Inscrit en tant que : {{ app.user.roles|first|slice(5)|capitalize}}</h2>
         {{ form_start(formEditUser) }}
-            {{ form_errors(formEditUser.avatar) }}
             <div class="change-avatar-profil">
                 <div>
                     <img class="user-picture" src="{{ asset('/images/avatar/' ~ user.avatar) }}" alt="Photo de profil" height=130 width=130>
@@ -21,30 +20,32 @@
                         <span>Séléctionner une photo</span>
                     </div>
                     {{ form_widget(formEditUser.removeAvatar) }}
+                    <div class="error-form">
+                        {{ form_errors(formEditUser.avatar) }}
+                    </div>
                 </div>
             </div>
             <div class="dividing-border"></div>
 
             <div class="edit-profil">
                 <p class="light-text text-light">Merci de contacter l’équipe technique pour modifier les informations suivantes</p>
-                <div>
+                <div class="block-input">
                     <label for="firstname">Prénom</label>
-                    <input type="text" name="" value="{{ user.firstname}}" disabled>
+                    <input class="input" type="text" name="" value="{{ user.firstname}}" disabled>
                 </div>
-                <div>
+                <div class="block-input">
                     <label for="lastname">Nom</label>
-                    <input type="text" name="" value="{{ user.lastname}}" disabled>
+                    <input class="input" type="text" name="" value="{{ user.lastname}}" disabled>
                 </div>
-                <div>
+                <div class="block-input">
                     <label for="lastname">Numéro de téléphone</label>
-                    <input type="text" name="" value="{{ user.phone}}" disabled>
+                    <input class="input" type="text" name="" value="{{ user.phone}}" disabled>
                 </div>
-                    <div>
+                <div class="block-input">
                     <label for="email">Email</label>
-                    <input type="email" name="" value="{{ user.email}}" disabled>
+                    <input class="input" type="email" name="" value="{{ user.email}}" disabled>
                 </div>
             </div>
-
             {{ form_widget(formEditUser.save) }}
         {{ form_end(formEditUser) }} 
     </div>

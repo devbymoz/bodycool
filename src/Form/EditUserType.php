@@ -11,6 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+
+/**
+ * Formulaire pour changer sa photo de profil
+ */
 class EditUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -23,7 +27,6 @@ class EditUserType extends AbstractType
                 'constraints' => [
                     new File([
                         'maxSize' => '2024k',
-
                         'mimeTypes' => [
                             'image/jpeg',
                             'image/png',
@@ -32,14 +35,16 @@ class EditUserType extends AbstractType
                         'mimeTypesMessage' => 'Votre photo doit être au format jpg, png ou bmp.',
                     ]),
                     new NotBlank([
-                        'message' => 'Merci de séléctionner une photo'
+                        'message' => 'Vous n\'avez pas séléctionné de photo'
                     ])
                 ]
             ])
+            // Bouton pour sauvegarder les modifications.
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',
-                'attr' => ['class' => 'btn-primary']
+                'attr' => ['class' => 'btn-primary form-btn']
                 ])
+            // Bouton pour supprimer la photo de profil
             ->add('removeAvatar', SubmitType::class, [
                 'label' => 'Supprimer',
                 'attr' => ['class' => 'btn-xs btn-white remove-avatar']
