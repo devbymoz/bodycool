@@ -14,6 +14,12 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class UserController extends AbstractController
 {
+    /**
+     * Affiche le profil de l'utilisateur.
+     * L'utilisateur peut modifier sa photo de profil.
+     *
+     * @return Response
+     */
     #[Route('/profil', name: 'app_profil')]
     #[IsGranted('ROLE_USER')]
     public function index(ManagerRegistry $doctrine, Request $request, SluggerInterface $slugger): Response
@@ -24,25 +30,24 @@ class UserController extends AbstractController
         $formEditUser = $this->createForm(EditUserType::class, $user);
         $formEditUser->handleRequest($request);
         
-        // Information sur la photo actuel
+        // Path de la photo de l'utilisateur actuelle.
         $directoryAvatar = $this->getParameter('avatar_directory');
-        $oldAvatar = $user->getAvatar();
-        $pathAvatar = $directoryAvatar .'/' . $oldAvatar;
-
-        /**
-         * Si le bouton save a été cliqué
-         */
+        $currentAvatar = $user->getAvatar();
+        $pathAvatar = $directoryAvatar .'/' . $currentAvatar;
+        
+        // Si le bouton save a été cliqué (mettre à jour).
         if ($formEditUser->getClickedButton() && 'save' === $formEditUser->getClickedButton()->getName()) {
             if ($formEditUser->isSubmitted() && $formEditUser->isValid()) {
                 $avatar = $formEditUser->get('avatar')->getData();
                 
-                // Verifie que le fichier est bien téléchargé
+                // Verifie que le fichier est bien téléchargé.
                 if ($avatar) {
                     $originalFilename = pathinfo($avatar->getClientOriginalName(), PATHINFO_FILENAME);
                     
-                    // Sécurité pour inclure le nom du fichier dans l'url
+                    // Sécurité pour inclure le nom du fichier dans l'url.
                     $safeFilename = $slugger->slug($originalFilename);
-                    // Renomme le fichier pour qu'il est un nom unique
+
+                    // Renomme le fichier pour qu'il est un nom unique.
                     $newFilename = $safeFilename.'-'.uniqid().'.'.$avatar->guessExtension();
                     
                     // Déplace le fichier dans le répertoire des avatars
@@ -56,8 +61,8 @@ class UserController extends AbstractController
                     }
                 }
                 
-                // On supprime l'ancienne photo du serveur
-                if (file_exists($pathAvatar) && $oldAvatar != 'avatar-defaut.jpg') {
+                // Suppression de l'ancienne photo du serveur.
+                if (file_exists($pathAvatar) && $currentAvatar != 'avatar-defaut.jpg') {
                     unlink($pathAvatar);
                 }
     
@@ -75,21 +80,21 @@ class UserController extends AbstractController
             }
         }
 
-        /**
-         * Si le bouton pour removeAvatar la photo a été cliqué
-         */
+        // Si le bouton removeAvatar a été cliqué (supprimer la photo)
         if ($formEditUser->getClickedButton() && 'removeAvatar' === $formEditUser->getClickedButton()->getName()) {
 
-            // On vérifie que la photo n'est pas celle par defaut
-            if ($user->getAvatar() === 'avatar-defaut.jpg') {
+            // Si la photo de profil est celle par defaut.
+            if ($currentAvatar === 'avatar-defaut.jpg') {
                 $this->addFlash(
                     'notice',
                     'Impossible de supprimer l\'avatar par default'
-                );         
-            } elseif (file_exists($pathAvatar) && $oldAvatar != 'avatar-defaut.jpg') {        
+                );
+            // On vérifie que la photo existe bien  
+            } elseif (file_exists($pathAvatar)) {
+                // On supprime la photo et on assigne la photo par defaut
                 unlink($pathAvatar);
-                
                 $user->setAvatar('avatar-defaut.jpg');
+
                 $em->persist($user);
                 $em->flush();
     
@@ -102,15 +107,11 @@ class UserController extends AbstractController
             }
         }
 
-
         return $this->render('user/profil.html.twig', [
             'user' => $user,
             'formEditUser' => $formEditUser->createView()
         ]);
     }
 
-
-
-
-
+    
 }

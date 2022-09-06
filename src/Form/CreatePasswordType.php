@@ -11,6 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+
+/**
+ * Formulaire pour la création du mot de passe utilisateu.
+ */
 class CreatePasswordType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -21,17 +25,16 @@ class CreatePasswordType extends AbstractType
                 'first_options'  => array(
                     'label' => 'Mot de passe', 
                     'attr' => array(
-                        'placeholder' => 'Saisissez un mot de passe'
+                        'placeholder' => 'Saisissez un mot de passe',
+                        'class' => 'input'
                     ),
-                    'help' => 'Votre mot de passe doit contenir au minimum 8 caractères',
-                    'help_attr' => [
-                        'class' => 'text-xs text-light'
-                    ],
+                    'help' => 'Votre mot de passe doit contenir au minimum 8 caractères'
                 ),
                 'second_options' => array(
                     'label' => 'Confirmer le mot de passe', 
                     'attr' => array(
-                        'placeholder' => 'Retapez le mot de passe'
+                        'placeholder' => 'Retapez le mot de passe',
+                        'class' => 'input'
                     )
                 ),
                 'constraints' => [

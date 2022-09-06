@@ -6,9 +6,24 @@
 {% block content %}
     <div class="block-add-permission">
         {{ form_start(formAddPermission) }}
-            {{ form_row(formAddPermission.name)}}
-            {{ form_row(formAddPermission.description)}}
-            <button class="btn-primary" type="submit">Créer la permission</button>
+            <div class="block-input">
+                {{ form_label(formAddPermission.name)}}
+                {{ form_widget(formAddPermission.name)}}
+                <div class="error-form">
+                    {{ form_errors(formAddPermission.name)}}
+                </div>
+            </div>  
+            <div class="block-input">
+                {{ form_label(formAddPermission.description)}}
+                {{ form_widget(formAddPermission.description)}}
+                <div class="error-form">
+                    {{ form_errors(formAddPermission.description)}}
+                </div>
+                <span class="text-light text-xs">
+                    {{ form_help(formAddPermission.description)}}
+                </span>
+            </div>  
+            <button class="btn-primary form-btn" type="submit">Créer la permission</button>
         {{ form_end(formAddPermission) }}
     </div>
 {% endblock %}

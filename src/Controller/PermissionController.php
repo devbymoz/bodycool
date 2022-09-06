@@ -13,6 +13,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class PermissionController extends AbstractController
 {
+    /**
+     * Permet de créer de nouvelles permissions
+     *
+     * @return Response
+     */
     #[Route('/ajouter-permission', name: 'app_ajouter_permission')]
     #[IsGranted('ROLE_ADMIN')]
     public function index(Request $request, ManagerRegistry $doctrine): Response
@@ -28,9 +33,9 @@ class PermissionController extends AbstractController
             $data = $formAddPermission->getData();
             $namePermission = $data->getName();
 
-            // Vérifie que le nom n'existe pas déja en BDD
             $checkNamePermission = $repo->findBy(['name' => $namePermission]);
-
+            
+            // Vérifie que le nom n'existe pas déja en BDD
             if($checkNamePermission != []) {
                 $this->addFlash(
                     'notice',
