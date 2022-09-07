@@ -58,4 +58,25 @@ class PermissionController extends AbstractController
             'formAddPermission' => $formAddPermission->createView()
         ]);
     }
+
+
+    /**
+     * Récupère la liste de toutes les permissions de la BDD
+     *
+     * @return Response
+     */
+    #[Route('/liste-permissions', name: 'app_liste_permissions')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function listPermissions(ManagerRegistry $doctrine): Response
+    {
+        $repo = $doctrine->getRepository(Permission::class);
+
+        $permissions = $repo->findAll();
+        $nbPermission = count($permissions);
+
+        return $this->render('permission/list-permissions.html.twig', [
+            'permissions' => $permissions,
+            'nbPermission' => $nbPermission
+        ]);
+    }
 }
