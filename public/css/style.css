@@ -415,8 +415,14 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     gap: 16px;
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
 }
+
 /* Carte des permissions */
-.card-permission { border: 1px solid #DEE1E6; border-radius: 8px;}
+.card-permission { 
+    border: 1px solid #DEE1E6; 
+    border-radius: 8px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;}
 .permission-top-card { padding: 16px 16px 0; margin-bottom: 16px;}
 .permission-top-card h3{ font-size: 18px; margin-bottom: 16px;}
 .permission-bottom-card {
@@ -424,7 +430,6 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     padding: 16px;
     border-top: 1px solid #DEE1E6;
     border-radius: 0 0 8px 8px;
-
 }
 .permission-bottom-card { display: flex; justify-content: space-between; align-items: center;}
 
