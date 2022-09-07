@@ -31,23 +31,18 @@ class FranchiseController extends AbstractController
         MailerInterface $mailer, 
         ): Response
     {
-
         $em = $doctrine->getManager();
-
-        $franchise = new Franchise();
-        $user = new User();
 
         $repoUser = $doctrine->getRepository(User::class);
         $repoFranchise = $doctrine->getRepository(Franchise::class);
 
-        $formFranchise = $this->createForm(AddFranchiseType::class, $franchise);
+        $formFranchise = $this->createForm(AddFranchiseType::class);
         $formFranchise->handleRequest($request);
-
+        
         if($formFranchise->isSubmitted() && $formFranchise->isValid()) {
             $data = $formFranchise->getData();
             $user = $data->getUserOwner();
-
-            
+              
             // Vérifie si l'email existe déja en BDD
             $email = $user->getEmail();
             $checkEmail = $repoUser->findBy(['email' => $email]);
@@ -67,9 +62,8 @@ class FranchiseController extends AbstractController
                     'Cette franchise existe déjà'
                 );
             } else {
-                // On défini le role Franchise à l'utilisateur et la photo de profil
+                // On attribue le role Franchise à l'utilisateur
                 $user->setRoles(['ROLE_FRANCHISE']);
-                $user->setAvatar('avatar-defaut.jpg');
                 
                 $em->persist($data);
                 $em->flush();

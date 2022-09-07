@@ -12,19 +12,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * À l'instanciation d'un nouvel utilisateur, on initialise : 
-     * - La date de création
-     * - l'activation du compte à false
-     * - le token pour la création du mot de passe
-     */
-    public function __construct()
-    {
-        $this->createAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
-        $this->active = 0;
-        $this->activationToken = md5(uniqid());
-    }
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -68,7 +55,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'userOwner', cascade: ['persist', 'remove'])]
     private ?Franchise $franchise = null;
 
-    
+    /**
+     * À l'instanciation d'un nouvel utilisateur, on initialise : 
+     * - La date de création
+     * - l'activation du compte à false
+     * - une photo de profil par defaut
+     * - le token pour la création du mot de passe
+     */
+    public function __construct()
+    {
+        $this->createAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
+        $this->active = 0;
+        $this->avatar= 'avatar-defaut.jpg';
+        $this->activationToken = md5(uniqid());
+    }
+
     public function getId(): ?int
     {
         return $this->id;

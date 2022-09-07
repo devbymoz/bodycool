@@ -66,7 +66,25 @@ window.addEventListener('load', () => {
 
         if (linkMenu == currentURI) {
             li.style.color = '#FFF';
-            li.classList.add('active-menu')
+            li.classList.add('active-menu');
         }
     });
 })
+
+
+/**
+ * Changement du texte 'Active' et 'Inactive' suivant l'état de la checkbox
+ */
+let stateCheckbox = document.querySelectorAll('.state-checkbox');
+let stateToggleTxt = document.querySelectorAll('.state-toggle-txt');
+
+for (let i = 0; i < stateCheckbox.length; i++) {
+    stateCheckbox[i].addEventListener('change', ()=> {
+        if (stateCheckbox[i].checked) {
+            stateToggleTxt[i].innerText = 'Active';
+        } else {
+            stateToggleTxt[i].innerText = 'Inactive';
+        }
+    })
+}
+
