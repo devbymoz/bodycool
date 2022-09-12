@@ -1,11 +1,11 @@
-let iconHbrgMenu = document.querySelector('.hamburger-menu');
-let displayMenuMobile = document.querySelector('.display-menu-mobile');
-let iconCloseMenu = document.querySelector('.close-menu');
-let menuNavigation = document.querySelector('.menu-navigation');
-let overlayMenuMobile = document.createElement('div');
+const iconHbrgMenu = document.querySelector('.hamburger-menu');
+const displayMenuMobile = document.querySelector('.display-menu-mobile');
+const iconCloseMenu = document.querySelector('.close-menu');
+const menuNavigation = document.querySelector('.menu-navigation');
+const overlayMenuMobile = document.createElement('div');
 
 /**
- * Au clique sur l'icone hamburger, on affiche le menu
+ * Permet d'afficher le menu sur mobile, en cliquant sur l'icon hamburger.
  */
  iconHbrgMenu.addEventListener('click', () => {
     displayMenuMobile.classList.remove('display-menu-mobile');
@@ -13,18 +13,17 @@ let overlayMenuMobile = document.createElement('div');
     menuNavigation.before(overlayMenuMobile);
 
     /**
-     * Au clique sur le overlay, on ferme le menu
+     * Au clic sur le overlay, on lance la fonction qui ferme le menu.
      */
     overlayMenuMobile.addEventListener('click', afterMenuClose)
 
     /** 
-     * Ferme le menu si on clique sur l'icon de fermeture
+     * Au clic sur l'icon de fermeture, on lance la fonction qui ferme le menu.
      */
     iconCloseMenu.addEventListener('click',afterMenuClose)
 })
-
 /**
- * Masque le menu et supprime le overlay
+ * Permet de fermer le menu et de supprimer l'overlay
  */
 function afterMenuClose() {
     displayMenuMobile.classList.add('display-menu-mobile');
@@ -33,10 +32,10 @@ function afterMenuClose() {
 
 
 /**
- * Info bulle au passage de la souris sur les icones du menu 
+ * Affiche une info bulle en passant la souris sur les icones du menu, uniquement lorsque le menu est au format icone seule.
  */
-let liMenu = document.querySelectorAll('.menu-navigation ul > a, .logout-mobile a');
-let spanMenu = document.createElement('span');
+const liMenu = document.querySelectorAll('.menu-navigation ul > a, .logout-mobile a');
+const spanMenu = document.createElement('span');
 
 liMenu.forEach(li => {
     li.addEventListener('mouseenter', () => {
@@ -46,7 +45,9 @@ liMenu.forEach(li => {
             spanMenu.innerHTML = li.textContent
         }
 
-        /* Supprime la bulle lorsque la souris est en dehors de l'icon */
+        /**
+         * Supprime l'info bulle lorsque la souris n'est plus sur l'icone.
+         */
         li.addEventListener('mouseleave', () => {
             spanMenu.innerText = '';
             spanMenu.remove();
@@ -56,9 +57,9 @@ liMenu.forEach(li => {
 
 
 /**
- * Surbrillance des li du menu en fonction de l'url 
+ * Permet de mettre les élements du menu en surbrillance lorsqu'on est sur une page du menu.
  */
-let currentURI = window.location.pathname;
+const currentURI = window.location.pathname;
 
 window.addEventListener('load', () => {
     liMenu.forEach(li => {
@@ -73,18 +74,49 @@ window.addEventListener('load', () => {
 
 
 /**
- * Changement du texte 'Active' et 'Inactive' suivant l'état de la checkbox
+ * Bloquer la modification des activations et désactivations aux non amdin.
+ * On récupère toutes les balises qui ont une classes no-access.
+ * L'attribut data hasAccess renvoi true si l'utilisateur est un admin.
+ * On affiche une popup si l'utilisateur clique sur un input auquel il n'a pas acces.
  */
-let stateCheckbox = document.querySelectorAll('.state-checkbox');
-let stateToggleTxt = document.querySelectorAll('.state-toggle-txt');
+const noAccess = document.querySelectorAll('.no-access');
+const userRole = document.querySelector('.js-user-access');
+const hasAccess = userRole.dataset.hasAccess;
+const popupAlert = document.createElement('div');
 
-for (let i = 0; i < stateCheckbox.length; i++) {
-    stateCheckbox[i].addEventListener('change', ()=> {
-        if (stateCheckbox[i].checked) {
-            stateToggleTxt[i].innerText = 'Active';
-        } else {
-            stateToggleTxt[i].innerText = 'Inactive';
+for (let i = 0; i < noAccess.length; i++) {
+    noAccess[i].addEventListener('click', (e) => {
+
+        if (hasAccess === 'false') {
+            popupAlert.classList.add('pop-up-alert');
+            popupAlert.innerText = 'Vous ne pouvez pas effectuer cette action';
+
+            document.body.prepend(popupAlert);
+            setTimeout(() => {
+                popupAlert.remove();
+            }, 4000)
+
+            e.preventDefault();
         }
     })
 }
 
+
+/**
+ * Permet d'enregistrer les modifications sans cliquer sur le bouton submit.
+ * Demande la confirmation avant de valider les modification.
+ */
+const formEditFranchise = document.querySelectorAll('.form-edit-franchise input');
+const btnFormEditFranchise = document.querySelector('.form-edit-franchise button')
+
+formEditFranchise.forEach(input => {
+    input.addEventListener('click', (e) => {
+        let messageConfirmation = confirm('Merci de cliquer sur OK pour confirmer');
+
+        if(messageConfirmation) {
+            btnFormEditFranchise.click();
+        } else {
+            e.preventDefault();
+        }
+    })
+});

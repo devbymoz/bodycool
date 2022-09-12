@@ -17,7 +17,12 @@
         {% endblock %}
     </head>
 
-    <body>
+    <body class="js-user-access" data-has-access="{{ is_granted('ROLE_ADMIN') ? 'true' : 'false' }}">
+        {# classe css qui diminue l'oppacité des élements lorsque l'user n'est pas un admin#}
+        {% set noAccess = ' no-access' %}
+        {% if is_granted('ROLE_ADMIN') %}
+            {% set noAccess = null %}
+        {% endif %}
         {% block header %}
                 <nav class="menu-navigation display-menu-mobile">
                     <div class="top-menu">
@@ -32,7 +37,7 @@
                                     <li>Profil</li>
                                 </a>
                                 {% if 'ROLE_FRANCHISE' in app.user.roles %}
-                                    <a href="#">
+                                    <a href="{{ path('app_franchise_unique', {id: app.user.franchise.id}) }}">
                                         <i class="fa-regular fa-address-card"></i>
                                         <li>Franchise</li>
                                     </a>
@@ -130,6 +135,11 @@
                     {% endfor %}
                     {% for message in app.flashes('success') %}
                         <div class="flash-notice success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('exception') %}
+                        <div class="flash-notice exception">
                             {{ message }}
                         </div>
                     {% endfor %}

@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\PermissionRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Franchise;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: PermissionRepository::class)]
 class Permission
@@ -18,6 +21,14 @@ class Permission
 
     #[ORM\Column(length: 255)]
     private ?string $description = null;
+
+    #[ORM\ManyToMany(targetEntity: Franchise::class, mappedBy: 'globalPermissions')]
+    private Collection $franchises;
+
+    public function __construct()
+    {
+        $this->franchises = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -48,4 +59,30 @@ class Permission
         return $this;
     }
 
+    /**
+     * @return Collection<int, Franchise>
+     */
+    public function getFranchises(): Collection
+    {
+        return $this->franchises;
+    }
+
+    public function addFranchise(Franchise $franchise): self
+    {
+        if (!$this->franchises->contains($franchise)) {
+            $this->franchises->add($franchise);
+            $franchise->addGlobalPermission($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFranchise(Franchise $franchise): self
+    {
+        if ($this->franchises->removeElement($franchise)) {
+            $franchise->removeGlobalPermission($this);
+        }
+
+        return $this;
+    }
 }
