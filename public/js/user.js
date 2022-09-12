@@ -1,9 +1,9 @@
-let btnRemoveAvatar = document.querySelector('.remove-avatar');
-let btnSelectAvatar = document.querySelector('.select-avatar');
-let detailSelectAvatar = document.querySelector('.detail-select-avatar');
+const btnRemoveAvatar = document.querySelector('.remove-avatar');
+const btnSelectAvatar = document.querySelector('.select-avatar');
+const detailSelectAvatar = document.querySelector('.detail-select-avatar');
 
 /**
- * Demande la confirmation avant de confirmer la suppression de la photo de profil
+ * Demande la confirmation de l'utilisateur avant de supprimer la photo de profil lorsqu'il clic sur le bouton supprimer de la page profil.
  */
 btnRemoveAvatar.addEventListener('click', (e) => {
     let confirmDelete = confirm('Êtes vous sur de vouloir supprimer votre photo ?');
@@ -13,8 +13,8 @@ btnRemoveAvatar.addEventListener('click', (e) => {
 })
 
 /**
- * Affiche le nom de la photo apres que l'utilisateur l'ai séléctionné
- * Indique si la taille de la photo est correct
+ * Affiche le nom de la photo séléctionnée par l'utilisateur.
+ * Indique si la photo séléctionnée respecte la taille de 2MO
  */
 btnSelectAvatar.addEventListener('input', (e) => {
     let namePictureSend = e.target.files[0].name;
@@ -23,7 +23,7 @@ btnSelectAvatar.addEventListener('input', (e) => {
     btnSelectAvatar.style.background = '';
 
     if (sizePictureSend > 2000000) {
-        detailSelectAvatar.textContent = 'Votre photo dépasse les 2Mo';
+        detailSelectAvatar.textContent = 'La photo séléctionnée dépasse les 2Mo';
         detailSelectAvatar.style.color = 'red';
     } else {
         detailSelectAvatar.textContent = 'Vous avez séléctionné : ' + namePictureSend;

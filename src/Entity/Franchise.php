@@ -30,8 +30,7 @@ class Franchise
     #[ORM\OneToOne(inversedBy: 'franchise', cascade: ['persist', 'remove'])]
     private ?User $userOwner = null;
 
-    #[ORM\ManyToMany(targetEntity: Permission::class)]
-    #[ORM\JoinTable(name: 'global_permissions')]
+    #[ORM\ManyToMany(targetEntity: Permission::class, inversedBy: 'franchises', fetch: 'EAGER', cascade: ['persist', 'remove'])]
     private Collection $globalPermissions;
 
     /**
@@ -108,7 +107,7 @@ class Franchise
         return $this->globalPermissions;
     }
 
-    public function addGlobalPermission(Permission $globalPermission): self
+    public function addGlobalPermission($globalPermission): self
     {
         if (!$this->globalPermissions->contains($globalPermission)) {
             $this->globalPermissions->add($globalPermission);
@@ -123,4 +122,7 @@ class Franchise
 
         return $this;
     }
+
+
+
 }

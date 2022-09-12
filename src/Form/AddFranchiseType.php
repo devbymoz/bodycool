@@ -3,16 +3,16 @@
 namespace App\Form;
 
 use App\Entity\Franchise;
-use App\Entity\Permission;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Form\UserType;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Entity\Permission;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 
 /**
@@ -23,9 +23,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 class AddFranchiseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
+    {     
         $builder
-            ->add('name', TextType::class, [
+             ->add('name', TextType::class, [
                 'label' => 'Nom de la franchise',
                 'attr' => array(
                     'placeholder' => 'Entrez le nom de la franchise',
@@ -41,22 +41,26 @@ class AddFranchiseType extends AbstractType
                     ]),
                 ],
             ])
-            // Ajout du formulaire d'un nouvel utilisateur
+
+            // Ajout du formulaire pour créer un un nouvel utilisateur
             ->add('userOwner', UserType::class)
-            
-            // Selection des permissions
+
+            // Ajout du formulaire pour ajouter les permissions globales
             ->add('globalPermissions', EntityType::class, [
                 'class' => Permission::class,
                 'choice_label' => 'id',
                 'choice_value'=> 'id',
                 'multiple' => true,
                 'expanded' => true,
+                'mapped' => true,
                 'query_builder' => function (EntityRepository $repo) {
                     return $repo->createQueryBuilder('u')
-                    ->orderBy('u.name', 'ASC');
+                    ->orderBy('u.name', 'DESC');
                 },
                 'choice_attr' => function() {
-                    return ['class' => 'state-checkbox'];
+                    return [
+                        'class' => 'state-checkbox'
+                    ];
                 },
             ])
         ;
