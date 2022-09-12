@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -34,6 +35,7 @@ class FranchiseController extends AbstractController
         Request $request, 
         ManagerRegistry $doctrine, 
         MailerInterface $mailer, 
+        LoggerInterface $logger
         ): Response
     {
         $em = $doctrine->getManager();
@@ -78,10 +80,17 @@ class FranchiseController extends AbstractController
                         'success',
                         'La franchise a bien été créée'
                     );
-                } catch (\Throwable $th) {
+                } catch (\Exception $e) {
+                    $errorNumber = uniqid();
+                    $logger->error('Erreur persistance des données', [
+                        'errorNumber' => $errorNumber,
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]);
+
                     $this->addFlash(
                         'exception',
-                        'La franchise n\'a pas pu être enregistré en BDD. Plus d\'infos dans les logs.'
+                        'La franchise n\'a pas pu être enregistrée en BDD. Log n° : ' . $errorNumber
                     );
                 }
 
@@ -97,10 +106,18 @@ class FranchiseController extends AbstractController
                         ]);
                         $sendEmail->htmlTemplate('emails/confirm-franchise.html.twig');
                     $mailer->send($sendEmail);
-                } catch (\Throwable $th) {
+                } catch (\Exception $e) {
+                    $errorNumber = $email . '_' . uniqid();
+                    $logger->error('Erreur distribution du mail au franchisé', [
+                        'errorNumber' => $errorNumber,
+                        'emailFranchise' => $email,
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]);
+
                     $this->addFlash(
                         'exception',
-                        'L\'email n\'a pas pu être envoyé au propriétaire. Plus d\'infos dans les logs.'
+                        'L\'email n\'a pas pu être envoyé au propriétaire. Log n° : ' . $errorNumber
                     );
                 }
             }
@@ -126,6 +143,7 @@ class FranchiseController extends AbstractController
         Request $request, 
         ManagerRegistry $doctrine, 
         MailerInterface $mailer, 
+        LoggerInterface $logger
         ): Response
     {
         $em = $doctrine->getManager();
@@ -162,7 +180,7 @@ class FranchiseController extends AbstractController
         if ($franchise->isActive() === false && !$isAdmin) {
             throw $this->createAccessDeniedException('Cette franchise est désactivée');
         }
-
+        
 
         $form = $this->createFormBuilder($franchise)
         ->add('globalPermissions', EntityType::class, [
@@ -237,10 +255,17 @@ class FranchiseController extends AbstractController
                     'success',
                     $changeFranchise
                 );
-            } catch (\Throwable $th) {
+            } catch (\Exception $e) {
+                $errorNumber = 'franchise-' . $id . '_' . uniqid();
+                $logger->error('Erreur persistance des données', [
+                    'errorNumber' => $errorNumber,
+                    'idFranchise' => $id,
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]);
                 $this->addFlash(
                     'exception',
-                    'Les modifications n\'ont pas pu être sauvegardées. Plus d\'infos dans les logs.'
+                    'Les modifications n\'ont pas pu être sauvegardées. Log n° : ' . $errorNumber
                 );
             }
  
@@ -262,10 +287,18 @@ class FranchiseController extends AbstractController
                     'success',
                     'Un email a été envoyé au franchisé'
                 );
-            } catch (\Throwable $th) {
+            } catch (\Exception $e) {
+                $errorNumber = 'franchise-' . $id . '_' . uniqid();
+                $logger->error('Erreur distribution du mail au franchisé', [
+                    'errorNumber' => $errorNumber,
+                    'idFranchise' => $id,
+                    'emailFranchise' => $userOwner->getEmail(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]);
                 $this->addFlash(
                     'exception',
-                    'L\'email n\'a pas pu être envoyé au propriétaire. Plus d\'infos dans les logs.'
+                    'L\'email n\'a pas pu être envoyé au propriétaire. Log n° : ' . $errorNumber
                 );
             }
         } 

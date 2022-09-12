@@ -31,6 +31,11 @@
                 {{ message }}
             </div>
         {% endfor %}
+        {% for message in app.flashes('exception') %}
+            <div class="flash-notice exception">
+                {{ message }}
+            </div>
+        {% endfor %}
 
         <div class="block-login">           
             {% block content %}{% endblock %} 

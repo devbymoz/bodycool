@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -22,7 +23,12 @@ class UserController extends AbstractController
      */
     #[Route('/profil', name: 'app_profil')]
     #[IsGranted('ROLE_USER')]
-    public function index(ManagerRegistry $doctrine, Request $request, SluggerInterface $slugger): Response
+    public function index(
+        ManagerRegistry $doctrine, 
+        Request $request, 
+        SluggerInterface $slugger,
+        LoggerInterface $logger
+        ): Response
     {
         $user = $this->getUser();
         $em = $doctrine->getManager();
@@ -40,7 +46,7 @@ class UserController extends AbstractController
             if ($formEditUser->isSubmitted() && $formEditUser->isValid()) {
                 $avatar = $formEditUser->get('avatar')->getData();
                 
-                // Verifie que le fichier est bien téléchargé.
+                // Verifie que le fichier est bien téléchargé sur le serveur.
                 if ($avatar) {
                     $originalFilename = pathinfo($avatar->getClientOriginalName(), PATHINFO_FILENAME);
                     
@@ -57,7 +63,18 @@ class UserController extends AbstractController
                             $newFilename
                         );
                     } catch (FileException $e) {
-                        die ('Le fichier n\'a pas été importé : ' . $e->getMessage());
+                        $errorNumber = 'userID-' . $user->getId() . '_' . uniqid();
+                        $logger->error('Erreur lors de l\'enregistrement de la photo de profil sur le serveur.', [
+                        'errorNumber' => $errorNumber,
+                        'idUser' => $user->getId(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        ]);
+
+                        $this->addFlash(
+                            'exception',
+                            'La photo n\'a pas pu être enregistrée, merci de nous communiquer le n° d\'erreur suivant : ' . $errorNumber
+                        );
                     }
                 }
                 
@@ -67,16 +84,31 @@ class UserController extends AbstractController
                 }
     
                 // Ajout de la nouvelle photo dans la BDD
-                $user->setAvatar($newFilename);
-                $em->persist($user);
-                $em->flush();
+                try {
+                    $user->setAvatar($newFilename);
+                    $em->persist($user);
+                    $em->flush();
+        
+                    $this->addFlash(
+                        'success',
+                        'Votre photo a été modifié'
+                    );
     
-                $this->addFlash(
-                    'success',
-                    'Votre photo a été modifié'
-                );
+                    return $this->redirectToRoute('app_profil');
+                } catch (\Exception $e) {
+                    $errorNumber = 'userID-' . $user->getId() . '_' . uniqid();
+                    $logger->error('Erreur persistance de la photo de profil.', [
+                    'errorNumber' => $errorNumber,
+                    'idUser' => $user->getId(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    ]);
 
-                return $this->redirectToRoute('app_profil');
+                    $this->addFlash(
+                        'exception',
+                        'La photo n\'a pas pu être enregistrée en BDD, merci de nous communiquer le n° d\'erreur suivant : ' . $errorNumber
+                    );
+                }
             }
         }
 
@@ -95,15 +127,30 @@ class UserController extends AbstractController
                 unlink($pathAvatar);
                 $user->setAvatar('avatar-defaut.jpg');
 
-                $em->persist($user);
-                $em->flush();
+                try {
+                    $em->persist($user);
+                    $em->flush();
+        
+                    $this->addFlash(
+                        'success',
+                        'Votre photo a bien été supprimée'
+                    );
     
-                $this->addFlash(
-                    'success',
-                    'Votre photo a bien été supprimée'
-                );
+                    return $this->redirectToRoute('app_profil');
+                } catch (\Exception $e) {
+                    $errorNumber = 'userID-' . $user->getId() . '_' . uniqid();
+                    $logger->error('Erreur persistance de la photo de profil.', [
+                    'errorNumber' => $errorNumber,
+                    'idUser' => $user->getId(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    ]);
 
-                return $this->redirectToRoute('app_profil');
+                    $this->addFlash(
+                        'exception',
+                        'La photo n\'a pas pu être supprimée, merci de nous communiquer le n° d\'erreur suivant : ' . $errorNumber
+                    );
+                }
             }
         }
 
