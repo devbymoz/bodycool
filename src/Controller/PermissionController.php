@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Permission;
 use App\Form\AddPermissionType;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,7 +21,7 @@ class PermissionController extends AbstractController
      */
     #[Route('/ajouter-permission', name: 'app_ajouter_permission')]
     #[IsGranted('ROLE_ADMIN')]
-    public function index(Request $request, ManagerRegistry $doctrine): Response
+    public function index(Request $request, ManagerRegistry $doctrine, LoggerInterface $logger): Response
     {
         $em = $doctrine->getManager();
         $permission = new Permission();
@@ -42,15 +43,29 @@ class PermissionController extends AbstractController
                     'Cette permission existe déjà'
                 );
             } else {
-                $em->persist($data);
-                $em->flush();
 
-                $this->addFlash(
-                    'success',
-                    'La permission à bien été créée'
-                );
+                try {
+                    $em->persist($data);
+                    $em->flush();
+    
+                    $this->addFlash(
+                        'success',
+                        'La permission à bien été créée'
+                    );
 
-                return $this->redirectToRoute('app_ajouter_permission');
+                    return $this->redirectToRoute('app_ajouter_permission');
+                } catch (\Exception $e) {
+                    $errorNumber = 'Permission_' . uniqid();
+                    $logger->error('Erreur persistance des données', [
+                        'errorNumber' => $errorNumber,
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]);
+                    $this->addFlash(
+                        'exception',
+                        'La permission n\'a pas pu être enregistréé en BDD. Log n° : ' . $errorNumber
+                    );
+                }
             }
         }
 

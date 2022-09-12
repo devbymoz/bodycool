@@ -16,6 +16,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Psr\Log\LoggerInterface;
 
 
 class LoginController extends AbstractController
@@ -55,7 +56,9 @@ class LoginController extends AbstractController
         ManagerRegistry $doctrine, 
         $token, 
         Request $request,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        LoggerInterface $logger
+
         ): Response 
     {
         // Si l'utilisateur est connecté, on le redirige vers la page profil
@@ -85,16 +88,31 @@ class LoginController extends AbstractController
             $user->setPassword($hashedPassword);
             $user->setActive(true);
             $user->setActivationToken(null);
-    
-            $em->persist($user);
-            $em->flush();
-    
-            $this->addFlash(
-                'success',
-                'Vous pouvez vous connecter 💪'
-            );
-    
-            return $this->redirectToRoute('app_connexion');
+            
+            try {
+                $em->persist($user);
+                $em->flush();
+
+                $this->addFlash(
+                    'success',
+                    'Vous pouvez vous connecter 💪'
+                );
+        
+                return $this->redirectToRoute('app_connexion');
+            } catch (\Exception $e) {
+                $errorNumber = $user->getEmail() . '_' . uniqid();
+                $logger->error('Erreur de création du mot de passe', [
+                    'errorNumber' => $errorNumber,
+                    'emailFranchise' => $user->getEmail(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]);
+
+                $this->addFlash(
+                    'exception',
+                    'L\'email n\'a pas pu être envoyé au propriétaire. Log n° : ' . $errorNumber
+                );
+            }
         }
 
 
@@ -102,6 +120,7 @@ class LoginController extends AbstractController
             'formCreatePassword' => $formCreatePassword->createView()
         ]);
     }
+
 
     /**
      * Deconnecte l'utilisateur et le renvoi vers la page de connexion
@@ -124,6 +143,7 @@ class LoginController extends AbstractController
         Request $request, 
         ManagerRegistry $doctrine,
         MailerInterface $mailer, 
+        LoggerInterface $logger
         ): Response 
     {
         // Si l'utilisateur est connecté, on le redirige vers la page profil
@@ -131,8 +151,8 @@ class LoginController extends AbstractController
             return $this->redirectToRoute('app_profil');
         }
 
-        $repo = $doctrine->getRepository(User::class);
         $em = $doctrine->getManager();
+        $repo = $doctrine->getRepository(User::class);
 
         // Formulaire de réinitialisation du mot de passe
         $formResetPassword = $this->createFormBuilder()
@@ -161,25 +181,54 @@ class LoginController extends AbstractController
                 // On crée un nouveau token en BDD
                 $user->setActivationToken(md5(uniqid()));
 
-                $em->persist($user);
-                $em->flush();
+                try {
+                    $em->persist($user);
+                    $em->flush();
+                } catch (\Exception $e) {
+                    $errorNumber = $email . '_' . uniqid();
+                    $logger->error('Erreur reinitalisation du mdp', [
+                        'errorNumber' => $errorNumber,
+                        'userMail' => $email,
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]);
+                    $this->addFlash(
+                        'exception',
+                        'Une erreur est survenue, merci de nous communiquer le n° d\'erreur suivant : ' . $errorNumber
+                    );
+                }
 
                 // Envoi d'un email avec un lien pour changer le mot de passe
-                $sendEmail = new TemplatedEmail();
-                    $sendEmail->from('BodyCool <noreply@bodycool.com>');
-                    $sendEmail->to($email);
-                    $sendEmail->replyTo('noreply@bodycool.com');
-                    $sendEmail->subject('Modifier votre mot de passe');
-                    $sendEmail->context([
-                        'user' => $user,
-                    ]);
-                    $sendEmail->htmlTemplate('emails/reset-password.html.twig');
-                $mailer->send($sendEmail);
+                try {
+                    $sendEmail = new TemplatedEmail();
+                        $sendEmail->from('BodyCool <noreply@bodycool.com>');
+                        $sendEmail->to($email);
+                        $sendEmail->replyTo('noreply@bodycool.com');
+                        $sendEmail->subject('Modifier votre mot de passe');
+                        $sendEmail->context([
+                            'user' => $user,
+                        ]);
+                        $sendEmail->htmlTemplate('emails/reset-password.html.twig');
+                    $mailer->send($sendEmail);
 
-                $this->addFlash(
-                    'success',
-                    'Vous allez recevoir un mail pour réinitialiser votre mot de passe'
-                );
+                    $this->addFlash(
+                        'success',
+                        'Vous allez recevoir un mail pour réinitialiser votre mot de passe'
+                    );
+                } catch (\Exception $e) {
+                    $errorNumber = $email . '_' . uniqid();
+                    $logger->error('Erreur de distribution du mail de réinitialisation du mdp', [
+                        'errorNumber' => $errorNumber,
+                        'emailFranchise' => $email,
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]);
+                    
+                    $this->addFlash(
+                        'exception',
+                        'L\'email n\'a pas pu être envoyé, merci de nous communiquer le n° d\'erreur suivant : ' . $errorNumber
+                    );
+                }
             } else {
                 $this->addFlash(
                     'notice',
