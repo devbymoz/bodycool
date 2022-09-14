@@ -4,7 +4,7 @@
 {% block title_h1 %}Nouvelle permission{% endblock %}
 
 {% block content %}
-    <div class="block-add-permission">
+    <section class="block-add-permission">
         {{ form_start(formAddPermission) }}
             <div class="block-input">
                 {{ form_label(formAddPermission.name)}}
@@ -25,6 +25,6 @@
             </div>  
             <button class="btn-primary form-btn" type="submit">Créer la permission</button>
         {{ form_end(formAddPermission) }}
-    </div>
+    </section>
 {% endblock %}
 

@@ -5,10 +5,10 @@
 {% block title_h1 %}Mon profil{% endblock %}
 
 {% block content %}
-    <div class="block-profil">
+    <section class="block-profil">
         <h2>Inscrit en tant que : {{ app.user.roles|first|slice(5)|capitalize}}</h2>
         {{ form_start(formEditUser) }}
-            <div class="change-avatar-profil">
+            <section class="change-avatar-profil">
                 <div>
                     <img class="user-picture" src="{{ asset('/images/avatar/' ~ user.avatar) }}" alt="Photo de profil" height=130 width=130>
                     <p class="text-light text-xs detail-select-avatar">Taille maximale 2Mo</p>
@@ -24,10 +24,10 @@
                         {{ form_errors(formEditUser.avatar) }}
                     </div>
                 </div>
-            </div>
+            </section>
             <div class="dividing-border"></div>
 
-            <div class="edit-profil">
+            <section class="edit-profil">
                 <p class="light-text text-light">Merci de contacter l’équipe technique pour modifier les informations suivantes</p>
                 <div class="block-input">
                     <label for="firstname">Prénom</label>
@@ -45,8 +45,8 @@
                     <label for="email">Email</label>
                     <input class="input" type="email" name="" value="{{ user.email}}" disabled>
                 </div>
-            </div>
+            </section>
             {{ form_widget(formEditUser.save) }}
         {{ form_end(formEditUser) }} 
-    </div>
+    </section>
 {% endblock %} 

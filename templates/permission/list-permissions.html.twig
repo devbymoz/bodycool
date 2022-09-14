@@ -4,16 +4,16 @@
 {% block title_h1 %}Les permissions{% endblock %}
 
 {% block content %}
-    <div class="block-list-permissions">
+    <section class="block-list-permissions">
         <h2>{{ nbPermission }} permissions</h2> 
-        <section class="block-cards-lists-permissions">
+        <div class="block-cards-lists-permissions">
             {% for permission in permissions %}
-                <div class="card-permission-list">
+                <article class="card-permission-list">
                     <h3>{{ permission.name }}</h3>
                     <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
-                </div>
+                </article>
             {% endfor %}
-        </section>
+        </div>
         <a href="{{ path('app_ajouter_permission') }}"><button class="btn-secondary">Nouvelle permission</button></a>
-    </div>
+    </section>
 {% endblock %}

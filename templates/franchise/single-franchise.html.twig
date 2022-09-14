@@ -11,7 +11,7 @@
 
 {% block content %}
     {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}  
-        <div class="block-single-franchise-info">
+        <section class="block-single-franchise-info">
             <div class="block-left">
                 <h2>{{ franchise.getName }}</h2>
                 <p><strong>Propriétaire : </strong>{{ userOwner.getFirstname|capitalize }} {{ userOwner.getLastname|capitalize }}</p>
@@ -36,18 +36,18 @@
                     </label>
                 </div>
             </div>
-        </div>
+        </section>
 
         <div class="dividing-border"></div>
 
-        <div class="add-global-permission">
+        <section class="add-global-permission">
             <h2>Permissions globales</h2>
             <p class="text-light">Sélectionnez les permissions globales quepourrontavoir les structures appartenant à cette franchise.</p>
-            <section class="block-cards-permission">
+            <div class="block-cards-permission">
                 {% for globalPermission in form.globalPermissions %}
                     {% set index = globalPermission.vars.value %}
                     {% set entity = form.globalPermissions.vars.choices[index].data%}
-                    <div class="card-permission">
+                    <article class="card-permission">
                         <div class="permission-top-card">
                             <h3>{{ entity.name }}</h3>
                             <p class="text-light">{{ entity.description }}</p>
@@ -71,10 +71,10 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 {% endfor %}
-            </section>
-        </div>   
+            </div>
+        </section>   
         <button class="hidden" type="submit">Envoye</button>
     {{ form_end(form) }}   
 {% endblock %} 
