@@ -6,7 +6,7 @@
 {% block content %}
     <div class="add-franchise">
         {{ form_start(formFranchise, { 'attr': {'class': 'form-add-franchise'} }) }}
-            <div class="form-owner-franchise">
+            <section class="form-owner-franchise">
                 <div class="form-owner">
                     <h2>Détails sur le propriétaire</h2>
                     <div class="block-input">
@@ -50,20 +50,20 @@
                     </div>   
                     {{ form_row(formFranchise._token)}}
                 </div>
-            </div>
+            </section>
 
             <div class="dividing-border"></div>
 
-            <div class="add-global-permission">
+            <section class="add-global-permission">
                 <h2>Permissions globales</h2>
                 <p class="text-light">Sélectionnez les permissions globales que pourront avoir les structures appartenant à cette franchise.</p>
-                <section class="block-cards-permission">
+                <div class="block-cards-permission">
                     {% for globalPermission in formFranchise.globalPermissions %}
                         {% set index = globalPermission.vars.value %}
                         {# Récupération de l'objet permission #}
                         {% set entity = formFranchise.globalPermissions.vars.choices[index].data %}
 
-                        <div class="card-permission">
+                        <article class="card-permission">
                             <div class="permission-top-card">
                                 <h3>{{ entity.name }}</h3>
                                 <p class="text-light">{{ entity.description }}</p>
@@ -77,10 +77,10 @@
                                     </label>
                                 </div>
                             </div>
-                        </div>
+                        </article>
                     {% endfor %}
-                </section>
-            </div>                 
+                </div>
+            </section>                 
             <button class="btn-primary form-btn" type="submit">Créer une franchise</button>
         {{ form_end(formFranchise) }}
     </div>

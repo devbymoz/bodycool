@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des franchises{% endblock %}
+{% block title_h1 %}Liste des franchises{% endblock %}
+
+
+{% block content %}
+    <div class="list-franchise">
+        <h2>Rechercher une franchise</h2>
+        <p class="text-light">Recherchez une franchise avec son nom ou son ID.</p>
+        <div class="block-search">
+            <input class="input" type="text" name="" id="" placeholder="Entrez le nom d’un franchisé">
+            <input class="input" type="text" name="" id="" placeholder="Ou recherchez avec son ID">
+        </div>
+
+        <div class="dividing-border"></div>
+
+        <div class="block-list-franchise">
+            <nav class="select-franchise">
+                <ul>
+                    <li class="active">Toutes</li>
+                    <li>Actives</li>
+                    <li>Inactives</li>
+                </ul>
+            </nav>
+            {{ form_start(form) }}  
+                <section class="block-cards-franchise">
+                    {% for franchise in form.matchs %}
+                    {% set entity = franchise.vars.value %}
+                        <article class="card-franchise">
+                            <a href="{{ path('app_franchise_unique', {id: entity.id}) }}"><h3>{{ entity.name }}</h3></a> 
+                            <p class="text-light text-xs">{{ entity.userOwner.firstname }} {{ entity.userOwner.lastname }}</p>
+                            <div class="bottom-card-franchise">
+                                <span class="state-toggle-txt {{ noAccess }}">
+                                    {% if entity.active == true %}
+                                        Active
+                                    {% else %}   
+                                        Inactive
+                                    {% endif %} 
+                                </span>
+                                <div class="check-toggle">
+                                    {{ form_widget(franchise.active, {'id': entity.id})}}
+                                    <label class="toggle-label" for="{{ entity.id }}">
+                                        <span class="btn-toggle"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </article>      
+                    {% endfor %}
+                </section>
+                <button class="btn-primary" type="submit">Envoyer</button>
+            {{ form_end(form) }} 
+        </div>
+        <div class="paggination">
+        </div>
+    </div>
+{% endblock %} 

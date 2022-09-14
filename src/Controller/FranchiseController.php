@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Franchise;
 use App\Entity\Permission;
+use App\Form\ActiveFranchiseType;
 use App\Form\AddFranchiseType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,10 +18,52 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+
 
 #[Route('/franchise')]
 class FranchiseController extends AbstractController
 {
+    /**
+     * Affiche la liste de toutes les franchises
+     * 
+     * @return Response
+     */
+    #[Route('/', name: 'app_list_franchise')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function listFranchise(
+        Request $request, 
+        ManagerRegistry $doctrine, 
+        ): Response
+    {
+        $em = $doctrine->getManager();
+        $repo = $doctrine->getRepository(Franchise::class);
+
+        $franchises = $repo->findAll();
+        $data = ['matchs' => $franchises];
+
+        $form = $this->createFormBuilder($data)
+            ->add('matchs', CollectionType::class,[
+                'entry_type' =>  ActiveFranchiseType::class,
+                ])
+            ->getForm();
+
+        $form->handleRequest($request); 
+              
+        if($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            //dd($data);
+            $em->flush();
+        }
+                   
+        
+        return $this->renderForm('franchise/list-franchise.html.twig', [
+            'form' => $form,                                 
+        ]);
+    } 
+        
+
+
     /**
      * Formulaire qui permet :
      * - Créer une nouvelle franchise.
@@ -127,6 +170,7 @@ class FranchiseController extends AbstractController
             'formFranchise' => $formFranchise->createView()
         ]);
     }
+
 
 
     /**

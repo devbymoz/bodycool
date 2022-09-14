@@ -25,11 +25,11 @@
         {% endif %}
         {% block header %}
                 <nav class="menu-navigation display-menu-mobile">
-                    <div class="top-menu">
+                    <section class="top-menu">
                         <i class="fa-solid fa-bolt bolt"></i><h3>{{ app.user.roles|first|slice(5)|capitalize}}</h3>
                         <i class="close-menu fa-regular fa-circle-xmark"></i>
-                    </div>
-                    <div class="user-menu">
+                    </section>
+                    <section class="user-menu">
                         <h4 class="text-light">MON COMPTE</h4>
                             <ul>
                                 <a href="{{ path('app_profil') }}">
@@ -51,12 +51,12 @@
                                 {% endif %}
 
                             </ul>
-                    </div>
-                    <div class="technician-menu">
+                    </section>
+                    <section class="technician-menu">
                         {% if is_granted('ROLE_ADMIN') %}
                             <h4 class="text-light">TECHNICIEN</h4>
                             <ul> 
-                                <a href="profi">
+                                <a href="{{ path('app_list_franchise') }}">
                                     <i class="fa-regular fa-address-book"></i>
                                     <li>Les franchises</li>
                                 </a>
@@ -82,7 +82,7 @@
                                 </a>
                             </ul>
                         {% endif %}
-                    </div>
+                    </section>
                     <div class="logout">
                         <a href="{{ path('app_logout') }}" ><button class="btn-primary">Déconnexion</button></a>
                     </div>
@@ -106,7 +106,7 @@
                     <a href="{{ path('app_profil') }}" class="logo">
                         <img src="{{ asset('/images/others/logo-bodycool.svg') }}" alt="Logo bodycool" height=42>
                     </a>
-                    <div class="user-header">
+                    <section class="user-header">
                         <div class="welcome-user">
                             <h3>Bienvenue</h3>
                             <span class="text-light" >{{ app.user.firstname|capitalize }} {{ app.user.lastname|capitalize }}</span>
@@ -117,7 +117,7 @@
                             </a>
                             <div class="bg-picture-header"></div>
                         </div>
-                    </div> 
+                    </section> 
                 </header>
         {% endblock %}
 
