@@ -1,0 +1,16 @@
+{% extends "base-email.html.twig" %}
+
+{% block titre %}Votre franchise a été modifiée{% endblock %}
+
+{% block content %}
+    <p>Bonjour {{ franchise.userOwner.getFirstname }}, votre franchise : {{ franchise.name}} a été 
+    {% if franchise.isActive %}
+        activée
+    {% else %}
+        désactivée.
+    {% endif %}     
+    </p>
+
+    <p>Merci de nous contacter si vous avez des questions.</p> 
+{% endblock %}
+

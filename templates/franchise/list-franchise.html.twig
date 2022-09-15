@@ -23,7 +23,7 @@
                     <li>Inactives</li>
                 </ul>
             </nav>
-            {{ form_start(form) }}  
+            {{ form_start(form, { 'attr': {'id': 'form-active-franchise'} }) }}  
                 <section class="block-cards-franchise">
                     {% for franchise in form.matchs %}
                     {% set entity = franchise.vars.value %}
@@ -39,7 +39,7 @@
                                     {% endif %} 
                                 </span>
                                 <div class="check-toggle">
-                                    {{ form_widget(franchise.active, {'id': entity.id})}}
+                                    {{ form_widget(franchise.active, {'id': entity.id, 'attr': {'class': 'form-add-franchise', 'value': entity.id} })}}
                                     <label class="toggle-label" for="{{ entity.id }}">
                                         <span class="btn-toggle"></span>
                                     </label>
@@ -48,7 +48,6 @@
                         </article>      
                     {% endfor %}
                 </section>
-                <button class="btn-primary" type="submit">Envoyer</button>
             {{ form_end(form) }} 
         </div>
         <div class="paggination">

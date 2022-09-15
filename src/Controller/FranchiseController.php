@@ -32,11 +32,9 @@ class FranchiseController extends AbstractController
     #[Route('/', name: 'app_list_franchise')]
     #[IsGranted('ROLE_ADMIN')]
     public function listFranchise(
-        Request $request, 
         ManagerRegistry $doctrine, 
         ): Response
     {
-        $em = $doctrine->getManager();
         $repo = $doctrine->getRepository(Franchise::class);
 
         $franchises = $repo->findAll();
@@ -47,21 +45,104 @@ class FranchiseController extends AbstractController
                 'entry_type' =>  ActiveFranchiseType::class,
                 ])
             ->getForm();
-
-        $form->handleRequest($request); 
-              
-        if($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            //dd($data);
-            $em->flush();
-        }
-                   
-        
+   
         return $this->renderForm('franchise/list-franchise.html.twig', [
             'form' => $form,                                 
         ]);
     } 
         
+
+
+    /**
+     * Permet d'activer ou de désactiver une franchise via une requete Ajax.
+     * 
+     */
+    #[Route('/etat-franchise-{id}', name: 'app_etat_franchise')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function changeStateFranchise(
+        $id, 
+        ManagerRegistry $doctrine, 
+        LoggerInterface $logger,
+        MailerInterface $mailer, 
+        )
+	{
+        $em = $doctrine->getManager();
+        $repo = $doctrine->getRepository(Franchise::class);
+
+        // On récupère la franchise correspondant à l'id en paramètre.
+        $franchise = $repo->findOneBy(['id' => $id]);
+        if (empty($franchise)) {
+            throw $this->createNotFoundException('Cette franchise n\'existe pas.');
+        }
+
+        $emailUserOwner = $franchise->getUserOwner()->getEmail();
+
+        // On récupère l'état de la franchise (activée ou désactivée).
+        $stateFranchise = $franchise->isActive();
+
+        // On inverse l'état de la franchise.
+        $franchise->setActive(!$stateFranchise);
+
+        // On sauvegarde le nouvel état dans une variable
+        $newStateFranchise = $franchise->isActive();
+
+        // On sauvegarder le nouvel état de la franchise en BDD
+        try {
+            $em->flush();
+        } catch (\Exception $e) {
+            $errorNumber = uniqid();
+            $logger->error('Erreur persistance des données', [
+                'errorNumber' => $errorNumber,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return $this->json([
+                'code' => 500, 
+                'message' => 'Erreur lors de la sauvegarde en BDD',
+                'franchiseName' => $franchise->getName(), 
+                'errorNumber' => $errorNumber
+            ], 500);
+        }
+
+        // On envoi un email au franchisé pour lui indiquer le nouvel état de sa franchise.
+        try {
+            $sendEmail = new TemplatedEmail();
+                $sendEmail->from('BodyCool <noreply@bodycool.com>');
+                $sendEmail->to($emailUserOwner);
+                $sendEmail->replyTo('noreply@bodycool.com');
+                $sendEmail->subject('Votre franchise a été modifiée');
+                $sendEmail->context([
+                    'franchise' => $franchise,
+                ]);
+                $sendEmail->htmlTemplate('emails/change-state-franchise.html.twig');
+            $mailer->send($sendEmail);
+        } catch (\Exception $e) {
+            $errorNumber = $franchise->getID() . '_' . uniqid();
+            $logger->error('Erreur distribution du mail au franchisé', [
+                'errorNumber' => $errorNumber,
+                'idFranchise' => $franchise->getID(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return $this->json([
+                'code' => 500, 
+                'message' => 'L\'email n\'a pas pu être envoyé au propriétaire. Log n° : ' . $errorNumber,
+                'idFranchise' => $franchise->getID(),
+                'errorNumber' => $errorNumber,
+            ], 500);
+        }
+
+
+        return $this->json([
+            'code' => 200, 
+            'message' => 'franchise modifiée avec success',
+            'newStateFranchise' => $newStateFranchise,
+            'franchiseName' => $franchise->getName()
+        ], 200);
+    }
+
 
 
     /**

@@ -120,3 +120,71 @@ formEditFranchise.forEach(input => {
         }
     })
 });
+
+
+
+/**
+ * Requete Ajax pour changer l'état d'une franchise.
+ * 
+ */
+const inputState = document.querySelectorAll('#form-active-franchise input[type=checkbox]')
+const popupAlertStateFranchise = document.createElement('div');
+const loader = document.createElement('div');
+
+inputState.forEach(input => {
+    input.addEventListener('click', (e) => {
+        // On demande la confirmation à l'utilisateur.
+        let messageConfirmation = confirm('Merci de cliquer sur OK pour confirmer');
+
+        if(messageConfirmation) {
+        // On récupere la valeur des checkbox qui sera le parametre de la route à exécuter.
+        const inputValue = input.getAttribute('value');
+
+        // On créer l'url de la route à executer avec le param
+        const urlActivateFranchise = 'http://127.0.0.1:8000/franchise/etat-franchise-' + inputValue
+    
+        // On commence le traitement ajax
+        let data = new FormData();
+        xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function () {
+            let resultat = this.response;
+
+            // On affiche un loading le temps du traitement de la requete
+            if (this.readyState == 3) {
+                loader.classList.add('loader');
+                document.body.prepend(loader);
+            } else if (this.readyState == 4 && this.status == 200) {
+                // Si la requete c'est bien passée.
+                let franchiseName = resultat.franchiseName;
+                let stateFranchise = resultat.newStateFranchise ? 'activée' : 'désactivée';
+                let successMessage = 'La franchise : ' + franchiseName + ' a bien été ' + stateFranchise + '. Un mail va être envoyé au propriétaire.';
+
+                // On simule un temps de traitement de 2sec.
+                setTimeout(() => {
+                    // On affiche une popup de succes.
+                    loader.remove();
+                    popupAlertStateFranchise.innerText = successMessage;
+                    popupAlertStateFranchise.classList.add('pop-up-alert');
+                    document.body.prepend(popupAlertStateFranchise);
+                    setTimeout(() => {
+                        popupAlertStateFranchise.remove();
+                    }, 8000)
+                }, 2000)
+            } else if (this.readyState == 4) {
+                console.log(resultat);
+            } 
+        };
+
+        xhr.open('POST', urlActivateFranchise, true);
+        xhr.responseType = 'json';
+        //xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(data);
+        } else {
+            e.preventDefault();
+        }
+
+    })   
+});
+
+
