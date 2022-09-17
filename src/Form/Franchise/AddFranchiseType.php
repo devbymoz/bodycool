@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Franchise;
 
 use App\Entity\Franchise;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Form\UserType;
+use App\Form\User\UserType;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 
 /**
- * Formulaire pour la création d'une nouvelle franchise.
+ * FORMULAIRE POUR LA CRÉATION D'UNE NOUVELLE FRANCHISE
  * Inclus le formulaire d'un nouvel utilisateur et les permissions globales
  * 
  */

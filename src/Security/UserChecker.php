@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 
 /**
- * Vérification supplémentaire pour la connexion de l'utilisateur
+ * VÉRIFICATION SUPPLÉMENTAIRE POUR LA CONNEXION DE L'UTILISATEUR
  * 
  */
 class UserChecker implements UserCheckerInterface

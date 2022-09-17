@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\User;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 
 /**
- * Formulaire pour la création du mot de passe utilisateu.
+ * FORMULAIRE POUR LA CRÉATION D'UN NOUVEAU MOT DE PASSE UTILISATEUR
  */
 class CreatePasswordType extends AbstractType
 {

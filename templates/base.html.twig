@@ -18,13 +18,12 @@
     </head>
 
     <body class="js-user-access" data-has-access="{{ is_granted('ROLE_ADMIN') ? 'true' : 'false' }}">
-        {# classe css qui diminue l'oppacité des élements lorsque l'user n'est pas un admin#}
+        {# classe css qui diminue l'oppacité des élements lorsque l'user n'est pas un admin #}
         {% set noAccess = ' no-access' %}
         {% if is_granted('ROLE_ADMIN') %}
             {% set noAccess = null %}
         {% endif %}
         {% block header %}
-         {# <div class="loader"></div> #}
                 <nav class="menu-navigation display-menu-mobile">
                     <section class="top-menu">
                         <i class="fa-solid fa-bolt bolt"></i><h3>{{ app.user.roles|first|slice(5)|capitalize}}</h3>

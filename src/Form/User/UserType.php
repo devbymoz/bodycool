@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\User;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 
 /**
- * Formulaire pour la création d'un nouvel utilisateur
+ * FORMULAIRE POUR LA CRÉATION D'UN NOUVEL UTILISATEUR
  */
 class UserType extends AbstractType
 {
