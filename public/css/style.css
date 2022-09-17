@@ -31,7 +31,10 @@ ul { list-style-type: none;}
     button { max-width: 450px;}
 }
 
-/* Formulaire */ 
+
+/**
+ * DÉBUT FORMULAIRE *******************************************
+ */
 .input,  textarea {
     height: 54px;
     border: 2px solid #DEE1E6;
@@ -49,8 +52,8 @@ textarea { min-height: 200px; padding: 16px; font-family: inherit; text-indent: 
 .form-btn { margin-top: 16px;}
 .error-form { color: #c61111; font-size: 14px; margin-top: 4px;}
 
-/* Boutons */
-button {
+/* bouton */
+button, .style-btn{
     height: 49px;
     border: none;
     border-radius: 8px;
@@ -65,6 +68,7 @@ button {
 .btn-secondary { background-color: #FF5A1F; }
 .btn-white { background-color: #FFF; border: 1px solid #DEE1E6; color: #00171f;}
 button:hover, .input-file:hover { opacity: 0.85; transition-duration: 400ms; }
+.style-btn { display: flex; justify-content: center; align-items: center;}
 
 /* Donne le style d'un bouton à un input de type file */
 .input-file input { position: absolute; visibility: hidden;}
@@ -126,7 +130,10 @@ input[type="checkbox"]:checked + .toggle-label{ background-color: #26B44C;}
 input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0;}
 
 
-/* LAYOUT GENERAL */
+
+/**
+ * HEADER *******************************************
+ */
 /* Header (logo, menu hamburger et photo utilisateur */
 .main-header {
     padding: 16px; 
@@ -168,7 +175,10 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 }
 
 
-/* MENU DE GAUCHE*/
+
+/**
+ * MENU DE GAUCHE *******************************************
+ */
 .menu-navigation {
     background-color: #00171f;
     padding: 32px 16px 8px;
@@ -284,7 +294,10 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 }
 
 
-/* PAGE LOGIN ET MOT DE PASSE OUBLIÉ */
+
+/**
+ * PAGE LOGIN ET MOT DE PASSE OUBLIÉ *******************************************
+ */
 .format-page-login { margin-left: 0; max-width: 475px;}
 .container-login, .footer-login { padding: 0 16px; max-width: 475px;}
 .block-form-login { margin-top: 32px;}
@@ -297,7 +310,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 @media screen and (min-width: 620px){
     .container-login, .footer-login {padding: 0 32px;}
 }
-
+/* Icon pour retourner à la page de connexion */ 
 .back-connexion {
     background-color: #00296B;
     height: 32px;
@@ -320,6 +333,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     .footer-login { position: static; margin-top: 16px;}
 }
 
+/* Image de droite sur pc */
 @media screen and (min-width: 970px) {
     .background-login {
         position: absolute;
@@ -338,20 +352,21 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 }
 
 
-/* FLASH MESSAGE */
+
+/**
+ * FLASH MESSAGE *******************************************
+ */
 .flash-notice {
     border-radius: 8px;
     padding: 16px 32px;
     margin-top: 16px;
     font-size: 16px;
-    font-weight: 700;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
 }
 .flash-notice::before {
     font-family: "Font Awesome 5 Free"; 
-    font-weight: 700;
     margin-right: 16px;
     font-size: 24px;
 }
@@ -362,26 +377,34 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 .exception { background-color: #fff9e9; font-weight: 400;}
 .exception::before { content: '\f06a'; color: #ffc12d;}
 
-/* Barre d'alerte en haut de l'écran */
-.pop-up-alert {
+
+
+/**
+ * POPUP EN HAUT DE L'ÉCRAN *******************************************
+ */
+.pop-up {
     position: fixed;
     left: 16px;
     right: 16px;
     top: 16px;
     border-radius: 8px;
-    background-color: #10ac8c;
     color: #fff;
-    font-weight: 700;
     padding: 16px 32px;
     z-index: 100000;
     animation: slideInTop 1000ms ease 0s 1 normal forwards;
 }
 @keyframes slideInTop {
-	0% { opacity: 0; transform: rotateX(-100deg); transform-origin: top;}
+    0% { opacity: 0; transform: rotateX(-100deg); transform-origin: top;}
 	100% { opacity: 1; transform: rotateX(0deg); transform-origin: top;}
 }
+.pop-up-success { background-color: #10ac8c;}
+.pop-up-notice { background-color: #ac1d10;}
 
-/* Loader */
+
+
+/**
+ * LOADER *******************************************
+ */
 .loader {
     position: absolute;
     background-color: #ffffff4d;
@@ -405,10 +428,16 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 
 
 
-/* MAIN */
+/**
+ * MAIN *******************************************
+ */
 .border-h1 { border: 3px solid #FF5A1F; width: 175px; border-radius: 10px; margin-bottom: 16px;}
 
-/* Page Mon profil */
+
+
+/**
+ * PAGE MON PROFIL *******************************************
+ */
 .block-profil { max-width: 400px;}
 .change-avatar-profil {
     margin: 32px 0 0; 
@@ -421,7 +450,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     object-fit: cover;
 }
 .btn-change-delete-picture-profil { width: 100%;}
-.btn-change-delete-picture-profil > button::before  {
+.delete-avatar::before  {
     font-family: "Font Awesome 5 Free"; 
     font-weight: 400;
     content: '\f2ed';
@@ -430,11 +459,18 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 }
 
 
-/* Page ajouter une permission */
+
+/**
+ * PAGE AJOUTER UNE PERMISSION *******************************************
+ */
 .block-add-permission { max-width: 400px;}
 
 
-/* Page ajouter une franchise */
+
+/**
+ * PAGE AJOUTER UNE FRANCHISE *******************************************
+ */
+ /* Section supperieur */
 .form-owner-franchise { margin-bottom: 0px;}
 @media screen and (min-width: 900px)  {
     .form-owner { 
@@ -457,7 +493,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     .form-owner-franchise h2 { grid-column: 1 / span 2;}
 }
 
-/* Block pour l'ajout et la modification des permissions */
+/* Section permissions globales */
 .add-global-permission p { max-width: 450px;}
 .block-cards-permission {
     margin-top: 32px;
@@ -466,7 +502,12 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
 }
 
-/* Carte des permissions */
+
+
+/**
+ * CARTE DES PERMISSIONS *******************************************
+ * Avec toggle d'activation et désactivation
+ */
 .card-permission { 
     border: 1px solid #DEE1E6; 
     border-radius: 8px; 
@@ -483,7 +524,11 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 }
 .permission-bottom-card { display: flex; justify-content: space-between; align-items: center;}
 
-/* Page liste des permissions */
+
+
+/**
+ * PAGE LISTE DES PERMISSIONS *******************************************
+ */
 .block-cards-lists-permissions {
     margin: 16px 0;
     display: grid;
@@ -491,7 +536,12 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
 }
 
-/* Carte des permissions bleu */
+
+
+/**
+ * CARTE DES PERMISSIONS *******************************************
+ * En lecture seule avec le background en couleur
+ */
 .card-permission-list {
     background-color: #00296B;
     padding: 32px 16px;
@@ -501,7 +551,11 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 .card-permission-list h3{ font-size: 18px;}
 .card-permission-list p{ margin-top: 16px; color: #DEE1E6;}
 
-/* Page franchise unique */
+
+
+/**
+ * PAGE FRANCHISE UNIQUE *******************************************
+ */
 .block-single-franchise-info .block-left > p { margin-top: 4px;}
 .block-right h3 { margin-bottom: 8px;}
 
@@ -516,7 +570,10 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 }
 
 
-/* Page liste des franchises */
+
+/**
+ * PAGE LISTE DES FRANCHISES *******************************************
+ */
 .block-search {
     margin: 16px 0;
 }
@@ -527,7 +584,6 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
         column-gap: 16px;
     }
 }
-
 .block-cards-franchise {
     margin: 16px 0;
     display: grid;
@@ -535,7 +591,21 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
 }
 
-/* Carte des franchises */
+/* Nav pour selectionner les cartes actives ou inactives */
+.select-franchise ul{
+    display: flex;
+    gap: 16px;
+    color: #7A8290;
+    font-weight: 700;
+}
+.select-franchise ul > .active{ color: #00171f; border-bottom: 2px solid #FF5A1F; padding-bottom: 8px;}
+
+
+
+/**
+ * CARTE DES FRANCHISES *******************************************
+ * Avec toggle d'activation et désactivation + Background en couleur
+ */
 .card-franchise { 
     background-color: #FDF0D5;
     border-radius: 8px; 
@@ -552,11 +622,5 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     align-items: center;
 }
 
-/* Nav pour selectionner les cartes actives ou inactives*/
-.select-franchise ul{
-    display: flex;
-    gap: 16px;
-    color: #7A8290;
-    font-weight: 700;
-}
-.select-franchise ul > .active{ color: #00171f; border-bottom: 2px solid #FF5A1F; padding-bottom: 8px;}
+
+

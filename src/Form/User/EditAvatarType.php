@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\User;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
@@ -13,9 +13,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 
 /**
- * Formulaire pour changer sa photo de profil
+ * FORMULAIRE POUR CHANGER SON AVATAR
  */
-class EditUserType extends AbstractType
+class EditAvatarType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -39,15 +39,9 @@ class EditUserType extends AbstractType
                     ])
                 ]
             ])
-            // Bouton pour sauvegarder les modifications.
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',
                 'attr' => ['class' => 'btn-primary form-btn']
-                ])
-            // Bouton pour supprimer la photo de profil
-            ->add('removeAvatar', SubmitType::class, [
-                'label' => 'Supprimer',
-                'attr' => ['class' => 'btn-xs btn-white remove-avatar']
                 ])
         ;
     }

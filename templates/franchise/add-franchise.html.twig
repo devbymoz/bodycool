@@ -69,7 +69,7 @@
                                 <p class="text-light">{{ entity.description }}</p>
                             </div>
                             <div class="permission-bottom-card">
-                                <span class="state-toggle-txt">Inactive</span>
+                                <span class="state-checkbox-text">Inactive</span>
                                 <div class="check-toggle">
                                     {{ form_widget(globalPermission, {'id': 'gp-' ~ entity.id}) }}
                                     <label class="toggle-label" for="gp-{{ entity.id }}">
@@ -78,6 +78,8 @@
                                 </div>
                             </div>
                         </article>
+                    {% else %}
+                        <h3>Aucune permission disponible</h3>
                     {% endfor %}
                 </div>
             </section>                 

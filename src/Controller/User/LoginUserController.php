@@ -1,29 +1,28 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\User;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
-use App\Form\CreatePasswordType;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use App\Form\User\CreatePasswordType;
+use App\Service\EmailService;
+use App\Service\LoggerService;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
-
-class LoginController extends AbstractController
+class LoginUserController extends AbstractController
 {
     /**
-     * Permet à l'utilisateur de se connecter.
-     * Complément de vérification dans la class UserChecker
+     * CONNEXION DE L'UTILISATEUR
+     * Complément de vérification dans la class UserChecker (Security)
      * 
      * @return Response
      */
@@ -44,9 +43,11 @@ class LoginController extends AbstractController
         ]);
     }
     
+
+
     
     /**
-     * Permet à l'utilisateur de créer ou réinitaliser son mot de passe.
+     * CRÉATION ET RÉINITIALISATION DU MOT DE PASSE
      * Active le compte de l'utilisateur après avoir crée son mot de passe.
      * 
      * @return Response
@@ -57,8 +58,7 @@ class LoginController extends AbstractController
         $token, 
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        LoggerInterface $logger
-
+        LoggerService $loggerService
         ): Response 
     {
         // Si l'utilisateur est connecté, on le redirige vers la page profil
@@ -100,30 +100,26 @@ class LoginController extends AbstractController
         
                 return $this->redirectToRoute('app_connexion');
             } catch (\Exception $e) {
-                $errorNumber = $user->getEmail() . '_' . uniqid();
-                $logger->error('Erreur de création du mot de passe', [
-                    'errorNumber' => $errorNumber,
-                    'emailFranchise' => $user->getEmail(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ]);
+                $loggerService->logGeneric($e, 'Erreur persistance des données');
 
                 $this->addFlash(
                     'exception',
-                    'L\'email n\'a pas pu être envoyé au propriétaire. Log n° : ' . $errorNumber
+                    'Le mot de passe n\'a pas pu être crée, merci de nous communiquer le n° d\'erreur suivant : ' . $loggerService->getErrorNumber()
                 );
             }
         }
 
 
-        return $this->render('login/create-password.html.twig', [
-            'formCreatePassword' => $formCreatePassword->createView()
+        return $this->renderForm('login/create-password.html.twig', [
+            'formCreatePassword' => $formCreatePassword
         ]);
     }
 
 
+
+
     /**
-     * Deconnecte l'utilisateur et le renvoi vers la page de connexion
+     * DECONNEXION DE L'UTILISATEUR
      * @return void
      */
     #[Route('/deconnexion', name: 'app_logout', methods: ['GET'])]
@@ -133,8 +129,10 @@ class LoginController extends AbstractController
     }
 
 
+
+
     /**
-     * Permet à l'utilisateur de réinitialiser son mot de passe.
+     * RÉINITIALISATION DU MOT DE PASSE
      *
      * @return Response
      */
@@ -142,8 +140,8 @@ class LoginController extends AbstractController
     public function resetPassword(
         Request $request, 
         ManagerRegistry $doctrine,
-        MailerInterface $mailer, 
-        LoggerInterface $logger
+        EmailService $emailService,
+        LoggerService $loggerService
         ): Response 
     {
         // Si l'utilisateur est connecté, on le redirige vers la page profil
@@ -168,7 +166,6 @@ class LoginController extends AbstractController
                 ]
             ])
             ->getForm();
- 
         $formResetPassword->handleRequest($request);
 
         if ($formResetPassword->isSubmitted() && $formResetPassword->isValid()) {
@@ -185,48 +182,35 @@ class LoginController extends AbstractController
                     $em->persist($user);
                     $em->flush();
                 } catch (\Exception $e) {
-                    $errorNumber = $email . '_' . uniqid();
-                    $logger->error('Erreur reinitalisation du mdp', [
-                        'errorNumber' => $errorNumber,
-                        'userMail' => $email,
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                    ]);
+                    $loggerService->logGeneric($e, 'Erreur persistance des données');
+
                     $this->addFlash(
                         'exception',
-                        'Une erreur est survenue, merci de nous communiquer le n° d\'erreur suivant : ' . $errorNumber
+                        'Une erreur est survenue, merci de nous communiquer le n° d\'erreur suivant : ' . $loggerService->getErrorNumber()
                     );
                 }
 
                 // Envoi d'un email avec un lien pour changer le mot de passe
                 try {
-                    $sendEmail = new TemplatedEmail();
-                        $sendEmail->from('BodyCool <noreply@bodycool.com>');
-                        $sendEmail->to($email);
-                        $sendEmail->replyTo('noreply@bodycool.com');
-                        $sendEmail->subject('Modifier votre mot de passe');
-                        $sendEmail->context([
+                    $emailService->sendEmail(
+                        $email, 
+                        'Modifier votre mot de pass', 
+                        [
                             'user' => $user,
-                        ]);
-                        $sendEmail->htmlTemplate('emails/reset-password.html.twig');
-                    $mailer->send($sendEmail);
+                        ], 
+                        'emails/reset-password.html.twig'
+                    );
 
                     $this->addFlash(
                         'success',
                         'Vous allez recevoir un mail pour réinitialiser votre mot de passe'
                     );
-                } catch (\Exception $e) {
-                    $errorNumber = $email . '_' . uniqid();
-                    $logger->error('Erreur de distribution du mail de réinitialisation du mdp', [
-                        'errorNumber' => $errorNumber,
-                        'emailFranchise' => $email,
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                    ]);
+                } catch (TransportExceptionInterface $e) {
+                    $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
                     
                     $this->addFlash(
                         'exception',
-                        'L\'email n\'a pas pu être envoyé, merci de nous communiquer le n° d\'erreur suivant : ' . $errorNumber
+                        'L\'email n\'a pas pu être envoyé, merci de nous communiquer le n° d\'erreur suivant : ' . $loggerService->getErrorNumber()
                     );
                 }
             } else {
@@ -237,8 +221,8 @@ class LoginController extends AbstractController
             }
         }
 
-        return $this->render('login/reset-password.html.twig', [
-            'formResetPassword' => $formResetPassword->createView()
+        return $this->renderForm('login/reset-password.html.twig', [
+            'formResetPassword' => $formResetPassword
         ]);
     }
 

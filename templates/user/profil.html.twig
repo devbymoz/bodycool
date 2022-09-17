@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
-
-{% block js_after %}<script src="{{ asset('/js/user.js') }}"></script>{% endblock %}     
+  
 {% block title %}Mon profil{% endblock %}
 {% block title_h1 %}Mon profil{% endblock %}
 
@@ -19,7 +18,7 @@
                         {{ form_widget(formEditUser.avatar) }}
                         <span>Séléctionner une photo</span>
                     </div>
-                    {{ form_widget(formEditUser.removeAvatar) }}
+                    <div class="style-btn btn-xs btn-white delete-avatar">Supprimer</div>
                     <div class="error-form">
                         {{ form_errors(formEditUser.avatar) }}
                     </div>

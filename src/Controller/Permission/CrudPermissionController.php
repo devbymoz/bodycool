@@ -1,31 +1,40 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Permission;
 
 use App\Entity\Permission;
-use App\Form\AddPermissionType;
+use App\Form\Permission\AddPermissionType;
+use App\Service\LoggerService;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 
-class PermissionController extends AbstractController
+
+/**
+ * CRÉATION, LECTURE, MISE À JOUR ET SUPPRESSION DE PERMISSION
+ * 
+ */
+class CrudPermissionController extends AbstractController
 {
     /**
-     * Permet de créer de nouvelles permissions
+     * CRÉATION D'UNE PERMISSION
      *
      * @return Response
      */
     #[Route('/ajouter-permission', name: 'app_ajouter_permission')]
     #[IsGranted('ROLE_ADMIN')]
-    public function index(Request $request, ManagerRegistry $doctrine, LoggerInterface $logger): Response
+    public function addPermission(
+        Request $request, 
+        ManagerRegistry $doctrine, 
+        LoggerService $loggerService
+        ): Response
     {
         $em = $doctrine->getManager();
-        $permission = new Permission();
         $repo = $doctrine->getRepository(Permission::class);
+        $permission = new Permission();
 
         $formAddPermission = $this->createForm(AddPermissionType::class, $permission);
         $formAddPermission->handleRequest($request);
@@ -34,16 +43,14 @@ class PermissionController extends AbstractController
             $data = $formAddPermission->getData();
             $namePermission = $data->getName();
 
+            // On vérifie que la permission n'existe pas déjà en BDD
             $checkNamePermission = $repo->findBy(['name' => $namePermission]);
-            
-            // Vérifie que le nom n'existe pas déja en BDD
             if($checkNamePermission != []) {
                 $this->addFlash(
                     'notice',
                     'Cette permission existe déjà'
                 );
             } else {
-
                 try {
                     $em->persist($data);
                     $em->flush();
@@ -52,18 +59,13 @@ class PermissionController extends AbstractController
                         'success',
                         'La permission à bien été créée'
                     );
-
                     return $this->redirectToRoute('app_ajouter_permission');
                 } catch (\Exception $e) {
-                    $errorNumber = 'Permission_' . uniqid();
-                    $logger->error('Erreur persistance des données', [
-                        'errorNumber' => $errorNumber,
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                    ]);
+                    $loggerService->logGeneric($e, 'Erreur fichier télécharger');
+
                     $this->addFlash(
                         'exception',
-                        'La permission n\'a pas pu être enregistréé en BDD. Log n° : ' . $errorNumber
+                        'La permission n\'a pas pu être enregistréé en BDD. Log n° : ' . $loggerService->getErrorNumber()
                     );
                 }
             }
@@ -75,8 +77,10 @@ class PermissionController extends AbstractController
     }
 
 
+
+    
     /**
-     * Récupère la liste de toutes les permissions de la BDD
+     * AFFICHE TOUTES LES PERMISSIONS
      *
      * @return Response
      */
@@ -94,4 +98,9 @@ class PermissionController extends AbstractController
             'nbPermission' => $nbPermission
         ]);
     }
+
+
+
+
+
 }

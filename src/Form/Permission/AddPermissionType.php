@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Permission;
 
 use App\Entity\Permission;
 use Symfony\Component\Form\AbstractType;
@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 
 /**
- * Formulaire pour la création de nouvelles permissions
+ * FORMULAIRE POUR LA CRÉATION D'UNE NOUVELLE PERMISSION
  */
 class AddPermissionType extends AbstractType
 {
