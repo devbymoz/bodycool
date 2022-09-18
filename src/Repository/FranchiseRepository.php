@@ -40,6 +40,10 @@ class FranchiseRepository extends ServiceEntityRepository
     }
 
 
+
+
+
+    
 //    /**
 //     * @return Franchise[] Returns an array of Franchise objects
 //     */

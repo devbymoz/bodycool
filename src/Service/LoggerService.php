@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 class LoggerService 
 {
 
-    private $errorNumber;
+    private string $errorNumber;
     private $logger;
 
     public function __construct(LoggerInterface $logger)
