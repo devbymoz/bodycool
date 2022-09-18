@@ -18,9 +18,15 @@
         <div class="block-list-franchise">
             <nav class="select-franchise">
                 <ul>
-                    <li class="active">Toutes</li>
-                    <li>Actives</li>
-                    <li>Inactives</li>
+                    <a href={{ path('app_list_franchise', {numpage: 1}) }}>
+                        <li class="active">Toutes ({{ totalAllFranchise }})</li>
+                    </a>
+                    <a href={{ path('app_list_franchise', {numpage: 1, active: 1}) }}>
+                        <li>Actives</li>
+                    </a>
+                    <a href={{ path('app_list_franchise', {numpage: 1, active: 0})}}>
+                        <li>Inactives <span></span></li>
+                    </a>
                 </ul>
             </nav>
             {{ form_start(form, { 'attr': {'id': 'form-active-franchise'} }) }}  
@@ -52,7 +58,34 @@
                 </section>
             {{ form_end(form) }} 
         </div>
-        <div class="paggination">
+
+        <div class="pagination">
+        {% if nbPage > 1 %}
+            <ul>
+                {% if numpage > 3 %}
+                    <a href={{ path('app_list_franchise', {numpage: 1, active: stateActive}) }}>
+                        <li data-num-page="1"><i class="fa-solid fa-angles-left"></i></li>
+                    </a>
+                {% endif %} 
+                {% if numpage > 1 %}
+                    <a href={{ path('app_list_franchise', {numpage: numpage - 1, active: stateActive}) }}>
+                        <li data-num-page="{{ numpage - 1 }}"><i class="fa-solid fa-angle-left"></i></li>
+                    </a>
+                {% endif %} 
+
+                {% for page in pagination %}
+                    <a href={{ path('app_list_franchise', {numpage: page, active: stateActive}) }}>
+                        {% if page == numpage %}
+                            <li class="page page-active" data-num-page="{{ page }}">{{ page }}</li>
+                        {% else %}
+                            <li class="page" data-num-page="{{ page }}">{{ page }}</li>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </ul>
+        {% endif %} 
         </div>
+
+
     </div>
 {% endblock %} 

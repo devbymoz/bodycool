@@ -585,20 +585,21 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
     }
 }
 .block-cards-franchise {
-    margin: 16px 0;
+    margin: 16px 0 32px;
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
 }
 
 /* Nav pour selectionner les cartes actives ou inactives */
-.select-franchise ul{
+.select-franchise > ul, .select-franchise a {
     display: flex;
-    gap: 16px;
+    gap: 20px;
     color: #7A8290;
     font-weight: 700;
 }
-.select-franchise ul > .active{ color: #00171f; border-bottom: 2px solid #FF5A1F; padding-bottom: 8px;}
+.select-franchise .active, .select-franchise li:hover{ color: #00171f; border-bottom: 2px solid #FF5A1F; padding-bottom: 8px;}
+
 
 
 
@@ -623,4 +624,23 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 }
 
 
+
+/**
+ * PAGINATION *******************************************
+ */
+.pagination ul { display: flex; align-items: center; gap: 8px;}
+.page {
+    height: 33px;
+    width: 45px;
+    background-color: #F4F7FC;
+    border-radius: 8px;
+    color: #00296B;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 700;
+}
+.page:hover { background-color: #003F88; color: #FFF; transition-duration: 400ms;}
+.page-active { background-color: #003F88; color: #FFF; transform: scale(1.1);}
 

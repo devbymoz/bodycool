@@ -138,7 +138,7 @@
  
  
  /**
-  * TRAITEMENT D'UNE REQUETE AJAX SIMPLE.
+  * TRAITEMENT D'UNE REQUETE DE VALIDATION EN AJAX.
   * Affiche un loader le temps du traitement.
   * Affiche une popup de success avec un message.
   * 
@@ -222,7 +222,6 @@
          // On récupere la valeur des checkbox qui sera le parametre de la route à exécuter.
          const inputValueGP = input.getAttribute('value');
          const idFranchise = input.dataset.idFranchise;;
-         console.log(idFranchise);
  
          // On créer l'url de la route à executer avec les paramètre
          const urlchangePermission = 'http://127.0.0.1:8000/franchises/changer-permission-globale-' + idFranchise + '-' +inputValueGP;
@@ -257,7 +256,7 @@
  let checkboxHasStateText = document.querySelectorAll('.state-checkbox-text + * > input[type=checkbox]');
  
  for(let i = 0; i < checkboxHasStateText.length; i++) {
-     checkboxHasStateText[i].addEventListener('click', () => {  
+     checkboxHasStateText[i].addEventListener('change', () => {  
  
          if(checkboxHasStateText[i].checked) {
              stateCheckboxText[i].innerText = 'Active';
@@ -268,6 +267,81 @@
  }
  
  
+
+
+
+
+
+
+/**
+  * PAGINATION AJAX.
+  * 
+  */
+ // On récupère tous les li correspondant à la pagination et le numéro de page correspondant
+ const formData = document.querySelector('#form-active-franchise');
+ const pages = document.querySelectorAll('.pagination li');
+
+ pages.forEach(page => {
+    page.addEventListener('click', (e) => {
+        e.preventDefault()
+        // On récupere la valeur de data-num-page qui correspond au numéro de la page.
+        const numPage = page.dataset.numPage;
+
+        // On créer l'url de la route à executer avec les paramètre
+        const urlChangePage = 'http://127.0.0.1:8000/franchises/page-' + numPage;
+    
+        // On commence le traitement ajax
+        let data = new FormData(formData);
+        console.log(data);
+
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            const loader = document.createElement('div');
+
+            resultat = xhr.response;
+            // On affiche un loader le temps du traitement de la requete
+            if (this.readyState == 3) {
+                //loader.classList.add('loader');
+                //document.body.prepend(loader);
+   
+
+            } else if (this.readyState == 4 && this.status == 200) {
+                // Si la requete c'est bien passée, on affiche un message de succès.
+                console.log(this.response);
+
+
+
+            } else if (this.readyState == 4) {
+                return false;
+            }
+        };
+
+
+        xhr.open('GET', urlChangePage, true);
+        xhr.responseType = 'json';
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+        xhr.send(data);
+    })   
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
  /**
   * SUPPRESSION DE LA PHOTO DE PROFIL (EN AJAX).
@@ -334,4 +408,4 @@
  })
  
  
- 
+  

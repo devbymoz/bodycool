@@ -5,6 +5,7 @@ namespace App\Controller\Franchise;
 use App\Entity\Franchise;
 use App\Entity\Permission;
 use App\Form\Franchise\ActiveFranchiseType;
+use App\Service\PaginationService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 /**
@@ -28,7 +30,170 @@ class DisplayFranchiseController extends AbstractController
      * 
      * @return Response
      */
-    #[Route('/', name: 'app_list_franchise')]
+    #[Route('/{page}-{numpage<\d+>}', name: 'app_list_franchise', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function franchiseListing(
+        ManagerRegistry $doctrine,
+        Request $request, 
+        PaginationService $paginationService,
+        string $page = 'page',
+        int $numpage = 1,
+        ): Response
+    {
+        $repo = $doctrine->getRepository(Franchise::class);
+        $allFranchise = $repo->findAll();
+        $totalAllFranchise = count($allFranchise);
+
+        // Nombre d'éléments par page
+        $nbPerPage = 4;
+
+        // On redirige si le numéro de page est égal à 0
+        if($numpage === 0) {
+            return $this->redirectToRoute($request->get('_route'));
+        }
+        
+        // Les critère que va contenir la requete SQL, suivant les paramètres récupérés.
+        $criteriaRequest = [];
+
+        // Traitement de l'état des franchise.
+        $stateActive = $request->query->get('active');
+
+        // On vérifie que le paramètre active est un 1 ou 0.
+        if($stateActive != 1 && $stateActive != 0 && empty($stateActive)) {
+            return $this->redirectToRoute('app_list_franchise');
+        }
+
+        // On attribut la valeur du parametre active au tableau de critère.
+        if($stateActive === null) {
+            $stateActive = null;
+        } elseif($stateActive == 1) {
+            $criteriaRequest = ['active' => $stateActive];
+        } elseif($stateActive == 0) {
+            $criteriaRequest = ['active' => $stateActive];
+        }
+        
+        // On récupère toutes les éléments et on met une limite
+        $franchises = $repo->findBy(
+            $criteriaRequest,
+            ['id' => 'ASC'], 
+            $nbPerPage,
+            $nbPerPage * ($numpage - 1)
+        );
+
+        // On appelle le service de pagination
+        $paginationService->myPagination($numpage, $nbPerPage, $repo, $criteriaRequest);
+        $nbPage = $paginationService->getNbPage();
+        $pagination = $paginationService->getPagination();
+        $nbrFranchise = $paginationService->getNbrElement();
+        
+        // On redigire si le numéro de page est supperieur au nombre de page disponible.
+        if($numpage > $nbPage ) {
+            return $this->redirectToRoute('app_list_franchise', ['numpage' => $nbPage]);
+        }
+
+        // On assigne le tableau de franchises dans la clé list
+        $data = ['list' => $franchises];
+
+        // Récupère le formulaire des checkbox pour activer ou désactiver une franchise. 
+        $form = $this->createFormBuilder($data)
+            ->add('list', CollectionType::class,[
+                'entry_type' => ActiveFranchiseType::class,
+                ])
+            ->getForm();
+   
+        //dump($franchises[0]);
+        //dd($data);
+        $testFranchise = $repo->findAll();
+        if ($request->isXmlHttpRequest()){
+            return $this->json([
+                'code' => 200, 
+                'content' => json_encode($testFranchise),
+            ], 200);
+        } else {
+            return $this->renderForm('franchise/franchise-listing.html.twig', [
+                'form' => $form,
+                'numpage' => $numpage,                         
+                'nbPage' => $nbPage,
+                'stateActive' => $stateActive,
+                'nbrFranchise' => $nbrFranchise,
+                'totalAllFranchise' => $totalAllFranchise,
+                'pagination' => $pagination,
+            ]);
+        }
+    } 
+
+
+
+
+
+
+    ////Paggination
+
+/* $nbPerPage = 1;
+
+        // On redirige si le numéro de page est égal à 0
+        if($numpage === 0) {
+            return $this->redirectToRoute($request->get('_route'));
+        }
+
+        // On récupère toutes les franchises et on met une limite
+        $franchises = $repo->findBy(
+            [],
+            ['id' => 'ASC'], 
+            $nbPerPage,
+            $nbPerPage * ($numpage - 1)
+          );
+        
+
+        // On récupère toutes les franchises.
+        $allFranchises = $repo->findAll();
+
+        // On calcule le nombre qu'aura la page.
+        $nbPage = intval(ceil(count($allFranchises) / $nbPerPage));
+
+        // On redigire si le numéro de page est supperieur au nombre de page disponible.
+        if($numpage > $nbPage ) {
+            return $this->redirectToRoute('app_list_franchise', ['numpage' => $nbPage]);
+        }
+              
+        // On crée un tableau avec le nombre de page total : les valeurs correspondent au numéro de la page.
+        $paggination = range($numpage, $nbPage);
+        
+        // Si le nombre de page est supérieur à 3, on limite coupe le tableau pour afficher les 3 premières pages et la dernière.
+        if($nbPage > 3) {
+            array_splice($paggination, 3, -1);
+        }
+        // Si on coupe à 3, tu m'affiche des petits points apres le 3eme éléments
+        
+
+        // Si le numéro de page correspond à une des 3 dernières pages, on affiche la paggination des 3 dernières pages. 
+        if($numpage > ($nbPage - 4)) {
+            $paggination = range(3, $nbPage);
+        } */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*     #[Route('/', name: 'app_list_franchise')]
     #[IsGranted('ROLE_ADMIN')]
     public function franchiseListing(ManagerRegistry $doctrine): Response
     {
@@ -48,10 +213,17 @@ class DisplayFranchiseController extends AbstractController
         return $this->renderForm('franchise/franchise-listing.html.twig', [
             'form' => $form,                                 
         ]);
-    } 
+    }  */
 
 
     
+
+
+
+
+
+
+
 
    /**
      * AFFICHE LES DÉTAILS D'UNE FRANCHISE
