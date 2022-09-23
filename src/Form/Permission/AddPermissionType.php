@@ -22,10 +22,10 @@ class AddPermissionType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'Entrez le nom de la permission',
                     'class' => 'input'
-                ),
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new Length([
@@ -38,9 +38,9 @@ class AddPermissionType extends AbstractType
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'Décrivez la permission'
-                ),
+                ],
                 'help' => 'La description doit comporter au moins 10 caractères',
                 'constraints' => [
                     new NotBlank(),

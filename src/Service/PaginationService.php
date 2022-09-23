@@ -12,62 +12,49 @@ class PaginationService extends AbstractController
 {
 
     private int $nbPage;
-    private array $pagination;
     private int $nbrElement;
+    private array $pagination;
 
     /**
-     * Permet d'avoir une pagination.
-     * $numpage : correspond au paramètre du numéro de page de l'url.
-     * $nbPerPage : le nombre d'élément à afficher par page.
-     * $repo : le Repository de l'entité pour laquelle nous devons pagginer, ex = $doctrine->getRepository(Franchise::class);
-     * $criteriaRequest : permet d'ajouter des critères de séléction à la requete.
+     * Permet d'avoir une pagination. Calcule le nombre de page en prenant le nombre d'élément renvoyé par la query avant la limitation.
      * 
-     * @param int $numpage
-     * @param int $nbPerPage
-     * @param [Repository] $repo
-     * @return void
+     * @param int $numpage : correspond au paramètre du numéro de page de l'url.
+     * @param int $nbPerPage : le nombre d'élément à afficher par page.
+     * @param int $nbrElement : le nombre d'élément de la query sans la limitation. 
+     * @return array : le tableau des pages à afficher.
      */
-    public function myPagination($numpage, $nbPerPage, $repo, $criteriaRequest)
+    public function myPagination($numpage, $nbPerPage, $nbrElement)
     {
-        // On récupère tous les éléments de la BDD sans la limitation de page.
-        $allElements = $repo->findBy(
-            $criteriaRequest,
-            ['id' => 'ASC'], 
-        );
-
-        $this->nbrElement = count($allElements);
+        // On initialise la propriété avec le nombre d'élément de la requete.
+        $this->nbrElement = $nbrElement;
 
         // On calcule le nombre de page total que nous aurons.
-        $this->nbPage = intval(ceil(count($allElements) / $nbPerPage));
+        $this->nbPage = intval(ceil($nbrElement / $nbPerPage));
 
-        // On crée un tableau qui va contenir les pages que nous devons afficher.
-        $this->pagination = range($numpage, $this->nbPage);
+        // On crée un tableau qui va contenir le nombre de  pages que nous devrons afficher.
+        $this->pagination = [];
 
-        // On trie le tableau pour ne garder que 4 pages.
-        // On affiche les 4 dernières pages.
-        if($this->nbPage > 3 && $numpage > ($this->nbPage - 3)) {
-            $this->pagination = range(3, $this->nbPage);
-        } elseif($this->nbPage > 4) {
-            // On affiche les 3 pages courantes et la dernière page.
-            array_splice($this->pagination, 3, -1);
-        } elseif($this->nbPage <= 3) {
-            // On affiche toutes les pages.
+        // Conditions pour remplir le tableau de pagination.
+        if ($this->nbPage <= 4) {
+            // Si on a moins de 4 pages, on les affiches toutes
             $this->pagination = range(1, $this->nbPage);
+        } elseif ($this->nbPage > 4 && $this->nbPage - $numpage < 4) {
+            // Si on à plus de 4 pages et que le nombre de page fait partie des 4 dernières pages, on affiche les 4 dernières pages.
+            $this->pagination = range($this->nbPage-3, $this->nbPage);
+        } elseif ($this->nbPage > 4) {
+            // Si on a plus de 4 pages, on affiche les 3 pages en partant du numpage et la dernière page du tableau.
+            // On coupe le tableau pour garder les 3 pages + la derniere.
+            $this->pagination = range($numpage, $this->nbPage);
+            array_splice($this->pagination, 3, -1);
         }
 
-
+        return $this->pagination;
     }
 
-
-
+    
     public function getNbPage()
     {
         return $this->nbPage;
-    }
-
-    public function getPagination()
-    {
-        return $this->pagination;
     }
 
     public function getNbrElement()
@@ -75,5 +62,10 @@ class PaginationService extends AbstractController
         return $this->nbrElement;
     }
 
+    public function getPagination()
+    {
+        return $this->pagination;
+    }
 
+    
 }

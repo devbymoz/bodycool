@@ -23,10 +23,10 @@ class UserType extends AbstractType
         $builder
             ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'Entrez le prénom du propriétaire',
                     'class' => 'input'
-                ),
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new Length([
@@ -39,10 +39,10 @@ class UserType extends AbstractType
             ])
             ->add('lastname', TextType::class, [
                 'label' => 'Nom',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'Entrez le nom du propriétaire',
                     'class' => 'input'
-                ),
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new Length([
@@ -55,10 +55,10 @@ class UserType extends AbstractType
             ])
             ->add('phone', TextType::class, [
                 'label' => 'Numéro de téléphone',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'Entrez son numéro de téléphone',
                     'class' => 'input'
-                ),
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new Length([
@@ -70,10 +70,10 @@ class UserType extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'Entrez l’adresse email du propriétaire',
                     'class' => 'input'
-                ),
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new Email([

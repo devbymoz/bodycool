@@ -3,89 +3,32 @@
 {% block title %}Liste des franchises{% endblock %}
 {% block title_h1 %}Liste des franchises{% endblock %}
 
-
 {% block content %}
-    <div class="list-franchise">
+    <div class="list-franchise ajax-content">
         <h2>Rechercher une franchise</h2>
         <p class="text-light">Recherchez une franchise avec son nom ou son ID.</p>
         <div class="block-search">
-            <input class="input" type="text" name="" id="" placeholder="Entrez le nom d’un franchisé">
-            <input class="input" type="text" name="" id="" placeholder="Ou recherchez avec son ID">
+            <form action="{{ path('app_list_franchise', {active: paramActive}) }}">
+                <input class="input" type="text" name="name" id="name" placeholder="Entrez le nom d’un franchisé">
+                <button type="submit">Rechercher</button>  
+            </form>
+            <form action="{{ path('app_list_franchise', {active: paramActive}) }}">
+                <input class="input" type="text" name="id" id="id" placeholder="Ou recherchez avec son ID">
+                <button type="submit">Rechercher</button>  
+            </form>
         </div>
 
         <div class="dividing-border"></div>
 
-        <div class="block-list-franchise">
-            <nav class="select-franchise">
-                <ul>
-                    <a href={{ path('app_list_franchise', {numpage: 1}) }}>
-                        <li class="active">Toutes ({{ totalAllFranchise }})</li>
-                    </a>
-                    <a href={{ path('app_list_franchise', {numpage: 1, active: 1}) }}>
-                        <li>Actives</li>
-                    </a>
-                    <a href={{ path('app_list_franchise', {numpage: 1, active: 0})}}>
-                        <li>Inactives <span></span></li>
-                    </a>
-                </ul>
-            </nav>
-            {{ form_start(form, { 'attr': {'id': 'form-active-franchise'} }) }}  
-                <section class="block-cards-franchise">
-                    {% for franchise in form.list %}
-                    {% set entity = franchise.vars.value %}
-                        <article class="card-franchise">
-                            <a href="{{ path('app_franchise_unique', {id: entity.id}) }}"><h3>{{ entity.name }}</h3></a> 
-                            <p class="text-light text-xs">{{ entity.userOwner.firstname }} {{ entity.userOwner.lastname }}</p>
-                            <div class="bottom-card-franchise">
-                                <span class="state-checkbox-text {{ noAccess }}">
-                                    {% if entity.active == true %}
-                                        Active
-                                    {% else %}   
-                                        Inactive
-                                    {% endif %} 
-                                </span>
-                                <div id="state-franchise" class="check-toggle">
-                                    {{ form_widget(franchise.active, {'id': entity.id, 'attr': {'class': 'form-add-franchise', 'value': entity.id} })}}
-                                    <label class="toggle-label" for="{{ entity.id }}">
-                                        <span class="btn-toggle"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </article>  
-                    {% else %}
-                        <h3>Aucune franchise disponible</h3>    
-                    {% endfor %}
-                </section>
-            {{ form_end(form) }} 
+        {{ include('franchise/_filter-state.html.twig') }}
+
+        <div class="block-list-franchise state-franchise">
+            <div class="number-resultat-filter"><em></em></div>
+            {{ include('franchise/_franchise-listing.html.twig') }}
         </div>
 
-        <div class="pagination">
-        {% if nbPage > 1 %}
-            <ul>
-                {% if numpage > 3 %}
-                    <a href={{ path('app_list_franchise', {numpage: 1, active: stateActive}) }}>
-                        <li data-num-page="1"><i class="fa-solid fa-angles-left"></i></li>
-                    </a>
-                {% endif %} 
-                {% if numpage > 1 %}
-                    <a href={{ path('app_list_franchise', {numpage: numpage - 1, active: stateActive}) }}>
-                        <li data-num-page="{{ numpage - 1 }}"><i class="fa-solid fa-angle-left"></i></li>
-                    </a>
-                {% endif %} 
-
-                {% for page in pagination %}
-                    <a href={{ path('app_list_franchise', {numpage: page, active: stateActive}) }}>
-                        {% if page == numpage %}
-                            <li class="page page-active" data-num-page="{{ page }}">{{ page }}</li>
-                        {% else %}
-                            <li class="page" data-num-page="{{ page }}">{{ page }}</li>
-                        {% endif %}
-                    </a>
-                {% endfor %}
-            </ul>
-        {% endif %} 
-        </div>
-
-
+        {{ include('franchise/_pagination.html.twig') }}
     </div>
 {% endblock %} 
+
+{% block js_after %}<script type='module' src="{{ asset('/js/franchise.js') }}"></script>{% endblock %}

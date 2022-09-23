@@ -1,0 +1,27 @@
+{# Block pour avoir la pagination, s'utilise avec les paramètres : active, searchid, searchname. #}
+
+<div class="pagination js-pagination">
+{% if nbPage > 1 %}
+    <ul>
+        {% if numpage >= 4 %}
+            <a class="link-js" href={{ path(app.request.attributes.get('_route'), {numpage: 1, active: paramActive, name: paramName, id: paramId}) }}>
+                <i class="fa-solid fa-angles-left"></i>
+            </a>
+        {% endif %} 
+        {% if numpage > 1 %}
+            <a class="link-js" href={{ path(app.request.attributes.get('_route'), {numpage: numpage - 1, active: paramActive, name: paramName, id: paramId}) }}>
+                <i class="fa-solid fa-angle-left"></i>
+            </a>
+        {% endif %}            
+        {% for page in pagination %}
+            <a class="link-js" href={{ path(app.request.attributes.get('_route'), {numpage: page, active: paramActive, name: paramName, id: paramId}) }}>
+                {% if page == numpage %}
+                    <li class="page page-active">{{ page }}</li>
+                {% else %}
+                    <li class="page">{{ page }}</li>
+                {% endif %}
+            </a>
+        {% endfor %}
+    </ul>
+{% endif %} 
+</div>
