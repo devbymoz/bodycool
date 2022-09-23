@@ -584,7 +584,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
         column-gap: 16px;
     }
 }
-.block-cards-franchise > form {
+.block-cards-franchise {
     margin: 16px 0 32px;
     display: grid;
     gap: 16px;
@@ -592,7 +592,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
 }
 
 /* Nav pour selectionner les cartes actives ou inactives */
-.filter-state { margin-bottom: 16px;}
+.filter-state { margin: 16px 0;}
 .filter-state > ul, .filter-state a {
     display: flex;
     gap: 20px;

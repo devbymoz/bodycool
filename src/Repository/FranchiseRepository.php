@@ -17,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class FranchiseRepository extends ServiceEntityRepository
 {
     // Sert à compter le nombre d'élement renvoyer par une query.
-    private int $nbrElement;
+    private array $nbrElement;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -86,8 +86,8 @@ class FranchiseRepository extends ServiceEntityRepository
                 ->setParameter('sname', "%$paramSearchName%");
         }
 
-        // On compte le nombre d'élément de la query sans la limiation, pour pouvoir faire notre pagination et l'envoyer au PaginationService.
-        $this->setNbrElement(count($query->getQuery()->getResult()));
+        // On renvoi la query sans la limiation, pour pouvoir faire notre pagination et l'envoyer au PaginationService.
+        $this->setNbrElement($query->getQuery()->getResult());
         
         // On limite le nombre d'élément à afficher.
         $query = $query
@@ -99,12 +99,12 @@ class FranchiseRepository extends ServiceEntityRepository
 
 
 
-    public function getNbrElement(): int
+    public function getNbrElement(): array
     {
         return $this->nbrElement;
     }
 
-    public function setNbrElement(?int $nbrElement): self
+    public function setNbrElement(?array $nbrElement): self
     {
         $this->nbrElement = $nbrElement;
 

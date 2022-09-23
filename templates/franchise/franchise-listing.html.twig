@@ -5,25 +5,21 @@
 
 {% block content %}
     <div class="list-franchise ajax-content">
-        <h2>Rechercher une franchise</h2>
+        <h2>Recherchez parmis vos {{ totalFranchise }} franchises</h2>
         <p class="text-light">Recherchez une franchise avec son nom ou son ID.</p>
+
         <div class="block-search">
-            <form action="{{ path('app_list_franchise', {active: paramActive}) }}">
-                <input class="input" type="text" name="name" id="name" placeholder="Entrez le nom d’un franchisé">
-                <button type="submit">Rechercher</button>  
-            </form>
-            <form action="{{ path('app_list_franchise', {active: paramActive}) }}">
-                <input class="input" type="text" name="id" id="id" placeholder="Ou recherchez avec son ID">
-                <button type="submit">Rechercher</button>  
-            </form>
+            <input class="input" type="text" name="name" id="name" placeholder="Entrez le nom d’un franchisé">
+            <input class="input" type="text" name="id" id="id" placeholder="Ou recherchez avec son ID">
         </div>
 
         <div class="dividing-border"></div>
 
+        <div class="number-resultat-filter"></div>
+
         {{ include('franchise/_filter-state.html.twig') }}
 
         <div class="block-list-franchise state-franchise">
-            <div class="number-resultat-filter"><em></em></div>
             {{ include('franchise/_franchise-listing.html.twig') }}
         </div>
 
@@ -32,3 +28,5 @@
 {% endblock %} 
 
 {% block js_after %}<script type='module' src="{{ asset('/js/franchise.js') }}"></script>{% endblock %}
+
+

@@ -124,7 +124,7 @@ for (let i = 0; i < noAccess.length; i++) {
  * @param {success, notice} typePopup 
  * 
  */
-export function displayPopup(message, typePopup = 'success') {
+export function displayPopup(message, typePopup = 'success', time = 8000) {
     const popup = document.createElement('div');
     popup.innerText = message;
 
@@ -137,7 +137,7 @@ export function displayPopup(message, typePopup = 'success') {
     document.body.prepend(popup);
     setTimeout(() => {
         popup.remove();
-    }, 8000)
+    }, time)
 }
 
 
