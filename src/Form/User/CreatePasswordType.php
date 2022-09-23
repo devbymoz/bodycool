@@ -22,21 +22,21 @@ class CreatePasswordType extends AbstractType
         $builder
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'first_options'  => array(
+                'first_options'  => [
                     'label' => 'Mot de passe', 
-                    'attr' => array(
+                    'attr' => [
                         'placeholder' => 'Saisissez un mot de passe',
                         'class' => 'input'
-                    ),
+                    ],
                     'help' => 'Votre mot de passe doit contenir au minimum 8 caractères'
-                ),
-                'second_options' => array(
+                ],
+                'second_options' => [
                     'label' => 'Confirmer le mot de passe', 
-                    'attr' => array(
+                    'attr' => [
                         'placeholder' => 'Retapez le mot de passe',
                         'class' => 'input'
-                    )
-                ),
+                    ]
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new Length([

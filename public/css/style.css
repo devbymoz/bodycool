@@ -584,22 +584,22 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle{ left: 50%;right: 0
         column-gap: 16px;
     }
 }
-.block-cards-franchise {
+.block-cards-franchise > form {
     margin: 16px 0 32px;
     display: grid;
     gap: 16px;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
 /* Nav pour selectionner les cartes actives ou inactives */
-.select-franchise > ul, .select-franchise a {
+.filter-state { margin-bottom: 16px;}
+.filter-state > ul, .filter-state a {
     display: flex;
     gap: 20px;
     color: #7A8290;
     font-weight: 700;
 }
-.select-franchise .active, .select-franchise li:hover{ color: #00171f; border-bottom: 2px solid #FF5A1F; padding-bottom: 8px;}
-
+.filter-state .active, .filter-state li:hover{ color: #00171f; border-bottom: 2px solid #FF5A1F; padding-bottom: 8px;}
 
 
 

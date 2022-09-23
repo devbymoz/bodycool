@@ -1,0 +1,30 @@
+{# Permet d'afficher la liste des franchises #}
+
+<section class="block-cards-franchise js-content">  
+    {{ form_start(form.list, { 'attr': {'class': 'form-state-franchise' } }) }}  
+        {% for franchise in form.list %}
+            {% set entity = franchise.vars.value %}
+            <article class="card-franchise">
+                <a href="{{ path('app_franchise_unique', {id: entity.id}) }}"><h3>{{ entity.name }}</h3></a> 
+                <p class="text-light text-xs">{{ entity.userOwner.firstname }} {{ entity.userOwner.lastname }}</p>
+                <div class="bottom-card-franchise">
+                    <span class="state-checkbox-text">
+                        {% if entity.active == true %}
+                            Active
+                        {% else %}   
+                            Inactive
+                        {% endif %} 
+                    </span>
+                    <div id="state-franchise" class="check-toggle">
+                        {{ form_widget(franchise.active, {'id': entity.id, 'attr': {'class': 'form-add-franchise', 'value': entity.id} })}}
+                        <label class="toggle-label" for="{{ entity.id }}">
+                            <span class="btn-toggle"></span>
+                        </label>
+                    </div>
+                </div>
+            </article>  
+        {% else %}
+            <h3>Aucune franchise disponible</h3>    
+        {% endfor %}
+    {{ form_end(form.list) }} 
+</section>

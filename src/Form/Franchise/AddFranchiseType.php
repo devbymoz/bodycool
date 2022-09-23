@@ -27,10 +27,10 @@ class AddFranchiseType extends AbstractType
         $builder
              ->add('name', TextType::class, [
                 'label' => 'Nom de la franchise',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'Entrez le nom de la franchise',
                     'class' => 'input'
-                ),
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new Length([

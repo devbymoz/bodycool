@@ -16,6 +16,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FranchiseRepository extends ServiceEntityRepository
 {
+    // Sert à compter le nombre d'élement renvoyer par une query.
+    private int $nbrElement;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Franchise::class);
@@ -40,32 +43,88 @@ class FranchiseRepository extends ServiceEntityRepository
     }
 
 
+    /**
+     * Récupère les franchises en fonction des critères suivants :
+     *
+     * @param [bool] $stateActive : l'état de la franchise.
+     * @param [id] $paramSearchId : rechercher par id de franchise.
+     * @param [string] $paramSearchName : recherche par nom de franchise.
+     * @param [int] $nbPerPage : nombre d'élément par page.
+     * @param [int] $numpage : numéro de page du parametre page.
+     * @return array : le resultat de la requete.
+     */
+    public function findFranchisesFilter(
+        $stateActive, 
+        $paramSearchId, 
+        $paramSearchName,
+        $nbPerPage,
+        $numpage
+        )
+    {
+        $query = $this
+            ->createQueryBuilder('f')
+            ->orderBy('f.id', 'ASC');
+
+        // Si nous avons une selection par état de franchise.
+        if (!empty($stateActive) || $stateActive != null) {
+            $query = $query
+                ->andWhere('f.active = :a')
+                ->setParameter('a', $stateActive);
+        }
+
+        // Si nous avons un recherche par id de franchise.
+        if (!empty($paramSearchId)) {
+            $query = $query
+                ->andWhere('f.id = :sid')
+                ->setParameter('sid', $paramSearchId);
+        }
+
+        // Si nous avons un recherche par nom de franchise.
+        if (!empty($paramSearchName)) {
+            $query = $query
+                ->andWhere('f.name LIKE :sname')
+                ->setParameter('sname', "%$paramSearchName%");
+        }
+
+        // On compte le nombre d'élément de la query sans la limiation, pour pouvoir faire notre pagination et l'envoyer au PaginationService.
+        $this->setNbrElement(count($query->getQuery()->getResult()));
+        
+        // On limite le nombre d'élément à afficher.
+        $query = $query
+            ->setMaxResults($nbPerPage)
+            ->setFirstResult($nbPerPage * ($numpage - 1));
+
+        return $query->getQuery()->getResult();
+    }
 
 
 
-    
-//    /**
-//     * @return Franchise[] Returns an array of Franchise objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getNbrElement(): int
+    {
+        return $this->nbrElement;
+    }
 
-//    public function findOneBySomeField($value): ?Franchise
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function setNbrElement(?int $nbrElement): self
+    {
+        $this->nbrElement = $nbrElement;
+
+        return $this;
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
