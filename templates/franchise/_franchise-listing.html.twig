@@ -1,7 +1,7 @@
 {# Permet d'afficher la liste des franchises #}
 
-<section class="block-cards-franchise js-content">  
-    {{ form_start(form.list, { 'attr': {'class': 'form-state-franchise' } }) }}  
+{{ form_start(form.list, { 'attr': {'class': 'form-state-franchise' } }) }}  
+    <section class="block-cards-franchise js-content">  
         {% for franchise in form.list %}
             {% set entity = franchise.vars.value %}
             <article class="card-franchise">
@@ -23,8 +23,6 @@
                     </div>
                 </div>
             </article>  
-        {% else %}
-            <h3>Aucune franchise disponible</h3>    
         {% endfor %}
-    {{ form_end(form.list) }} 
-</section>
+    </section>
+ {{ form_end(form.list) }} 

@@ -50,10 +50,10 @@ btnSelectAvatar.addEventListener('input', (e) => {
 
     if (!mimeAccepted.includes(typePictureSend)) {
         const message = 'Votre photo doit être au format jpeg, png ou bmp';
-        displayPopup(message, 'notice');
+        displayPopup(message, 'notice', 3000);
     } else if (sizePictureSend > 2000000) {
         const message = 'La photo séléctionnée dépasse les 2Mo';
-        displayPopup(message, 'notice');
+        displayPopup(message, 'notice', 3000);
     } else {
         detailSelectAvatar.textContent = namePictureSend + ' : Cliquer sur le bouton enregistrer pour confirmer';
         detailSelectAvatar.style.color = '#2668e2';

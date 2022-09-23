@@ -33,29 +33,11 @@ class DisplayFranchiseController extends AbstractController
     #[Route('/{numpage<\d+>}', name: 'app_list_franchise', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function franchiseListing(
-        ManagerRegistry $doctrine,
         Request $request,
         PaginationService $paginationService,
         FranchiseRepository $franchiseRepo,
         int $numpage = 1,
     ): Response {
-        // On récupère le nombre de franchise suivant leur état.
-        $allFranchise = $franchiseRepo->findAll();
-
-        $nbrAllFranchise = count($franchiseRepo->findAll());
-        $nbrFranchiseEnable = 0;
-        $nbrFranchiseDisable = 0;
-
-        // On compte le nombre de franchise activé et désactivé.
-        foreach ($allFranchise as $active) {
-            if ($active->isActive() === true) {
-                $nbrFranchiseEnable++;
-            }
-            if ($active->isActive() === false) {
-                $nbrFranchiseDisable++;
-            }
-        }
-
         // On redirige si le numéro de page vaut 0
         if ($numpage === 0) {
             return $this->redirectToRoute($request->get('_route'));
@@ -76,9 +58,11 @@ class DisplayFranchiseController extends AbstractController
             return $this->redirectToRoute('app_list_franchise');
         }
 
-        // PAGINATION ET FILTRE
-        // Nombre d'éléments à afficher par page
-        $nbPerPage = 1;
+        // On récupère le nombre total de franchise dans la BDD.
+        $totalFranchise = count($franchiseRepo->findAll());
+
+        // Nombre d'éléments à afficher par page.
+        $nbPerPage = 3;
 
         // On récupère les franchises en fonction des paramètres de la requete.
         $franchises = $franchiseRepo->findFranchisesFilter(
@@ -89,21 +73,31 @@ class DisplayFranchiseController extends AbstractController
             $numpage
         );
 
+        // On récupère le nombre de franchise avant la limitation SQL.
+        $nbrFranchise = count($franchiseRepo->getNbrElement());
+        $nbrFranchiseEnable = 0;
+        $nbrFranchiseDisable = 0;
+
+        // On compte le nombre de franchise activé et désactivé pour les envoyer à la vue.
+        foreach ($franchiseRepo->getNbrElement() as $active) {
+            if ($active->isActive() === true) {
+                $nbrFranchiseEnable++;
+            }
+            if ($active->isActive() === false) {
+                $nbrFranchiseDisable++;
+            }
+        }
+
         // On appelle le service de pagination
-        $paginationService->myPagination(
-            $numpage, 
-            $nbPerPage, 
-            $franchiseRepo->getNbrElement()
-        );
+        $paginationService->myPagination($numpage, $nbPerPage, $nbrFranchise);
 
         // On récupère certaines valeurs pour les afficher dans la vue.
         $pagination = $paginationService->getPagination();
         $nbPage = $paginationService->getNbPage();
-        $nbrFranchiseFilter = $paginationService->getNbrElement();
 
         // On redigire si le numéro de page est superieur au nombre de page disponible.
         /* if($numpage > $nbPage && is_numeric($numpage)) {
-            return $this->redirectToRoute('app_list_franchise', ['numpage' => $nbPage]);
+            return $this->redirectToRoute('app_list_franchise');
         } */
 
         // On assigne le tableau de franchises dans la clé list.
@@ -124,7 +118,7 @@ class DisplayFranchiseController extends AbstractController
                     'form' => $form->createView(),
                     'numpage' => $numpage,
                     'paramActive' => $paramActive,
-                    'nbrAllElement' => $nbrAllFranchise
+                    'nbrAllElement' => $nbrFranchise
                 ]),
                 'pagination' => $this->renderView('franchise/_pagination.html.twig', [
                     'pagination' => $pagination,
@@ -138,12 +132,11 @@ class DisplayFranchiseController extends AbstractController
                     'paramActive' => $paramActive,
                     'paramName' => $paramName,
                     'paramId' => $paramId,
-                    'nbrAllElement' => $nbrAllFranchise,
+                    'nbrAllElement' => $nbrFranchise,
                     'nbrElementEnable' => $nbrFranchiseEnable,
                     'nbrElementDisable' => $nbrFranchiseDisable,
                 ]),
-                'nbrElementFilter' => $nbrFranchiseFilter,
-
+                'nbrAllElement' => $nbrFranchise,
             ], 200);
         } else {
             return $this->renderForm('franchise/franchise-listing.html.twig', [
@@ -154,11 +147,10 @@ class DisplayFranchiseController extends AbstractController
                 'paramId' => $paramId,
                 'nbPage' => $nbPage,
                 'numpage' => $numpage,
-                'nbrAllElement' => $nbrAllFranchise,
+                'nbrAllElement' => $nbrFranchise,
                 'nbrElementEnable' => $nbrFranchiseEnable,
                 'nbrElementDisable' => $nbrFranchiseDisable,
-
-                'nbrElementFilter' => $nbrFranchiseFilter,
+                'totalFranchise' => $totalFranchise
             ]);
         }
     }

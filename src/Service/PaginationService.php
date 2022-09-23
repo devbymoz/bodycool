@@ -12,7 +12,6 @@ class PaginationService extends AbstractController
 {
 
     private int $nbPage;
-    private int $nbrElement;
     private array $pagination;
 
     /**
@@ -25,9 +24,6 @@ class PaginationService extends AbstractController
      */
     public function myPagination($numpage, $nbPerPage, $nbrElement)
     {
-        // On initialise la propriété avec le nombre d'élément de la requete.
-        $this->nbrElement = $nbrElement;
-
         // On calcule le nombre de page total que nous aurons.
         $this->nbPage = intval(ceil($nbrElement / $nbPerPage));
 
@@ -55,11 +51,6 @@ class PaginationService extends AbstractController
     public function getNbPage()
     {
         return $this->nbPage;
-    }
-
-    public function getNbrElement()
-    {
-        return $this->nbrElement;
     }
 
     public function getPagination()

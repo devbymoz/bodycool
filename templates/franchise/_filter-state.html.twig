@@ -3,12 +3,12 @@
 
 <nav class="filter-state js-filter">
     <ul>
-        <a class="link-js" href="{{ path(app.request.attributes.get('_route'), {numpage: 1}) }}">
+        <a class="link-js" href="{{ path(app.request.attributes.get('_route'), {numpage: 1, name: paramName, id: paramId}) }}">
             <li 
                 {% if paramActive == null %}
                     class="active" 
                 {% endif %}
-                >Toutes ({{ nbrAllElement }})
+                >Toutes
             </li>
         </a>
         <a class="link-js" href="{{ path(app.request.attributes.get('_route'), {numpage: 1, active: 1, name: paramName, id: paramId}) }}">
@@ -16,7 +16,7 @@
                 {% if paramActive == 1 %}
                     class="active" 
                 {% endif %}
-                >Actives ({{ nbrElementEnable }})
+                >Actives
             </li>
         </a>
         <a class="link-js" href={{ path(app.request.attributes.get('_route'), {numpage: 1, active: 0, name: paramName, id: paramId})}}>
@@ -24,7 +24,7 @@
                 {% if paramActive != null and paramActive !=1 %}
                     class="active"
                 {% endif %}
-                >Inactives ({{ nbrElementDisable }})
+                >Inactives
             </li>
         </a>
     </ul>
