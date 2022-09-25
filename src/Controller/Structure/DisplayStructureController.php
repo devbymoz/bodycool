@@ -4,12 +4,17 @@ namespace App\Controller\Structure;
 
 use App\Entity\Franchise;
 use App\Entity\Structure;
+use App\Form\Structure\ActiveStructureType;
+use App\Repository\StructureRepository;
+use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * AFFICHAGE DES STRUCTURES
@@ -18,6 +23,139 @@ use Doctrine\Persistence\ManagerRegistry;
 #[Route('/structures')]
 class DisplayStructureController extends AbstractController
 {
+    /**
+     * LISTE DE TOUTES LES STRUCTURES
+     * 
+     * @return Response
+     */
+    #[Route('/{numpage<\d+>}', name: 'app_list_structure', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function structureListing(
+        Request $request,
+        PaginationService $paginationService,
+        StructureRepository $structureRepo,
+        int $numpage = 1,
+    ): Response {
+        // On redirige si le numéro de page vaut 0
+        if ($numpage === 0) {
+            return $this->redirectToRoute($request->get('_route'));
+        }
+
+        // Les paramètres GET de la rechercher.
+        $paramActive = $request->get('active');
+        $paramId = $request->get('id');
+        $paramName = $request->get('name');
+
+        // On vérifie que le param active n'est pas different de 1 ou 0.
+        if ($paramActive != 1 && $paramActive != 0 && empty($paramActive)) {
+            return $this->redirectToRoute('app_list_structure');
+        }
+
+        // On vérifie que la valeur de l'id est bien un numerique.
+        if (isset($paramId) && !is_numeric($paramId)) {
+            return $this->redirectToRoute('app_list_structure');
+        }
+
+        // On récupère le nombre total de structure dans la BDD.
+        $totalStructure = count($structureRepo->findAll());
+
+        // Nombre d'éléments à afficher par page.
+        $nbPerPage = 4;
+
+        // On récupère les structures en fonction des paramètres de la requete.
+        $structures = $structureRepo->findElementFilter(
+            $paramActive,
+            $paramId,
+            $paramName,
+            $nbPerPage,
+            $numpage
+        );
+
+        // On récupère le nombre de structure avant la limitation SQL.
+        $nbrStructure = count($structureRepo->getNbrElement());
+        $nbrStructureEnable = 0;
+        $nbrStructureDisable = 0;
+
+        // On compte le nombre de structure activée et désactivée pour les envoyer à la vue.
+        foreach ($structureRepo->getNbrElement() as $active) {
+            if ($active->isActive() === true) {
+                $nbrStructureEnable++;
+            }
+            if ($active->isActive() === false) {
+                $nbrStructureDisable++;
+            }
+        }
+
+        // On appelle le service de pagination
+        $paginationService->myPagination($numpage, $nbPerPage, $nbrStructure);
+
+        // On récupère certaines valeurs pour les afficher dans la vue.
+        $pagination = $paginationService->getPagination();
+        $nbPage = $paginationService->getNbPage();
+
+        // On redigire si le numéro de page est superieur au nombre de page disponible.
+        /* if($numpage > $nbPage && is_numeric($numpage)) {
+            return $this->redirectToRoute('app_list_franchise');
+        } */
+
+        // On assigne le tableau de franchises dans la clé list.
+        $data = ['list' => $structures];
+
+        // Récupère le formulaire des checkbox pour activer ou désactiver une structure. 
+        $form = $this->createFormBuilder($data)
+            ->add('list', CollectionType::class, [
+                'entry_type' => ActiveStructureType::class,
+            ])
+            ->getForm();
+
+        // Si la requête reçu contient un param Ajax. 
+        if ($request->get('ajax')) {
+            return new JsonResponse([
+                'code' => 200,
+                'content' => $this->renderView('include/_structure-listing.html.twig', [
+                    'form' => $form->createView(),
+                    'numpage' => $numpage,
+                    'paramActive' => $paramActive,
+                    'nbrAllElement' => $nbrStructure
+                ]),
+                'pagination' => $this->renderView('include/_pagination.html.twig', [
+                    'pagination' => $pagination,
+                    'numpage' => $numpage,
+                    'nbPage' => $nbPage,
+                    'paramActive' => $paramActive,
+                    'paramName' => $paramName,
+                    'paramId' => $paramId,
+                ]),
+                'filterState' => $this->renderView('include/_filter-state.html.twig', [
+                    'paramActive' => $paramActive,
+                    'paramName' => $paramName,
+                    'paramId' => $paramId,
+                    'nbrAllElement' => $nbrStructure,
+                    'nbrElementEnable' => $nbrStructureEnable,
+                    'nbrElementDisable' => $nbrStructureDisable,
+                ]),
+                'nbrAllElement' => $nbrStructure,
+            ], 200);
+        } else {
+            return $this->renderForm('structure/structure-listing.html.twig', [
+                'form' => $form,
+                'pagination' => $pagination,
+                'paramActive' => $paramActive,
+                'paramName' => $paramName,
+                'paramId' => $paramId,
+                'nbPage' => $nbPage,
+                'numpage' => $numpage,
+                'nbrAllElement' => $nbrStructure,
+                'nbrElementEnable' => $nbrStructureEnable,
+                'nbrElementDisable' => $nbrStructureDisable,
+                'totalStructure' => $totalStructure
+            ]);
+        }
+    }
+
+
+
+
     /**
      * LISTE DES STRUCTURES APPARTENANT À UNE FRANCHISE.
      * 
@@ -104,20 +242,10 @@ class DisplayStructureController extends AbstractController
         }
 
 
-
-
         return $this->renderForm('structure/single-structure.html.twig', [
             'structure' => $structure,
             'franchise' => $franchise,
             'userAdminStructure' => $userAdminStructure
-
-
-
         ]);
     }
-
-
-
-
-
 }

@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="list-franchise ajax-content">
-        <h2>Recherchez parmis vos {{ totalFranchise }} franchises</h2>
+        <h2>Recherchez une franchise</h2>
         <p class="text-light">Recherchez une franchise avec son nom ou son ID.</p>
 
         <div class="block-search">
@@ -15,18 +15,16 @@
 
         <div class="dividing-border"></div>
 
+        {{ include('include/_filter-state.html.twig') }}
+
         <div class="number-resultat-filter"></div>
 
-        {{ include('franchise/_filter-state.html.twig') }}
+        {{ include('include/_franchise-listing.html.twig') }}
 
-        <div class="block-list-franchise state-franchise">
-            {{ include('franchise/_franchise-listing.html.twig') }}
-        </div>
-
-        {{ include('franchise/_pagination.html.twig') }}
+        {{ include('include/_pagination.html.twig') }}
     </div>
 {% endblock %} 
 
-{% block js_after %}<script type='module' src="{{ asset('/js/franchise.js') }}"></script>{% endblock %}
+{% block js_after %}<script type='module' src="{{ asset('/js/franchise-structure.js') }}"></script>{% endblock %}
 
 

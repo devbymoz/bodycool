@@ -78,7 +78,7 @@ class DisplayFranchiseController extends AbstractController
         $nbrFranchiseEnable = 0;
         $nbrFranchiseDisable = 0;
 
-        // On compte le nombre de franchise activé et désactivé pour les envoyer à la vue.
+        // On compte le nombre de franchise activée et désactivée pour les envoyer à la vue.
         foreach ($franchiseRepo->getNbrElement() as $active) {
             if ($active->isActive() === true) {
                 $nbrFranchiseEnable++;
@@ -114,13 +114,13 @@ class DisplayFranchiseController extends AbstractController
         if ($request->get('ajax')) {
             return new JsonResponse([
                 'code' => 200,
-                'content' => $this->renderView('franchise/_franchise-listing.html.twig', [
+                'content' => $this->renderView('include/_franchise-listing.html.twig', [
                     'form' => $form->createView(),
                     'numpage' => $numpage,
                     'paramActive' => $paramActive,
                     'nbrAllElement' => $nbrFranchise
                 ]),
-                'pagination' => $this->renderView('franchise/_pagination.html.twig', [
+                'pagination' => $this->renderView('include/_pagination.html.twig', [
                     'pagination' => $pagination,
                     'numpage' => $numpage,
                     'nbPage' => $nbPage,
@@ -128,7 +128,7 @@ class DisplayFranchiseController extends AbstractController
                     'paramName' => $paramName,
                     'paramId' => $paramId,
                 ]),
-                'filterState' => $this->renderView('franchise/_filter-state.html.twig', [
+                'filterState' => $this->renderView('include/_filter-state.html.twig', [
                     'paramActive' => $paramActive,
                     'paramName' => $paramName,
                     'paramId' => $paramId,

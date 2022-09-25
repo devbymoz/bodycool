@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des structure{% endblock %}
+{% block title_h1 %}Liste des structure{% endblock %}
+
+{% block content %}
+    <div class="list-structure ajax-content">
+        <h2>Recherchez une structure</h2>
+        <p class="text-light">Recherchez une structure avec son nom ou son ID.</p>
+
+        <div class="block-search">
+            <input class="input" type="text" name="name" id="name" placeholder="Entrez le nom d’une structure">
+            <input class="input" type="text" name="id" id="id" placeholder="Ou recherchez avec son ID">
+        </div>
+
+        <div class="dividing-border"></div>
+
+        {{ include('include/_filter-state.html.twig') }}
+
+        <div class="number-resultat-filter"></div>
+
+        {{ include('include/_structure-listing.html.twig') }}
+       
+        {{ include('include/_pagination.html.twig') }} 
+    </div>
+{% endblock %} 
+
+{% block js_after %}<script type='module' src="{{ asset('/js/franchise-structure.js') }}"></script>{% endblock %}
+

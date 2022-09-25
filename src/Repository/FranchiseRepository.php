@@ -16,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FranchiseRepository extends ServiceEntityRepository
 {
-    // Sert à compter le nombre d'élement renvoyer par une query.
+    // Sert à stocker le nombre d'élement renvoyer par une query.
     private array $nbrElement;
 
     public function __construct(ManagerRegistry $registry)

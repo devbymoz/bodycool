@@ -1,7 +1,7 @@
 {# Permet d'afficher la liste des franchises #}
 
-{{ form_start(form.list, { 'attr': {'class': 'form-state-franchise' } }) }}  
-    <section class="block-cards-franchise js-content">  
+{{ form_start(form.list, { 'attr': {'class': 'js-content state-franchise'} }) }}  
+    <section class="block-cards-franchise">  
         {% for franchise in form.list %}
             {% set entity = franchise.vars.value %}
             <article class="card-franchise">
@@ -15,7 +15,7 @@
                             Inactive
                         {% endif %} 
                     </span>
-                    <div id="state-franchise" class="check-toggle">
+                    <div class="check-toggle">
                         {{ form_widget(franchise.active, {'id': entity.id, 'attr': {'class': 'form-add-franchise', 'value': entity.id} })}}
                         <label class="toggle-label" for="{{ entity.id }}">
                             <span class="btn-toggle"></span>
