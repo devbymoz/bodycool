@@ -98,7 +98,6 @@ class FranchiseRepository extends ServiceEntityRepository
     }
 
 
-
     public function getNbrElement(): array
     {
         return $this->nbrElement;

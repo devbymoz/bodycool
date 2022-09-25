@@ -18,7 +18,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 
 /**
- * CRÉATION, MISE À JOUR, SUPPRESSION DES FRANCHISES
+ * CRÉATION, MISE À JOUR, SUPRESSION DES FRANCHISES
  * 
  */
 #[Route('/franchises')]
@@ -26,8 +26,8 @@ class CudFranchiseController extends AbstractController
 {
     /**
      * CRÉATION D'UNE NOUVELLE FRANCHISE
-     * - Créer une nouvelle franchise.
-     * - Créer un nouvelle utilisateur qui sera le propriétaire de la franchise.
+     * - Crée une nouvelle franchise.
+     * - Crée un nouvel utilisateur qui sera le propriétaire de la franchise.
      * - Attribution des permissions globales qui seront liées à la franchise.
      * 
      * @return Response

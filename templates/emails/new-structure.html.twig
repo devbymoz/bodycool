@@ -1,0 +1,8 @@
+{% extends "base-email.html.twig" %}
+
+{% block titre %}Votre structure a bien été créée{% endblock %}
+
+{% block content %}
+    <p>Bonjour {{ userOwner.getFirstname }}, nous vous confirmons la création de votre nouvelle structure : {{ data.name }}, elle est gérée par {{ userAdmin.getLastname }} {{ userAdmin.getFirstname }}</p>
+{% endblock %}
+

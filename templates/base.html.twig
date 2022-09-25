@@ -36,20 +36,22 @@
                                     <i class="fa-regular fa-circle-user"></i>
                                     <li>Profil</li>
                                 </a>
-                                {% if 'ROLE_FRANCHISE' in app.user.roles %}
+                                {% if 'ROLE_FRANCHISE' in app.user.roles|first %}
                                     <a href="{{ path('app_franchise_unique', {id: app.user.franchise.id}) }}">
                                         <i class="fa-regular fa-address-card"></i>
                                         <li>Franchise</li>
                                     </a>
-                                {% endif %}   
-                                {% if 'ROLE_FRANCHISE' in app.user.roles or 'ROLE_GESTIONNAIRE' in app.user.roles %}
-                                    <a href="#">
+                                    <a href="{{ path('app_mes_structures') }}">
                                         <i class="fa-regular fa-building"></i>
-                                        <li>{{ ('ROLE_FRANCHISE' in app.user.roles|first) ? 
-                                        'Structures' : 'Structure' }}</li>
+                                        <li>Structures</li>
                                     </a>
-                                {% endif %}
-
+                                {% endif %}   
+                                {% if 'ROLE_GESTIONNAIRE' in app.user.roles|first %}
+                                    <a href="{{ path('app_mes_structures') }}">
+                                        <i class="fa-regular fa-building"></i>
+                                        <li>Structure</li>
+                                    </a>
+                                {% endif %}   
                             </ul>
                     </section>
                     <section class="technician-menu">
@@ -68,7 +70,7 @@
                                     <i class="fa-regular fa-rectangle-list"></i>
                                     <li>Les structures</li>
                                 </a>
-                                <a href="profi">
+                                <a href="{{ path('app_ajouter_structure') }}">
                                     <i class="fa-regular fa-square-plus"></i>
                                     <li>Ajouter une structure</li>
                                 </a>

@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une structure{% endblock %}
+{% block title_h1 %}Ajouter une structure{% endblock %}
+
+{% block content %}
+    <div class="add-structure">
+        {{ form_start(form, { 'attr': {'class': 'form-add-structure'} }) }}
+            <section class="add-user">
+                <div class="form-user">
+                    <h2>Détails sur le gestionnaire</h2>
+                    <div class="block-input">
+                        {{ form_label(form.userAdmin.firstname)}}
+                        {{ form_widget(form.userAdmin.firstname)}}
+                        <div class="error-form">
+                            {{ form_errors(form.userAdmin.firstname) }}
+                        </div>
+                    </div>
+                    <div class="block-input">
+                        {{ form_label(form.userAdmin.lastname)}}
+                        {{ form_widget(form.userAdmin.lastname)}}
+                        <div class="error-form">
+                            {{ form_errors(form.userAdmin.lastname) }}
+                        </div>
+                    </div>
+                    <div class="block-input">
+                        {{ form_label(form.userAdmin.phone)}}
+                        {{ form_widget(form.userAdmin.phone)}}
+                        <div class="error-form">
+                            {{ form_errors(form.userAdmin.phone) }}
+                        </div>
+                    </div>
+                    <div class="block-input">
+                        {{ form_label(form.userAdmin.email)}}
+                        {{ form_widget(form.userAdmin.email)}}
+                        <div class="error-form">
+                            {{ form_errors(form.userAdmin.email) }}
+                        </div>
+                    </div>   
+                </div>
+            </section>
+
+            <div class="dividing-border"></div>
+            <section class="block-add-structure">
+                <div class="form-structure">
+                    <h2>Détails sur la structure</h2>
+                    <div class="block-input">
+                        {{ form_label(form.franchise)}}
+                        {{ form_widget(form.franchise)}}
+                        <div class="error-form">
+                            {{ form_errors(form.franchise) }}
+                        </div>
+                    </div>
+                    <div class="block-input">
+                        {{ form_label(form.name)}}
+                        {{ form_widget(form.name)}}
+                        <div class="error-form">
+                            {{ form_errors(form.name) }}
+                        </div>
+                    </div>
+                    <div class="block-input">
+                        {{ form_label(form.phone)}}
+                        {{ form_widget(form.phone)}}
+                        <div class="error-form">
+                            {{ form_errors(form.phone) }}
+                        </div>
+                    </div>
+                     <div class="block-input">
+                        {{ form_label(form.contractNumber)}}
+                        {{ form_widget(form.contractNumber)}}
+                        <div class="error-form">
+                            {{ form_errors(form.contractNumber) }}
+                        </div>
+                    </div>  
+                    <div class="block-input">
+                        {{ form_label(form.address)}}
+                        {{ form_widget(form.address)}}
+                        <div class="error-form">
+                            {{ form_errors(form.address) }}
+                        </div>
+                    </div>   
+                </div>
+            </section>    
+            <button class="btn-primary form-btn" type="submit">Créer une structure</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %} 

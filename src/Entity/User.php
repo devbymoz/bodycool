@@ -58,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'userOwner', cascade: ['persist', 'remove'])]
     private ?Franchise $franchise = null;
 
+    #[ORM\OneToOne(mappedBy: 'userAdmin', cascade: ['persist', 'remove'])]
+    private ?Structure $structure = null;
+
     /**
      * À l'instanciation d'un nouvel utilisateur, on initialise : 
      * - La date de création
@@ -265,6 +268,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->franchise = $franchise;
+
+        return $this;
+    }
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(Structure $structure): self
+    {
+        // set the owning side of the relation if necessary
+        if ($structure->getUserAdmin() !== $this) {
+            $structure->setUserAdmin($this);
+        }
+
+        $this->structure = $structure;
 
         return $this;
     }
