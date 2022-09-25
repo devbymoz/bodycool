@@ -1,0 +1,37 @@
+{# Permet d'afficher la liste des structures #}
+
+{{ form_start(form.list, { 'attr': {'class': 'js-content state-structure'} }) }}  
+    <section class="block-cards-list-structures">  
+        {% for structure in form.list %}
+            {% set entity = structure.vars.value %}
+                <article class="card-my-structures">
+                    <div>
+                        <div class="card-my-structure-name">
+                            <a href="{{ path('app_structure_unique', {id: 1}) }}">
+                                <h3>{{ entity.name }}</h3>
+                            </a>
+                        </div>
+                        <div class="card-info-my-structure">
+                            <p class="text-light">Contrat n° : {{ entity.contractNumber }}</p>
+                            <p class="text-light">Adresse : {{ entity.address }}</p>
+                        </div>
+                    </div>
+                    <div class="bottom-card-franchise">
+                        <span class="state-checkbox-text">
+                            {% if entity.active == true %}
+                                Active
+                            {% else %}   
+                                Inactive
+                            {% endif %} 
+                        </span>
+                        <div class="check-toggle">
+                            {{ form_widget(structure.active, {'id': entity.id, 'attr': {'class': 'form-add-franchise', 'value': entity.id} })}}
+                            <label class="toggle-label" for="{{ entity.id }}">
+                                <span class="btn-toggle"></span>
+                            </label>
+                        </div>
+                    </div>
+                 </article>
+        {% endfor %}
+    </section>
+ {{ form_end(form.list) }} 
