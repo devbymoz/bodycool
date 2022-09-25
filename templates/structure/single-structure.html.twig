@@ -1,32 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Franchise : {{ franchise.getName }}{% endblock %}
+{% block title %}Structure : {{ structure.getName }}{% endblock %}
 {% block title_h1 %}
     {% if is_granted('ROLE_ADMIN') %}
-        Franchise n° {{ franchise.id }}
+        Structure n° {{ structure.id }}
     {% else %}
-        Votre franchise
+        Votre Structure
     {% endif %}
 {% endblock %}
 
 {% block content %}
-    {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}  
+   {#  {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}   #}
         <section class="block-top-page-single">
             <div class="block-left">
-                <h2>{{ franchise.getName }}</h2>
-                <p><strong>Propriétaire : </strong>{{ franchise.userOwner.getFirstname|capitalize }} {{ franchise.userOwner.getLastname|capitalize }}</p>
-                <p><strong>Téléphone : </strong>{{ franchise.userOwner.getPhone }}</p>
-                <p><strong>Nombre de structure détenue : </strong>{3}</p>  
+                <h2>{{ structure.getName }}</h2>
+                <p><strong>Franchise : </strong>
+                    {% if 'ROLE_FRANCHISE' in app.user.roles %}
+                    <a href="{{ path('app_franchise_unique', {id: franchise.id}) }}">{{ franchise.getName|capitalize }}</a>
+                    {% endif %}
+                    {{ franchise.getName|capitalize }}
+                </p>
             </div>
             <div class="dividing-border"></div>
             <div class="block-right">
                 {% if franchise.active %}
-                    <h3>La franchise est active</h3>
+                    <h3>La structure est active</h3>
                 {% else %}
-                    <h3>La franchise est désactivée</h3>
+                    <h3>La structure est désactivée</h3>
                 {% endif %}
                 <div class="check-toggle{{ noAccess }} state-franchise">
-                    {{ form_widget(form.active, {'id': franchise.id, 'attr': {'class': 'form-add-franchise', 'value': franchise.id} })}}
+                   {#  {{ form_widget(form.active, {'id': franchise.id, 'attr': {'class': 'form-add-franchise', 'value': franchise.id} })}} #}
                     <label class="toggle-label" for="{{ franchise.id }}">
                         <span class="btn-toggle"></span>
                     </label>
@@ -36,7 +39,20 @@
 
         <div class="dividing-border"></div>
 
-        <section class="add-global-permission">
+        <section class="block-info-page-single">
+            <div class="block-left">
+                <p><strong>Contrat n° : </strong> {{ structure.contractNumber }}</p>
+                <p><strong>Adresse : </strong> {{ structure.address }}</p>
+            </div>
+            <div class="block-right">
+                <p><strong>Gestionnaire : </strong> {{ userAdminStructure.getFirstname|capitalize }} {{ userAdminStructure.getLastname|capitalize }}</p>
+                <p><strong>Téléphone : </strong> {{ structure.phone }}</p>
+            </div>
+        </section>
+
+        <div class="dividing-border"></div>
+
+        {# <section class="add-global-permission">
             <h2>Permissions globales</h2>
             <p class="text-light">Sélectionnez les permissions globales quepourrontavoir les structures appartenant à cette franchise.</p>
             <div class="block-cards-permission state-global-permission">
@@ -73,7 +89,7 @@
                 {% endfor %}
             </div>
         </section>   
-    {{ form_end(form) }}   
+    {{ form_end(form) }}  #}  
 {% endblock %}
 
 {% block js_after %}<script type='module' src="{{ asset('/js/franchise.js') }}"></script>{% endblock %}

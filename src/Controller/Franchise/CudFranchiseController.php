@@ -126,7 +126,7 @@ class CudFranchiseController extends AbstractController
      * 
      * @return Response Json
      */
-    #[Route('/changer-etat-{id<\d+>}', options: ['expose' => true] , name: 'app_changer_etat_franchise')]
+    #[Route('/changer-etat-{id<\d+>}', name: 'app_changer_etat_franchise')]
     #[IsGranted('ROLE_ADMIN')]
     public function changeStateFranchise(
         $id, 

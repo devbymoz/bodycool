@@ -26,7 +26,7 @@
                             <p class="text-light">Adresse : {{ structure.address }}</p>
                         </div>
                     </div>
-                    <a href="#">
+                    <a href="{{ path('app_structure_unique', {id: structure.id}) }}">
                         <button class="btn-xs">Plus de détails</button>
                     </a>
                  </article>

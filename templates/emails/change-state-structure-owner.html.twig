@@ -1,0 +1,16 @@
+{% extends "base-email.html.twig" %}
+
+{% block titre %}Votre structure a été modifiée{% endblock %}
+
+{% block content %}
+    <p>Bonjour {{ userOwner.firstname }}, votre structure : {{ structure.name}} a été 
+    {% if structure.isActive %}
+        activée
+    {% else %}
+        désactivée.
+    {% endif %}     
+    </p>
+
+    <p>Merci de nous contacter si vous avez des questions.</p> 
+{% endblock %}
+

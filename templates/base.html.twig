@@ -47,11 +47,11 @@
                                     </a>
                                 {% endif %}   
                                 {% if 'ROLE_GESTIONNAIRE' in app.user.roles|first %}
-                                    <a href="{{ path('app_mes_structures') }}">
+                                    <a href="{{ path('app_structure_unique', {id: app.user.structure.id}) }}">
                                         <i class="fa-regular fa-building"></i>
                                         <li>Structure</li>
                                     </a>
-                                {% endif %}   
+                                {% endif %}  
                             </ul>
                     </section>
                     <section class="technician-menu">

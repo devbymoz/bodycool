@@ -148,4 +148,109 @@ class CudStructureController extends AbstractController
             'form' => $form
         ]);
     }
+
+
+
+
+    /**
+     * PERMET D'ACTIVER OU DÉSACTIVER UNE STRUCTURE
+     * 
+     * @return Response Json
+     */
+    #[Route('/changer-etat-{id<\d+>}', name: 'app_changer_etat_structure')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function changeStateFranchise(
+        $id, 
+        ManagerRegistry $doctrine, 
+        EmailService $emailService,
+        LoggerService $loggerService
+        ): Response
+	{
+        $em = $doctrine->getManager();
+        $repo = $doctrine->getRepository(Structure::class);
+
+        // On récupère la structure correspondant à l'id en paramètre.
+        $structure = $repo->findOneBy(['id' => $id]);
+        if (empty($structure)) {
+            throw $this->createNotFoundException('Cette structure n\'existe pas.');
+        }
+        
+        // On récupère le gestionnaire et le franchisé.
+        $userAdminStructure = $structure->getUserAdmin();
+        $userOwner = $structure->getFranchise()->getUserOwner();
+            
+        // On récupère l'état de la structure (activée ou désactivée).
+        $stateStructure = $structure->isActive();
+        
+        // On inverse l'état de la structure.
+        $structure->setActive(!$stateStructure);
+        
+        // On sauvegarde le nouvel état dans une variable
+        $newStateStructure = $structure->isActive();
+
+        // On sauvegarder le nouvel état de la structure en BDD
+        try {
+            $em->flush();
+        } catch (\Exception $e) {
+            $loggerService->logGeneric($e, 'Erreur persistance des données');
+
+            return $this->json([
+                'code' => 500, 
+                'message' => 'Erreur de persistance des données',
+                'structureName' => $structure->getName(), 
+                'errorNumber' => $loggerService->getErrorNumber()
+            ], 500);
+        }
+
+        // On envoi un email au franchisé pour lui indiquer qu'un de ces structures a été changées.
+        try {
+            $emailService->sendEmail(
+                $userOwner->getEmail(), 
+                'Votre structure a été modifiée', 
+                ['structure' => $structure, 'userOwner' => $userOwner], 
+                'emails/change-state-structure-owner.html.twig'
+            );
+
+            // On envoi un email au gestionnaire pour lui indiquer que la structure qu'il gère à changée.
+            $emailService->sendEmail(
+                $userAdminStructure->getEmail(), 
+                'La structure que vous gérez a été modifiée', 
+                ['structure' => $structure, 'userAdminStructure' => $userAdminStructure], 
+                'emails/change-state-structure-admin.html.twig'
+            );
+        } catch (TransportExceptionInterface $e) {
+            $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
+
+            return $this->json([
+                'code' => 500, 
+                'message' => 'Erreur de distribution du mail.',
+                'idStructure' => $structure->getId(),
+                'errorNumber' => $loggerService->getErrorNumber(),
+            ], 500);
+        }
+
+
+        return $this->json([
+            'code' => 200, 
+            'message' => 'Structure modifiée avec success',
+            'newStateStructure' => $newStateStructure,
+            'structureName' => $structure->getName()
+        ], 200);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 }
