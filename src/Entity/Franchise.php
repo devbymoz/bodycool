@@ -33,6 +33,9 @@ class Franchise
     #[ORM\ManyToMany(targetEntity: Permission::class, inversedBy: 'franchises', fetch: 'EAGER', cascade: ['persist', 'remove'])]
     private Collection $globalPermissions;
 
+    #[ORM\OneToMany(mappedBy: 'franchise', targetEntity: Structure::class, orphanRemoval: true)]
+    private Collection $structures;
+
     /**
      * À l'instanciation d'une nouvelle franchise, on initialise :
      * - la date de création
@@ -44,6 +47,7 @@ class Franchise
         $this->createAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
         $this->active = 1;
         $this->globalPermissions = new ArrayCollection();
+        $this->structures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,6 +123,36 @@ class Franchise
     public function removeGlobalPermission(Permission $globalPermission): self
     {
         $this->globalPermissions->removeElement($globalPermission);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Structure>
+     */
+    public function getStructures(): Collection
+    {
+        return $this->structures;
+    }
+
+    public function addStructure(Structure $structure): self
+    {
+        if (!$this->structures->contains($structure)) {
+            $this->structures->add($structure);
+            $structure->setFranchise($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStructure(Structure $structure): self
+    {
+        if ($this->structures->removeElement($structure)) {
+            // set the owning side to null (unless already changed)
+            if ($structure->getFranchise() === $this) {
+                $structure->setFranchise(null);
+            }
+        }
 
         return $this;
     }
