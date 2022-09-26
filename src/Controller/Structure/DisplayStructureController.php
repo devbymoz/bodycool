@@ -23,6 +23,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 #[Route('/structures')]
 class DisplayStructureController extends AbstractController
 {
+
+
     /**
      * LISTE DE TOUTES LES STRUCTURES
      * 

@@ -5,6 +5,7 @@ namespace App\Controller\Structure;
 use App\Entity\Structure;
 use App\Entity\User;
 use App\Form\Structure\AddStructureType;
+use App\Service\ChangeStateService;
 use App\Service\EmailService;
 use App\Service\LoggerService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,6 +24,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 #[Route('/structures')]
 class CudStructureController extends AbstractController
 {
+
 
     /**
      * CRÉATION D'UNE NOUVELLE STRUCTURE
@@ -68,7 +70,7 @@ class CudStructureController extends AbstractController
             if ($checkEmail != []) {
                 $this->addFlash(
                     'notice',
-                    'Cet utilisateur existe déjà'
+                    'Cet email existe déjà'
                 );
             } elseif ($checkNameStructure != []) {
                 $this->addFlash(
@@ -112,17 +114,8 @@ class CudStructureController extends AbstractController
                         ],
                         'emails/confirm-structure.html.twig'
                     );
-                } catch (TransportExceptionInterface $e) {
-                    $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
 
-                    $this->addFlash(
-                        'exception',
-                        'L\'email n\'a pas pu être envoyé au propriétaire. Log n° : ' . $loggerService->getErrorNumber()
-                    );
-                }
-
-                // On envoi un email au franchisé pour lui indiquer que sa structure a bien été créée.
-                try {
+                    // On envoi un email au franchisé pour lui indiquer que sa structure a bien été créée.
                     $emailService->sendEmail(
                         $userOwner->getEmail(),
                         'Votre nouvelle structure a bien été créée',
@@ -133,12 +126,13 @@ class CudStructureController extends AbstractController
                         ],
                         'emails/new-structure.html.twig'
                     );
+
                 } catch (TransportExceptionInterface $e) {
                     $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
 
                     $this->addFlash(
                         'exception',
-                        'L\'email n\'a pas pu être envoyé au franchisé. Log n° : ' . $loggerService->getErrorNumber()
+                        'L\'email n\'a pas pu être envoyé. Log n° : ' . $loggerService->getErrorNumber()
                     );
                 }
             }
@@ -163,10 +157,10 @@ class CudStructureController extends AbstractController
         $id, 
         ManagerRegistry $doctrine, 
         EmailService $emailService,
-        LoggerService $loggerService
+        LoggerService $loggerService, 
+        ChangeStateService $changeStateService 
         ): Response
 	{
-        $em = $doctrine->getManager();
         $repo = $doctrine->getRepository(Structure::class);
 
         // On récupère la structure correspondant à l'id en paramètre.
@@ -179,28 +173,8 @@ class CudStructureController extends AbstractController
         $userAdminStructure = $structure->getUserAdmin();
         $userOwner = $structure->getFranchise()->getUserOwner();
             
-        // On récupère l'état de la structure (activée ou désactivée).
-        $stateStructure = $structure->isActive();
-        
-        // On inverse l'état de la structure.
-        $structure->setActive(!$stateStructure);
-        
-        // On sauvegarde le nouvel état dans une variable
-        $newStateStructure = $structure->isActive();
-
-        // On sauvegarder le nouvel état de la structure en BDD
-        try {
-            $em->flush();
-        } catch (\Exception $e) {
-            $loggerService->logGeneric($e, 'Erreur persistance des données');
-
-            return $this->json([
-                'code' => 500, 
-                'message' => 'Erreur de persistance des données',
-                'structureName' => $structure->getName(), 
-                'errorNumber' => $loggerService->getErrorNumber()
-            ], 500);
-        }
+        // On appel la méthode pour changer l'état de structure.
+        $changeStateService->changeStateObject($structure);
 
         // On envoi un email au franchisé pour lui indiquer qu'un de ces structures a été changées.
         try {
@@ -229,7 +203,6 @@ class CudStructureController extends AbstractController
             ], 500);
         }
 
-
         return $this->json([
             'code' => 200, 
             'message' => 'Structure modifiée avec success',
@@ -237,20 +210,6 @@ class CudStructureController extends AbstractController
             'structureName' => $structure->getName()
         ], 200);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
     
 }
