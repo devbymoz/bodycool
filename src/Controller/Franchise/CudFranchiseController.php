@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 /**
  * CRÉATION, MISE À JOUR, SUPRESSION DES FRANCHISES
@@ -43,7 +43,7 @@ class CudFranchiseController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         EmailService $emailService,
-        LoggerService $loggerService
+        LoggerService $loggerService 
     ): Response {
         $em = $doctrine->getManager();
 
@@ -79,6 +79,11 @@ class CudFranchiseController extends AbstractController
                 // On attribue le role Franchise à l'utilisateur.
                 $user->setRoles(['ROLE_FRANCHISE']);
 
+                // On crée l'url de la franchise.
+                $slugger = new AsciiSlugger();
+                $slug = $slugger->slug(strtolower($data->getName()));
+                $data->setSlug($slug);
+                
                 try {
                     $em->persist($data);
                     $em->flush();
@@ -344,7 +349,6 @@ class CudFranchiseController extends AbstractController
                 'success',
                 'La franchise a bien été supprimée'
             );
-            //return $this->redirectToRoute('app_list_franchise');
         } catch (\Exception $e) {
             $loggerService->logGeneric($e, 'Erreur persistance des données');
 

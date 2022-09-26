@@ -199,10 +199,10 @@ class DisplayStructureController extends AbstractController
      * 
      * @return Response
      */
-    #[Route('/structure-{id<\d+>}', name: 'app_structure_unique')]
+    #[Route('/{slug}/{id<\d+>}', name: 'app_structure_unique')]
     #[IsGranted('ROLE_GESTIONNAIRE')]
     public function singleStucture(
-        $id,
+        $id, $slug,
         Request $request,
         ManagerRegistry $doctrine,
     ): Response {

@@ -166,10 +166,10 @@ class DisplayFranchiseController extends AbstractController
      * 
      * @return Response
      */
-    #[Route('/franchise-{id<\d+>}', name: 'app_franchise_unique')]
+    #[Route('/{slug}/{id<\d+>}', name: 'app_franchise_unique')]
     #[IsGranted('ROLE_FRANCHISE')]
     public function singleFranchise(
-        $id,
+        $id, $slug,
         Request $request,
         ManagerRegistry $doctrine,
     ): Response {

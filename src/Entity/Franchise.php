@@ -36,6 +36,9 @@ class Franchise
     #[ORM\OneToMany(mappedBy: 'franchise', targetEntity: Structure::class, orphanRemoval: true)]
     private Collection $structures;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
     /**
      * À l'instanciation d'une nouvelle franchise, on initialise :
      * - la date de création
@@ -49,6 +52,10 @@ class Franchise
         $this->globalPermissions = new ArrayCollection();
         $this->structures = new ArrayCollection();
     }
+
+
+    // On met tout en minuscule, on supprime les caractère spéciaux, on remplace les espaces par des tirets
+
 
     public function getId(): ?int
     {
@@ -153,6 +160,18 @@ class Franchise
                 $structure->setFranchise(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

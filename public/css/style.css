@@ -515,9 +515,9 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     margin-top: 32px;
 }
 .block-form-login a {
-    display: block;
+    display: flex;
     font-weight: bold;
-    text-align: right;
+    float: right;
     margin-top: 8px;
 }
 @media screen and (min-width: 620px) {
