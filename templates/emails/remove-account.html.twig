@@ -1,0 +1,9 @@
+{% extends "base-email.html.twig" %}
+
+{% block titre %}Votre compte a été supprimé{% endblock %}
+
+{% block content %}
+    <p>Bonjour {{ user.getFirstname }}, votre compte et tout ce qui lui est rattaché ont été suprimé.</p>
+    <p>Merci de nous contacter si vous avez des questions.</p> 
+{% endblock %}
+
