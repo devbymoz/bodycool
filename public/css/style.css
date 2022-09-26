@@ -84,8 +84,6 @@ ul {
     }
 }
 
-
-
 /**
  * DÉBUT FORMULAIRE *******************************************
  */
@@ -830,7 +828,8 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 /**
  * PAGE FRANCHISE UNIQUE, STRUCTURE UNIQUE *******************************************
  */
-.block-top-page-single .block-left > p, .block-info-page-single p {
+.block-top-page-single .block-left > p,
+.block-info-page-single p {
     margin-top: 8px;
 }
 .block-right h3 {
@@ -865,7 +864,6 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
         gap: 32px;
     }
 }
-
 
 /**
  * PAGE LISTE DES FRANCHISES *******************************************
@@ -961,18 +959,19 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 /**
  * PAGE MES STRUCTURES *******************************************
  */
-.block-cards-my-structures, .block-cards-list-structures {
+.block-cards-my-structures,
+.block-cards-list-structures {
     margin: 32px 0;
     display: grid;
     gap: 32px;
     height: 242px;
 }
 @media screen and (min-width: 670px) {
-    .block-cards-my-structures, .block-cards-list-structures {
+    .block-cards-my-structures,
+    .block-cards-list-structures {
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     }
 }
-
 
 /**
  * CARTE DES STRUCTURES *******************************************
@@ -995,10 +994,10 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     border-radius: 100px;
     height: 32px;
     width: 32px;
-    background-color: #23BA5B;
+    background-color: #23ba5b;
     margin-right: 16px;
 }
-.block-cards-my-structures .card-my-structures .disable{
+.block-cards-my-structures .card-my-structures .disable {
     background-color: #ac1d10;
 }
 .card-my-structures button {
@@ -1010,6 +1009,19 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 .card-info-my-structure {
     margin: 16px 0;
 }
-.card-info-my-structure p{
-   margin-top: 8px; 
+.card-info-my-structure p {
+    margin-top: 8px;
+}
+
+/**
+ * CONTENU EDITABLE *******************************************
+ * La balise devient editable via JS
+ */
+.content-editable {
+    display: flex;
+    align-items: center;
+}
+.content-editable i {
+    margin-left: 16px;
+    cursor: pointer;
 }

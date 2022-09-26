@@ -11,9 +11,12 @@
 
 {% block content %}
     {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}  
-        <section class="block-top-page-single">
+        <section class="block-top-page-single content-editable">
             <div class="block-left">
-                <h2>{{ franchise.getName }}</h2>
+                <div class="content-editable">
+                    <h2 data-request="namefranchise">{{ franchise.getName }}</h2>
+                    <i class="fa-regular fa-pen-to-square {{ noAccess }}"></i>
+                </div>
                 <p><strong>Propriétaire : </strong>{{ franchise.userOwner.getFirstname|capitalize }} {{ franchise.userOwner.getLastname|capitalize }}</p>
                 <p><strong>Téléphone : </strong>{{ franchise.userOwner.getPhone }}</p>
                 <p><strong>Nombre de structure détenue : </strong> {{ franchise.structures|length }} </p>  

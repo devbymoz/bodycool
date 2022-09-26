@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 
@@ -366,7 +367,7 @@ class CudFranchiseController extends AbstractController
             $loggerService->logGeneric($e, 'Erreur persistance des données');
 
             return $this->json([
-                'code' => 500, 
+                'code' => 500,
                 'message' => 'Erreur de suppression de la franchise',
                 'idFranchise' => $franchise->getId(),
                 'errorNumber' => $loggerService->getErrorNumber(),
@@ -407,6 +408,68 @@ class CudFranchiseController extends AbstractController
         return $this->json([
             'code' => 200,
             'message' => 'Franchise supprimée avec succès',
+        ], 200);
+    }
+
+
+
+
+    /**
+     * PERMET DE MODIFIER UNE FRANCHISE :
+     * - Le nom de la franchise
+     * 
+     * @return Response Json
+     */
+    #[Route('/modifier-franchise-{id<\d+>}', name: 'app_modifierfranchise')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function editFranchise(
+        $id,
+        LoggerService $loggerService,
+        FranchiseRepository $franchiseRepo,
+        Request $request,
+        ManagerRegistry $doctrine,
+    ) {
+        $em = $doctrine->getManager();
+
+        // On récupère la franchise à modifier
+        $franchise =  $franchiseRepo->findOneBy(['id' => $id]);
+        if (empty($franchise)) {
+            throw $this->createNotFoundException('Cette franchise n\'existe pas.');
+        }
+
+        // On récupère les params de la requete Ajax, le nom est celui indiqué dans l'attribut data-request de la balise HTML.
+        $paramNameFranchise = $request->get('namefranchise');
+
+        if (!empty($paramNameFranchise) && isset($paramNameFranchise)) {
+            // On vérifie que le nom n'est pas déja pris.
+            $checkValue = $franchiseRepo->findOneBy(['name' => $paramNameFranchise]);
+
+            if (!empty($checkValue)) {
+                return new JsonResponse([
+                    'alreadyExists' => 'Ce nom existe déjà'
+                ], 409);
+            }
+            $franchise->setName($paramNameFranchise);
+            $em->persist($franchise);
+        }
+
+        // On modifie la franchise.
+        try {
+            $em->flush();
+        } catch (\Exception $e) {
+            $loggerService->logGeneric($e, 'Erreur persistance des données');
+
+            return $this->json([
+                'code' => 500,
+                'message' => 'Erreur de suppression de la franchise',
+                'idFranchise' => $franchise->getId(),
+                'errorNumber' => $loggerService->getErrorNumber(),
+            ], 500);
+        }
+
+        return new JsonResponse([
+            'code' => 200,
+            'message' => 'Franchise modifiée avec succès'
         ], 200);
     }
 }
