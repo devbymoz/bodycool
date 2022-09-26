@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CrudPermissionController extends AbstractController
 {
+
+    
     /**
      * CRÉATION D'UNE PERMISSION
      *

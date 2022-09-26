@@ -7,7 +7,7 @@ use App\Entity\Permission;
 use App\Entity\User;
 use App\Form\Franchise\AddFranchiseType;
 use App\Repository\FranchiseRepository;
-use App\Repository\UserRepository;
+use App\Service\ChangeStateService;
 use App\Service\EmailService;
 use App\Service\LoggerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -27,6 +27,8 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 #[Route('/franchises')]
 class CudFranchiseController extends AbstractController
 {
+
+
     /**
      * CRÉATION D'UNE NOUVELLE FRANCHISE
      * - Crée une nouvelle franchise.
@@ -134,9 +136,9 @@ class CudFranchiseController extends AbstractController
         $id,
         ManagerRegistry $doctrine,
         EmailService $emailService,
-        LoggerService $loggerService
+        LoggerService $loggerService,
+        ChangeStateService $changeStateService
     ): Response {
-        $em = $doctrine->getManager();
         $repo = $doctrine->getRepository(Franchise::class);
 
         // On récupère la franchise correspondant à l'id en paramètre.
@@ -145,30 +147,11 @@ class CudFranchiseController extends AbstractController
             throw $this->createNotFoundException('Cette franchise n\'existe pas.');
         }
 
+        // On récupère l'email du propriétaire, pour envoyer le mail.
         $emailUserOwner = $franchise->getUserOwner()->getEmail();
 
-        // On récupère l'état de la franchise (activée ou désactivée).
-        $stateFranchise = $franchise->isActive();
-
-        // On inverse l'état de la franchise.
-        $franchise->setActive(!$stateFranchise);
-
-        // On sauvegarde le nouvel état dans une variable
-        $newStateFranchise = $franchise->isActive();
-
-        // On sauvegarder le nouvel état de la franchise en BDD
-        try {
-            $em->flush();
-        } catch (\Exception $e) {
-            $loggerService->logGeneric($e, 'Erreur persistance des données');
-
-            return $this->json([
-                'code' => 500,
-                'message' => 'Erreur de persistance des données',
-                'franchiseName' => $franchise->getName(),
-                'errorNumber' => $loggerService->getErrorNumber()
-            ], 500);
-        }
+        // On appel la méthode pour changer l'état de la franchise.
+        $changeStateService->changeStateObject($franchise);
 
         // On envoi un email au franchisé pour lui indiquer le nouvel état de sa franchise.
         try {
@@ -189,11 +172,10 @@ class CudFranchiseController extends AbstractController
             ], 500);
         }
 
-
         return $this->json([
             'code' => 200,
             'message' => 'franchise modifiée avec success',
-            'newStateFranchise' => $newStateFranchise,
+            'newStateFranchise' => $changeStateService->getNewStateObject(),
             'franchiseName' => $franchise->getName()
         ], 200);
     }
