@@ -5,7 +5,7 @@
         {% for franchise in form.list %}
             {% set entity = franchise.vars.value %}
             <article class="card-franchise">
-                <a href="{{ path('app_franchise_unique', {id: entity.id}) }}"><h3>{{ entity.name }}</h3></a> 
+                <a href="{{ path('app_franchise_unique', {slug: entity.slug, id: entity.id}) }}"><h3>{{ entity.name }}</h3></a> 
                 <p class="text-light text-xs">{{ entity.userOwner.firstname }} {{ entity.userOwner.lastname }}</p>
                 <div class="bottom-card-franchise">
                     <span class="state-checkbox-text">

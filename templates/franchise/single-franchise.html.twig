@@ -21,7 +21,7 @@
                 <p><strong>Téléphone : </strong>{{ franchise.userOwner.getPhone }}</p>
                 <p><strong>Nombre de structure détenue : </strong> {{ franchise.structures|length }} </p>  
                 {% if is_granted('ROLE_ADMIN') %}
-                    <a class="delete-partner" data-id-partner="{{ franchise.id }}">Supprimer la franchise</a>
+                    <a href="{{ path('app_supprimer_franchise', {id: franchise.id}) }}" class="delete-partner">Supprimer la franchise</a>
                 {% endif %}
             </div>
             <div class="dividing-border"></div>

@@ -14,14 +14,14 @@ if (iconHbrgMenu) {
     iconHbrgMenu.addEventListener('click', () => {
         // On supprime la classe qui cache le menu
         displayMenuMobile.classList.remove('display-menu-mobile');
-    
+
         // On ajoute un backgroud sombre pour masquer légérement la page.
         overlayMenuMobile.classList.add('menu-mobile-overlay');
         menuNavigation.before(overlayMenuMobile);
-    
+
         // Au clic sur l'icon de fermeture, on lance la fonction qui ferme le menu.
         iconCloseMenu.addEventListener('click', afterMenuClose)
-    
+
         // Au clic sur le overlay, on lance la fonction qui ferme le menu.
         overlayMenuMobile.addEventListener('click', afterMenuClose)
     })
@@ -136,20 +136,20 @@ export function displayPopup(message, typePopup = 'success', time = 8000) {
  * 
  * On récupère uniquement les checkbox qui ont leur parent avec un frère qui a comme class state-checkbox-text. 
  */
- const stateCheckboxText = document.querySelectorAll('.state-checkbox-text')
- const checkboxHasStateText = document.querySelectorAll('.state-checkbox-text + * > input[type=checkbox]');
- 
- for (let i = 0; i < checkboxHasStateText.length; i++) {
-     checkboxHasStateText[i].addEventListener('change', () => {
- 
-         if (checkboxHasStateText[i].checked) {
-             stateCheckboxText[i].innerText = 'Active';
-         } else {
-             stateCheckboxText[i].innerText = 'Inactive';
-         }
-     })
- }
- 
+const stateCheckboxText = document.querySelectorAll('.state-checkbox-text')
+const checkboxHasStateText = document.querySelectorAll('.state-checkbox-text + * > input[type=checkbox]');
+
+for (let i = 0; i < checkboxHasStateText.length; i++) {
+    checkboxHasStateText[i].addEventListener('change', () => {
+
+        if (checkboxHasStateText[i].checked) {
+            stateCheckboxText[i].innerText = 'Active';
+        } else {
+            stateCheckboxText[i].innerText = 'Inactive';
+        }
+    })
+}
+
 
 
 
@@ -165,8 +165,10 @@ export function displayPopup(message, typePopup = 'success', time = 8000) {
  * @param {*} event 
  * @param {*} queryUrl : l'url de la requete à envoyée.
  * @param {*} data : les données d'un formulaire, on passe le formulaire directement.
+ * @param {*} redirect : un lien de redirection si la requete c'est bien passée.
+ * 
  */
- export function changeStateElement(event, queryUrl, data = '') {
+export function changeStateElement(event, queryUrl, data = '', redirect = null) {
     const messageConfirmation = confirm('Merci de cliquer sur OK pour confirmer');
 
     if (messageConfirmation) {
@@ -194,6 +196,12 @@ export function displayPopup(message, typePopup = 'success', time = 8000) {
                     // On supprime le loader et on affiche une popup de succes.
                     loader.remove();
                     displayPopup(successMessage);
+                    // On redirige vers la page de redirection.
+                    if (redirect != null) {
+                        setTimeout(() => {
+                            window.location.replace(redirect);
+                        }, 4000); 
+                    }
                 }, 2000)
             }
         };
@@ -254,7 +262,7 @@ if (ajaxContent) {
 
                 // Les paramètres id et name ne sont jamais appelés en même temps et sont toujours mis en fin d'url, on récupère la dernière valeur.
                 const getParamInput = arrayParams.pop();
-               
+
                 // On injecte la valeur dans l'input correspondant.
                 if (params.includes('name')) {
                     inputName.setAttribute('value', getParamInput);

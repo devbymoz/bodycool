@@ -13,13 +13,20 @@
    {#  {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}   #}
         <section class="block-top-page-single">
             <div class="block-left">
-                <h2>{{ structure.getName }}</h2>
+                <div class="content-editable">
+                    <h2 data-request="namefranchise">{{ structure.getName }}</h2>
+                    <i class="fa-regular fa-pen-to-square {{ noAccess }}"></i>
+                </div>
                 <p><strong>Franchise : </strong>
-                    {% if 'ROLE_FRANCHISE' in app.user.roles %}
-                    <a href="{{ path('app_franchise_unique', {id: franchise.id}) }}">{{ franchise.getName|capitalize }}</a>
+                    {% if is_granted('ROLE_FRANCHISE') %}
+                        <a href="{{ path('app_franchise_unique', {slug: franchise.slug, id: franchise.id}) }}">{{ franchise.getName|capitalize }}</a>
+                    {% else %}
+                        {{ franchise.getName|capitalize }}
                     {% endif %}
-                    {{ franchise.getName|capitalize }}
                 </p>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_supprimer_structure', {id: structure.id}) }}" class="delete-partner">Supprimer la structure</a>
+                {% endif %}
             </div>
             <div class="dividing-border"></div>
             <div class="block-right">
@@ -92,4 +99,4 @@
     {{ form_end(form) }}  #}  
 {% endblock %}
 
-{% block js_after %}<script type='module' src="{{ asset('/js/franchise.js') }}"></script>{% endblock %}
+{% block js_after %}<script type='module' src="{{ asset('/js/franchise-structure.js') }}"></script>{% endblock %}

@@ -164,22 +164,20 @@ const linkDeletePartner = document.querySelector('.delete-partner');
 
 if (linkDeletePartner) {
     linkDeletePartner.addEventListener('click', (e) => {
+        e.preventDefault();
         const messageConfirmation = confirm('Vous allez supprimer un partenaire, vous devrez confirmer une seconde fois.');
 
         if (messageConfirmation) {
-            // On récupère l'id du partenaire.
-            const idPartner = e.target.dataset.idPartner;
+            e.preventDefault();
+            // On récupère l'url du lien de suppression.
+            const url = linkDeletePartner.getAttribute('href');
 
-            // On crée l'url pour supprimer le partenaire
-            const url = 'http://127.0.0.1:8000/franchises/supprimer-franchise-' + idPartner
+            // On crée l'url de redirection.
+            const pathname = window.location.pathname.split('/')[1];
+            const redirect = window.location.origin + '/' + pathname;
 
             // On appel la fonction pour changer l'état d'un élément.
-            changeStateElement(e, url)
-
-            // On redirige vers la page des franchsies.
-            setTimeout(() => {
-                window.location.replace("http://127.0.0.1:8000/franchises");
-            }, 8000);
+            changeStateElement(e, url, '', redirect)
         } else {
             e.preventDefault();
         }

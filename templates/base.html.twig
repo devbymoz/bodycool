@@ -37,7 +37,7 @@
                                     <li>Profil</li>
                                 </a>
                                 {% if 'ROLE_FRANCHISE' in app.user.roles|first %}
-                                    <a href="{{ path('app_franchise_unique', {id: app.user.franchise.id}) }}">
+                                    <a href="{{ path('app_franchise_unique', {slug: app.user.franchise.slug, id: app.user.franchise.id}) }}">
                                         <i class="fa-regular fa-address-card"></i>
                                         <li>Franchise</li>
                                     </a>
@@ -47,7 +47,7 @@
                                     </a>
                                 {% endif %}   
                                 {% if 'ROLE_GESTIONNAIRE' in app.user.roles|first %}
-                                    <a href="{{ path('app_structure_unique', {id: app.user.structure.id}) }}">
+                                    <a href="{{ path('app_structure_unique', {slug: app.user.structure.slug, id: app.user.structure.id}) }}">
                                         <i class="fa-regular fa-building"></i>
                                         <li>Structure</li>
                                     </a>
