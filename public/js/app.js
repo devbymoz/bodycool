@@ -158,6 +158,7 @@ export function displayPopup(message, typePopup = 'success', time = 8000) {
  * - Franchises
  * - Permissions globales 
  * - Suppression de la photo de profil de l'utilisateur
+ * - Suppression d'un partenaire
  * 
  * Affiche un loader le temps du traitement.
  * Affiche une popup de success avec un message.
@@ -186,7 +187,7 @@ export function displayPopup(message, typePopup = 'success', time = 8000) {
                 document.body.prepend(loader);
             } else if (this.readyState == 4 && this.status == 200) {
                 // Si la requete c'est bien passée, on affiche un message.
-                const successMessage = 'La modification a été apportée avec succès.'
+                const successMessage = 'Changement effectué avec succès'
 
                 // On simule un temps de traitement de 2sec.
                 setTimeout(() => {

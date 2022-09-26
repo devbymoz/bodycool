@@ -154,3 +154,34 @@ if (stateStructure) {
 
 
 
+
+/**
+ * CONFIRMATION AVANT SUPRESSION D'UN PARTENAIRE
+ *  - Franchise
+ *  - Structure
+ */
+const linkDeletePartner = document.querySelector('.delete-partner');
+
+if (linkDeletePartner) {
+    linkDeletePartner.addEventListener('click', (e) => {
+        const messageConfirmation = confirm('Vous allez supprimer un partenaire, vous devrez confirmer une seconde fois.');
+    
+        if (messageConfirmation) {
+            // On récupère l'id du partenaire.
+            const idPartner = e.target.dataset.idPartner;
+    
+            // On crée l'url pour supprimer le partenaire
+            const url= 'http://127.0.0.1:8000/franchises/supprimer-franchise-' + idPartner
+    
+            // On appel la fonction pour changer l'état d'un élément.
+            changeStateElement(e, url)
+    
+            // On redirige vers la page des franchsies.
+            setTimeout(() => {
+                window.location.replace("http://127.0.0.1:8000/franchises");
+            }, 8000);
+        } else {
+            e.preventDefault();
+        }
+    })
+}

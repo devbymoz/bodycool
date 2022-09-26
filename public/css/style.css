@@ -836,6 +836,13 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 .block-right h3 {
     margin-bottom: 8px;
 }
+.delete-partner {
+    display: inline-block;
+    color: #fd0000;
+    font-weight: 700;
+    margin-top: 16px;
+    cursor: pointer;
+}
 
 @media screen and (min-width: 670px) {
     .block-top-page-single {
