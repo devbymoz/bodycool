@@ -109,7 +109,7 @@ class CudFranchiseController extends AbstractController
                         [
                             'user' => $user,
                         ],
-                        'emails/confirm-franchise.html.twig'
+                        'emails/confirm-account.html.twig'
                     );
                 } catch (TransportExceptionInterface $e) {
                     $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');

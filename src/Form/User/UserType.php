@@ -4,6 +4,8 @@ namespace App\Form\User;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -81,7 +83,32 @@ class UserType extends AbstractType
                     ]),
                 ],
             ])
-        ;
+            ->add('roles', ChoiceType::class, [
+                'label' => 'Rôle de l\'utilisateur',
+                'expanded' => false,
+                'multiple' => false,
+                'choices'  => [
+                    'Gestionnaire' => 'ROLE_GESTIONNAIRE',
+                    'Franchisé' => 'ROLE_FRANCHISE',
+                    'Technicien' => 'ROLE_ADMIN',
+                    'Super Admin' => 'ROLE_SUPER_ADMIN'
+                ],
+                'attr' => [
+                    'class' => 'input'
+                ]
+            ]);
+        //   
+        $builder->get('roles')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($roles) {
+                    // transform the array to a string
+                    return $roles[0] ?? null;
+                },
+                function ($roles) {
+                    // transform the string back to an array
+                    return [$roles];
+                }
+            ));
     }
 
 

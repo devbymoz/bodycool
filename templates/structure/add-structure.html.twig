@@ -81,7 +81,9 @@
                     </div>   
                 </div>
             </section>    
+            {{ form_widget(form._token) }}
+            {{ form_errors(form._token) }}
             <button class="btn-primary form-btn" type="submit">Créer une structure</button>
-        {{ form_end(form) }}
+        {{ form_end(form, {'render_rest': false}) }}
     </div>
 {% endblock %} 

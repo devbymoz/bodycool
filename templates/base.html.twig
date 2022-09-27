@@ -36,7 +36,7 @@
                                     <i class="fa-regular fa-circle-user"></i>
                                     <li>Profil</li>
                                 </a>
-                                {% if 'ROLE_FRANCHISE' in app.user.roles|first %}
+                                {% if 'ROLE_FRANCHISE' in app.user.roles|first and app.user.franchise != null %}
                                     <a href="{{ path('app_franchise_unique', {slug: app.user.franchise.slug, id: app.user.franchise.id}) }}">
                                         <i class="fa-regular fa-address-card"></i>
                                         <li>Franchise</li>
@@ -45,8 +45,8 @@
                                         <i class="fa-regular fa-building"></i>
                                         <li>Structures</li>
                                     </a>
-                                {% endif %}   
-                                {% if 'ROLE_GESTIONNAIRE' in app.user.roles|first %}
+                                {% endif %} 
+                                {% if 'ROLE_GESTIONNAIRE' in app.user.roles|first and app.user.structure != null %}
                                     <a href="{{ path('app_structure_unique', {slug: app.user.structure.slug, id: app.user.structure.id}) }}">
                                         <i class="fa-regular fa-building"></i>
                                         <li>Structure</li>
@@ -82,6 +82,12 @@
                                     <i class="fa-regular fa-pen-to-square"></i>
                                     <li>Ajouter une permission</li>
                                 </a>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('app_ajouter_utilisateur') }}">
+                                        <i class="fa-solid fa-person-circle-plus"></i>
+                                        <li>Créer un utilisateur</li>
+                                    </a>
+                                {% endif %}
                             </ul>
                         {% endif %}
                     </section>

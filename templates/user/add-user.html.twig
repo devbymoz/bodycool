@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un nouvel utilisateur{% endblock %}
+{% block title_h1 %}Ajouter un nouvel utilisateur{% endblock %}
+
+{% block content %}
+    <section class="block-simple-form">
+        {{ form_start(form) }}
+            <div class="block-input">
+                {{ form_label(form.roles)}}
+                {{ form_widget(form.roles)}}
+                <div class="error-form">
+                    {{ form_errors(form.roles)}}
+                </div>
+            </div>  
+            <div class="block-input">
+                {{ form_label(form.firstname)}}
+                {{ form_widget(form.firstname)}}
+                <div class="error-form">
+                    {{ form_errors(form.firstname)}}
+                </div>
+            </div>  
+            <div class="block-input">
+                {{ form_label(form.lastname)}}
+                {{ form_widget(form.lastname)}}
+                <div class="error-form">
+                    {{ form_errors(form.lastname)}}
+                </div>
+                <span class="text-light text-xs">
+                    {{ form_help(form.lastname)}}
+                </span>
+            </div>  
+            <div class="block-input">
+                {{ form_label(form.phone)}}
+                {{ form_widget(form.phone)}}
+                <div class="error-form">
+                    {{ form_errors(form.phone)}}
+                </div>
+            </div>  
+            <div class="block-input">
+                {{ form_label(form.email)}}
+                {{ form_widget(form.email)}}
+                <div class="error-form">
+                    {{ form_errors(form.email)}}
+                </div>
+            </div>  
+            {{ form_widget(form._token) }}
+            {{ form_errors(form._token) }}
+            <button class="btn-primary form-btn" type="submit">Créer l'utilisateur</button>
+        {{ form_end(form, {'render_rest': false}) }}
+    </section>
+{% endblock %}
+
