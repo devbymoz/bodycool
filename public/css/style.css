@@ -361,6 +361,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     margin-right: 16px;
     width: 34px;
 }
+
 /* Permet d'ajouter un élément à droite du menu pour savoir sur quelle page nous sommes */
 .menu-navigation ul .active-menu::after {
     content: "";
@@ -685,9 +686,6 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 /**
  * PAGE MON PROFIL *******************************************
  */
-.block-profil {
-    max-width: 400px;
-}
 .change-avatar-profil {
     margin: 32px 0 0;
     display: flex;
@@ -710,10 +708,10 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 }
 
 /**
- * PAGE AJOUTER UNE PERMISSION *******************************************
+ * FORMULAIRE SIMPLE SUR UNE COLONNE *******************************************
  */
-.block-add-permission {
-    max-width: 400px;
+.block-simple-form {
+    max-width: 450px;
 }
 
 /**

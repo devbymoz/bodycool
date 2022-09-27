@@ -48,7 +48,6 @@
                             {{ form_errors(formFranchise.name) }}
                         </div>
                     </div>   
-                    {{ form_row(formFranchise._token)}}
                 </div>
             </section>
 
@@ -82,8 +81,10 @@
                         <h3>Aucune permission disponible</h3>
                     {% endfor %}
                 </div>
-            </section>                 
+            </section>   
+            {{ form_widget(formFranchise._token) }}
+            {{ form_errors(formFranchise._token) }}              
             <button class="btn-primary form-btn" type="submit">Créer une franchise</button>
-        {{ form_end(formFranchise) }}
+        {{ form_end(formFranchise, {'render_rest': false}) }}
     </div>
 {% endblock %} 

@@ -4,7 +4,7 @@
 {% block title_h1 %}Mon profil{% endblock %}
 
 {% block content %}
-    <section class="block-profil">
+    <section class="block-simple-form">
         <h2>Inscrit en tant que : {{ app.user.roles|first|slice(5)|capitalize}}</h2>
         {{ form_start(formEditUser) }}
             <section class="change-avatar-profil">
