@@ -219,7 +219,7 @@ export function changeStateElement(event, queryUrl, data = '', redirect = null) 
 
 
 /**
- * CHANGEMENT DE CONTENU AU CLIC.
+ * CHANGEMENT DE CONTENU AU SANS RECHARGER LA PAGE.
  * 
  * Au clic sur une balise avec une class link-js, on exécute la fonction qui va récupérer les nouveaux éléments en JSON et qui va les afficher à la place des anciens.
  * 
@@ -260,13 +260,15 @@ if (ajaxContent) {
                 // On coupe la chaine avec les =
                 const arrayParams = params.split('=');
 
-                // Les paramètres id et name ne sont jamais appelés en même temps et sont toujours mis en fin d'url, on récupère la dernière valeur.
+                // Les paramètres id et name ne sont jamais appelés en même temps et sont toujours mis en fin d'url, on récupère donc la dernière valeur.
                 const getParamInput = arrayParams.pop();
 
                 // On injecte la valeur dans l'input correspondant.
                 if (params.includes('name')) {
+                    const inputName = document.querySelector('.ajax-content [name="name"]')
                     inputName.setAttribute('value', getParamInput);
                 } else {
+                    const inputId = document.querySelector('.ajax-content [name="id"]')
                     inputId.setAttribute('value', getParamInput);
                 }
             }

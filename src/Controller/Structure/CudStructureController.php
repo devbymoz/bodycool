@@ -156,7 +156,7 @@ class CudStructureController extends AbstractController
      * 
      * @return Response Json
      */
-    #[Route('/changer-etat-{id<\d+>}', name: 'app_changer_etat_structure')]
+    #[Route('/changer-etat-{id<\d+>}', options: ['expose' => true], name: 'app_changer_etat_structure')]
     #[IsGranted('ROLE_ADMIN')]
     public function changeStateFranchise(
         $id,

@@ -135,7 +135,7 @@ class CudFranchiseController extends AbstractController
      * 
      * @return Response Json
      */
-    #[Route('/changer-etat-{id<\d+>}', name: 'app_changer_etat_franchise')]
+    #[Route('/changer-etat-{id<\d+>}', options: ['expose' => true], name: 'app_changer_etat_franchise')]
     #[IsGranted('ROLE_ADMIN')]
     public function changeStateFranchise(
         $id,
@@ -192,7 +192,7 @@ class CudFranchiseController extends AbstractController
      * 
      * @return Response Json
      */
-    #[Route('/changer-permission-globale-{id<\d+>}-{idGP<\d+>}', name: 'app_changer_permission-globale')]
+    #[Route('/changer-permission-globale-{id<\d+>}-{idGP<\d+>}', options: ['expose' => true], name: 'app_changer_permission_globale')]
     #[IsGranted('ROLE_ADMIN')]
     public function changeGlobalPermissionFranchise(
         $id,
@@ -406,7 +406,7 @@ class CudFranchiseController extends AbstractController
      * 
      * @return Response Json
      */
-    #[Route('/modifier-franchise-{id<\d+>}', name: 'app_modifierfranchise')]
+    #[Route('/modifier-franchise-{id<\d+>}', options: ['expose' => true], name: 'app_modifier_franchise')]
     #[IsGranted('ROLE_ADMIN')]
     public function editFranchise(
         $id,

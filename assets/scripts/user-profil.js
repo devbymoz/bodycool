@@ -1,3 +1,7 @@
+const routes = require('../js/routes.json');
+import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
+Routing.setRoutingData(routes);
+
 import { changeStateElement } from './general';
 import { displayPopup } from './general';
 
@@ -15,7 +19,7 @@ if (btnDeleteAvatar) {
         const avatarByDefault = '/images/avatar/avatar-defaut.jpg';
     
         // On créer l'url de la route à executer avec les paramètre.
-        const urlDeleteAvatar = 'http://127.0.0.1:8000/profil/supprimer-avatar';
+        const urlDeleteAvatar = Routing.generate('app_supprimer_avatar');
     
         // Message à afficher si la photo est celle par défaut.
         if (userPicture.getAttribute('src') == avatarByDefault) {
