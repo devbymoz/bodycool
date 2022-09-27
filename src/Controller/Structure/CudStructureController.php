@@ -210,7 +210,6 @@ class CudStructureController extends AbstractController
         return $this->json([
             'code' => 200,
             'message' => 'Structure modifiée avec success',
-            'newStateStructure' => $newStateStructure,
             'structureName' => $structure->getName()
         ], 200);
     }

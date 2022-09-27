@@ -88,9 +88,8 @@ class AddStructureType extends AbstractType
                 'label' => 'Appartient à la franchise ?',
                 'class' => Franchise::class,
                 'choice_label' => 'name',
-                'attr' => [
-                    'class' => 'input'
-                ]
+                'autocomplete' => true,
+                'placeholder' => 'À qui appartient cette structure',
             ])
 
         ; 
