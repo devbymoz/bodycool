@@ -1,3 +1,7 @@
+const routes = require('../js/routes.json');
+import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
+Routing.setRoutingData(routes);
+
 import { changeStateElement } from './general.js';
 import { displayPopup } from './general.js';
 import { loadNewContent } from './general.js';
@@ -17,7 +21,7 @@ if (stateFranchise) {
             const input = e.target.getAttribute('value');
 
             // On créer l'url de la route qui permet de modifier l'état d'une franchise.
-            const urlAjax = 'http://127.0.0.1:8000/franchises/changer-etat-' + input
+            const urlAjax = Routing.generate('app_changer_etat_franchise', { id: input })
 
             // On appel la fonction pour changer l'état.
             changeStateElement(e, urlAjax)
@@ -43,7 +47,7 @@ if (stateGlobalPermission) {
             const idFranchise = e.target.dataset.idFranchise;
 
             // On créer l'url de la route qui permet de modifier l'état de la permission globale.
-            const urlAjax = 'http://127.0.0.1:8000/franchises/changer-permission-globale-' + idFranchise + '-' + input;
+            const urlAjax = Routing.generate('app_changer_permission_globale', { id: idFranchise,idGP: input})
 
             // On appel la fonction pour changer l'état.
             changeStateElement(e, urlAjax)
@@ -81,7 +85,8 @@ if (tagSearchElement) {
             let valueInput = e.target.value;
 
             // On crée l'url de la requete.
-            const baseUrl = window.origin + window.location.pathname;
+            const baseUrl = Routing.generate('app_list_franchise')
+
             const paramName = '?name=' + valueInput;
             let urlFinal = baseUrl + paramName
 
@@ -111,7 +116,7 @@ if (tagSearchElement) {
             }
 
             // On crée l'url de la requete.
-            const baseUrl = window.origin + window.location.pathname;
+            const baseUrl = Routing.generate('app_list_franchise')
             const paramName = '?id=' + valueInput;
             let urlFinal = baseUrl + paramName;
 
@@ -142,10 +147,9 @@ if (stateStructure) {
             // On récupere la valeur des checkbox pour savoir quelle structure modifiée.
             const input = e.target.getAttribute('value');
 
-
             // On créer l'url de la route qui permet de modifier l'état d'une structure.
-            const urlAjax = 'http://127.0.0.1:8000/structures/changer-etat-' + input
-
+            const urlAjax = Routing.generate('app_changer_etat_structure', { id: input})
+           
             // On appel la fonction pour changer l'état.
             changeStateElement(e, urlAjax)
         }
@@ -190,6 +194,7 @@ if (linkDeletePartner) {
 /**
  * MODIFICATION D'UNE FRANCHISE
  * La balise html doit contenir un attribut data, qui correspond au nom du paramètre à modifier.
+ * Elle contient également un attribut id qui correspond à l'id de l'élément à modifier.
  * 
  */
 // On récupère le contenu qui peut etre édité.
@@ -203,6 +208,9 @@ if (contentsEditable) {
             // On récupère le champ à éditer et son contenu.
             const contentEditable = iconEditable.previousElementSibling;
             const oldContent = contentEditable.innerText;
+    
+            // On récupère la valeur de l'attribut data id.
+            const idElement = contentEditable.dataset.id;
 
             // On récupère la valeur de l'attribut data request.
             const nameRequest = contentEditable.dataset.request;
@@ -226,7 +234,7 @@ if (contentsEditable) {
 
                     if (messageConfirmation) {
                         // On crée l'url de la requete à envoyer.
-                        const url = 'http://127.0.0.1:8000/franchises/modifier-franchise-52';
+                        const url = Routing.generate('app_modifier_franchise', { id: idElement})
 
                         // On formate les données à envoyer.
                         const data = nameRequest + '=' + newContent;
@@ -274,7 +282,6 @@ if (contentsEditable) {
                 } else {
                     e.preventDefault()
                 }
-
             }, { once: true })
         }
     })

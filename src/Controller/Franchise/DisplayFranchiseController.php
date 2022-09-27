@@ -30,7 +30,7 @@ class DisplayFranchiseController extends AbstractController
      * 
      * @return Response
      */
-    #[Route('/{numpage<\d+>}', name: 'app_list_franchise', methods: ['GET'])]
+    #[Route('/{numpage<\d+>}', options: ['expose' => true], name: 'app_list_franchise', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function franchiseListing(
         Request $request,
