@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -25,6 +24,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/franchises')]
 class DisplayFranchiseController extends AbstractController
 {
+
+
+
     /**
      * LISTE DE TOUTES LES FRANCHISES
      * 
@@ -43,7 +45,7 @@ class DisplayFranchiseController extends AbstractController
             return $this->redirectToRoute($request->get('_route'));
         }
 
-        // Les paramètres GET de la rechercher.
+        // Les paramètres GET de la recherche.
         $paramActive = $request->get('active');
         $paramId = $request->get('id');
         $paramName = $request->get('name');
@@ -62,7 +64,7 @@ class DisplayFranchiseController extends AbstractController
         $totalFranchise = count($franchiseRepo->findAll());
 
         // Nombre d'éléments à afficher par page.
-        $nbPerPage = 3;
+        $nbPerPage = 1;
 
         // On récupère les franchises en fonction des paramètres de la requete.
         $franchises = $franchiseRepo->findFranchisesFilter(
@@ -96,9 +98,9 @@ class DisplayFranchiseController extends AbstractController
         $nbPage = $paginationService->getNbPage();
 
         // On redigire si le numéro de page est superieur au nombre de page disponible.
-        /* if($numpage > $nbPage && is_numeric($numpage)) {
+        if(!empty($numpage) && $numpage > $nbPage) {
             return $this->redirectToRoute('app_list_franchise');
-        } */
+        }
 
         // On assigne le tableau de franchises dans la clé list.
         $data = ['list' => $franchises];
@@ -112,7 +114,7 @@ class DisplayFranchiseController extends AbstractController
 
         // Si la requête reçu contient un param Ajax. 
         if ($request->get('ajax')) {
-            return new JsonResponse([
+            return $this->json([
                 'code' => 200,
                 'content' => $this->renderView('include/_franchise-listing.html.twig', [
                     'form' => $form->createView(),

@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -94,7 +95,7 @@ class RudUserController extends AbstractController
                 );
         
                 return $this->redirectToRoute('app_profil');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $loggerService->logGeneric($e, 'Erreur persistance des données');
 
                 $this->addFlash(
@@ -147,7 +148,7 @@ class RudUserController extends AbstractController
                 $em->flush();
     
                 return $this->redirectToRoute('app_profil');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $loggerService->logGeneric($e, 'Erreur persistance des données');
 
                 return $this->json([

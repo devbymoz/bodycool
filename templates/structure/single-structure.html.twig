@@ -11,10 +11,10 @@
 
 {% block content %}
    {#  {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}   #}
-        <section class="block-top-page-single">
+        <section class="block-top-page-single structure-id" data-structure-id="{{ structure.id }}">
             <div class="block-left">
                 <div class="content-editable">
-                    <h2 data-request="namefranchise">{{ structure.getName }}</h2>
+                    <h2 data-id="{{ structure.id }}" data-request="namestructure">{{ structure.getName }}</h2>
                     <i class="fa-regular fa-pen-to-square {{ noAccess }}"></i>
                 </div>
                 <p><strong>Franchise : </strong>
@@ -23,7 +23,9 @@
                     {% else %}
                         {{ franchise.getName|capitalize }}
                     {% endif %}
-                </p>
+                 <span class="change-franchise"><i class="fa-regular fa-pen-to-square {{ noAccess }}"></i></span></p>
+                 {# Affiche le selecteur de franchise en JS #}
+                 <div class="block-select-franchise"></div>    
                 {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_supprimer_structure', {id: structure.id}) }}" class="delete-partner">Supprimer la structure</a>
                 {% endif %}

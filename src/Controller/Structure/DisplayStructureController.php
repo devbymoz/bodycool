@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * AFFICHAGE DES STRUCTURES
@@ -30,7 +29,7 @@ class DisplayStructureController extends AbstractController
      * 
      * @return Response
      */
-    #[Route('/{numpage<\d+>}', name: 'app_list_structure', methods: ['GET'])]
+    #[Route('/{numpage<\d+>}', options: ['expose' => true], name: 'app_list_structure', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function structureListing(
         Request $request,
@@ -43,7 +42,7 @@ class DisplayStructureController extends AbstractController
             return $this->redirectToRoute($request->get('_route'));
         }
 
-        // Les paramètres GET de la rechercher.
+        // Les paramètres GET de la recherche.
         $paramActive = $request->get('active');
         $paramId = $request->get('id');
         $paramName = $request->get('name');
@@ -96,9 +95,9 @@ class DisplayStructureController extends AbstractController
         $nbPage = $paginationService->getNbPage();
 
         // On redigire si le numéro de page est superieur au nombre de page disponible.
-        /* if($numpage > $nbPage && is_numeric($numpage)) {
+        if (!empty($numpage) && $numpage > $nbPage) {
             return $this->redirectToRoute('app_list_franchise');
-        } */
+        }
 
         // On assigne le tableau de franchises dans la clé list.
         $data = ['list' => $structures];
@@ -112,7 +111,7 @@ class DisplayStructureController extends AbstractController
 
         // Si la requête reçu contient un param Ajax. 
         if ($request->get('ajax')) {
-            return new JsonResponse([
+            return $this->json([
                 'code' => 200,
                 'content' => $this->renderView('include/_structure-listing.html.twig', [
                     'form' => $form->createView(),
@@ -202,7 +201,8 @@ class DisplayStructureController extends AbstractController
     #[Route('/{slug}/{id<\d+>}', name: 'app_structure_unique')]
     #[IsGranted('ROLE_GESTIONNAIRE')]
     public function singleStucture(
-        $id, $slug,
+        $id,
+        $slug,
         Request $request,
         ManagerRegistry $doctrine,
     ): Response {

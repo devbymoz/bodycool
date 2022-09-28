@@ -2,11 +2,13 @@
 
 namespace App\Controller\Structure;
 
+use App\Entity\Franchise;
 use App\Entity\Structure;
 use App\Entity\User;
 use App\Form\Structure\AddStructureType;
 use App\Repository\StructureRepository;
 use App\Service\ChangeStateService;
+use Exception;
 use App\Service\EmailService;
 use App\Service\LoggerService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -100,7 +103,7 @@ class CudStructureController extends AbstractController
                         'success',
                         'La structure a bien été créée'
                     );
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $loggerService->logGeneric($e, 'Erreur persistance des données');
 
                     $this->addFlash(
@@ -150,7 +153,6 @@ class CudStructureController extends AbstractController
 
 
 
-
     /**
      * PERMET D'ACTIVER OU DÉSACTIVER UNE STRUCTURE
      * 
@@ -158,7 +160,7 @@ class CudStructureController extends AbstractController
      */
     #[Route('/changer-etat-{id<\d+>}', options: ['expose' => true], name: 'app_changer_etat_structure')]
     #[IsGranted('ROLE_ADMIN')]
-    public function changeStateFranchise(
+    public function changeStateStructure(
         $id,
         ManagerRegistry $doctrine,
         EmailService $emailService,
@@ -177,7 +179,7 @@ class CudStructureController extends AbstractController
         $userAdminStructure = $structure->getUserAdmin();
         $userOwner = $structure->getFranchise()->getUserOwner();
 
-        // On appel la méthode pour changer l'état de structure.
+        // On appel le service pour changer l'état d'un objet.
         $changeStateService->changeStateObject($structure);
 
         // On envoi un email au franchisé pour lui indiquer qu'un de ces structures a été changées.
@@ -259,7 +261,7 @@ class CudStructureController extends AbstractController
                 'success',
                 'La structure a bien été supprimée'
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $loggerService->logGeneric($e, 'Erreur persistance des données');
 
             return $this->json([
@@ -296,7 +298,7 @@ class CudStructureController extends AbstractController
             return $this->json([
                 'code' => 500,
                 'message' => 'Erreur de distribution du mail.',
-                'idFranchise' => $structure->getId(),
+                'idStructure' => $structure->getId(),
                 'errorNumber' => $loggerService->getErrorNumber(),
             ], 500);
         }
@@ -306,4 +308,190 @@ class CudStructureController extends AbstractController
             'message' => 'Structure supprimée avec succès',
         ], 200);
     }
+
+
+
+    /**
+     * PERMET DE LIER UNE STRUCTURE À UNE NOUVELLE FRANCHISE
+     * 
+     * @return Response Json
+     */
+    #[Route('/lier-structure-{id<\d+>}', options: ['expose' => true], name: 'app_lier_structure')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function linkStructureWithFranchise(
+        $id,
+        EmailService $emailService,
+        LoggerService $loggerService,
+        ManagerRegistry $doctrine,
+        Request $request,
+    ): Response {
+        $em = $doctrine->getManager();
+
+        // On récupère la structure correspondant à l'id.
+        $repoStructure = $doctrine->getRepository(Structure::class);
+        $structure = $repoStructure->findOneBy(['id' => $id]);
+
+        // Selection de la nouvelle franchise.
+        $form = $this->createFormBuilder()
+            ->add('name', EntityType::class, [
+                'class' => Franchise::class,
+                'choice_label' => 'name',
+                'autocomplete' => true,
+                'placeholder' => 'Choisissez une nouvelle franchise',
+            ])
+            ->getForm();
+
+        // On vérifie que les paramètres pour traiter la requete sont bien présents.
+        if ($request->get('ajax') && (!empty($request->get('idfr')))) {
+            // On récupère la valeur du paramètre de l'id de la franchise.
+            $idFranchise = $request->get('idfr');
+
+            // On vérifie que l'id correspond bien à une franchise en BDD
+            $repoFranchise = $doctrine->getRepository(Franchise::class);
+            $newFranchise = $repoFranchise->findOneBy(['id' => $idFranchise]);
+
+            if (empty($newFranchise) || !isset($newFranchise)) {
+                return $this->json([
+                    'code' => 404,
+                    'message' => 'Aucune franchise ne correspond à cette id'
+                ], 404);
+            }
+
+            // On persist la nouvelle franchise en BDD. 
+            try {
+                $structure->setFranchise($newFranchise);
+
+                $em->persist($structure);
+                $em->flush();    
+
+                $this->addFlash(
+                    'success',
+                    'La structure à bien été modifiée'
+                );
+            } catch (Exception $e) {
+                $loggerService->logGeneric($e, 'Erreur persistance des données');
+
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de modification de la structure',
+                    'idStructure' => $structure->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
+
+            // On envoi un mail au franchisé.
+            try {
+                $emailService->sendEmail(
+                    $newFranchise->getUserOwner()->getEmail(),
+                    'Votre nouvelle structure',
+                    [
+                        'user' => $newFranchise->getUserOwner(),
+                        'structure' => $structure
+                    ],
+                    'emails/bind-new-franchise.html.twig'
+                );
+            } catch (TransportExceptionInterface $e) {
+                $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
+    
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de distribution du mail.',
+                    'idNewFranchise' => $newFranchise->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
+            
+            return $this->json([
+                'code' => 200,
+                'content' => $this->renderView('include/_change-structure.html.twig', [
+                    'form' => $form->createView(),
+                ]),
+                'idFranchise' =>  $idFranchise,
+                'newFranchise' => $newFranchise,
+            ], 200);
+        } else {
+            return $this->json([
+                'code' => 200,
+                'Message' =>  'Connexion ok',
+                'content' => $this->renderView('include/_change-structure.html.twig', [
+                    'form' => $form->createView(),
+                ]),
+            ], 200);
+        }
+    }
+
+
+
+    /**
+     * PERMET DE MODIFIER UNE STRUCTURE :
+     * - Modifie le nom de la structure
+     * 
+     * @return Response Json
+     */
+    #[Route('/modifier-structure-{id<\d+>}', options: ['expose' => true], name: 'app_modifier_structure')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function editStructure(
+        $id,
+        LoggerService $loggerService,
+        StructureRepository $structureRepo,
+        Request $request,
+        ManagerRegistry $doctrine,
+    ) {
+        $em = $doctrine->getManager();
+
+        // On récupère la franchise à modifier
+        $structure =  $structureRepo->findOneBy(['id' => $id]);
+        if (empty($structure)) {
+            throw $this->createNotFoundException('Cette structure n\'existe pas.');
+        }
+
+        // On récupère les params de la requete Ajax, le nom est celui indiqué dans l'attribut data-request de la balise HTML.
+        $paramNameStructure = $request->get('namestructure');
+
+        if (!empty($paramNameStructure) && isset($paramNameStructure)) {
+            // On vérifie que le nom n'est pas déja pris.
+            $checkValue = $structureRepo->findOneBy(['name' => $paramNameStructure]);
+
+            if (!empty($checkValue)) {
+                return $this->json([
+                    'alreadyExists' => 'Ce nom existe déjà'
+                ], 409);
+            }
+            $structure->setName($paramNameStructure);
+            $em->persist($structure);
+
+            // On persist les nouvelles données.
+            try {
+                $em->flush();
+                
+                $this->addFlash(
+                    'success',
+                    'La structure à bien été modifiée'
+                );
+                return $this->json([
+                    'code' => 200,
+                    'message' => 'Structure modifiée avec succès'
+                ], 200);
+            } catch (Exception $e) {
+                $loggerService->logGeneric($e, 'Erreur persistance des données');
+    
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de suppression de la structure',
+                    'idStructure' => $structure->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
+        }
+
+        return $this->json([
+            'code' => 200,
+            'message' => 'Connexion OK'
+        ], 200);
+    }
+
+
+
+
+
 }

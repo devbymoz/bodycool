@@ -833,6 +833,9 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 .block-right h3 {
     margin-bottom: 8px;
 }
+.block-left {
+    min-width: 55%;
+}
 .delete-partner {
     display: inline-block;
     color: #fd0000;
@@ -1019,10 +1022,11 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     display: flex;
     align-items: center;
 }
-.content-editable i {
+.content-editable i, .change-franchise i {
     margin-left: 16px;
     cursor: pointer;
 }
+
 
 
 /**

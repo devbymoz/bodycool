@@ -42,9 +42,6 @@ class LoggerService
     }
 
 
-    /**
-     * Get the value of errorNumber
-     */ 
     public function getErrorNumber()
     {
         return $this->errorNumber;
