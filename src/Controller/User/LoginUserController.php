@@ -17,6 +17,8 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Exception;
+
 
 class LoginUserController extends AbstractController
 {
@@ -99,7 +101,7 @@ class LoginUserController extends AbstractController
                 );
         
                 return $this->redirectToRoute('app_connexion');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $loggerService->logGeneric($e, 'Erreur persistance des données');
 
                 $this->addFlash(
@@ -181,7 +183,7 @@ class LoginUserController extends AbstractController
                 try {
                     $em->persist($user);
                     $em->flush();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $loggerService->logGeneric($e, 'Erreur persistance des données');
 
                     $this->addFlash(

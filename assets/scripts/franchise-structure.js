@@ -47,7 +47,7 @@ if (stateGlobalPermission) {
             const idFranchise = e.target.dataset.idFranchise;
 
             // On créer l'url de la route qui permet de modifier l'état de la permission globale.
-            const urlAjax = Routing.generate('app_changer_permission_globale', { id: idFranchise,idGP: input})
+            const urlAjax = Routing.generate('app_changer_permission_globale', { id: idFranchise, idGP: input })
 
             // On appel la fonction pour changer l'état.
             changeStateElement(e, urlAjax)
@@ -84,8 +84,16 @@ if (tagSearchElement) {
             // On récupère la valeur saisie dans le champs.
             let valueInput = e.target.value;
 
-            // On crée l'url de la requete.
-            const baseUrl = Routing.generate('app_list_franchise')
+            //On récupère le path de l'url pour vérifier quelle page est appelée.
+            const pathname = window.location.pathname;
+            let baseUrl = '';
+
+            // On crée l'url de la requete en fonction de le page appelée.
+            if (pathname == '/structures') {
+                baseUrl = Routing.generate('app_list_structure')
+            } else if (pathname == '/franchises') {
+                baseUrl = Routing.generate('app_list_franchise')
+            }
 
             const paramName = '?name=' + valueInput;
             let urlFinal = baseUrl + paramName
@@ -115,10 +123,21 @@ if (tagSearchElement) {
                 return false;
             }
 
+            //On récupère le path de l'url pour vérifier quelle page est appelée.
+            const pathname = window.location.pathname;
+            let baseUrl = '';
+
+            // On crée l'url de la requete en fonction de le page appelée.
+            if (pathname == '/structures') {
+                baseUrl = Routing.generate('app_list_structure')
+            } else if (pathname == '/franchises') {
+                baseUrl = Routing.generate('app_list_franchise')
+            }
+
             // On crée l'url de la requete.
-            const baseUrl = Routing.generate('app_list_franchise')
             const paramName = '?id=' + valueInput;
             let urlFinal = baseUrl + paramName;
+
 
             // On supprime le paramID de l'url si l'utilisateur efface toute sa saisie.
             if (valueInput === '') {
@@ -148,8 +167,8 @@ if (stateStructure) {
             const input = e.target.getAttribute('value');
 
             // On créer l'url de la route qui permet de modifier l'état d'une structure.
-            const urlAjax = Routing.generate('app_changer_etat_structure', { id: input})
-           
+            const urlAjax = Routing.generate('app_changer_etat_structure', { id: input })
+
             // On appel la fonction pour changer l'état.
             changeStateElement(e, urlAjax)
         }
@@ -192,7 +211,7 @@ if (linkDeletePartner) {
 
 
 /**
- * MODIFICATION D'UNE FRANCHISE
+ * MODIFICATION D'UNE FRANCHISE OU STRUCTURE
  * La balise html doit contenir un attribut data, qui correspond au nom du paramètre à modifier.
  * Elle contient également un attribut id qui correspond à l'id de l'élément à modifier.
  * 
@@ -208,7 +227,7 @@ if (contentsEditable) {
             // On récupère le champ à éditer et son contenu.
             const contentEditable = iconEditable.previousElementSibling;
             const oldContent = contentEditable.innerText;
-    
+
             // On récupère la valeur de l'attribut data id.
             const idElement = contentEditable.dataset.id;
 
@@ -220,8 +239,10 @@ if (contentsEditable) {
             contentEditable.focus();
             contentEditable.style.padding = '8px 16px'
 
-            // On traite la demande lorsque l'élément perd le focus, se déclenche une fois.
-            contentEditable.addEventListener('blur', (e) => {
+            // On traite la demande lorsque l'élément perd le focus.
+            contentEditable.addEventListener('blur', sendQuery, { once: true });
+
+            function sendQuery() {
                 contentEditable.removeAttribute('contenteditable');
                 contentEditable.blur();
                 contentEditable.style.padding = ''
@@ -233,8 +254,17 @@ if (contentsEditable) {
                     const messageConfirmation = confirm('Merci de cliquer sur OK pour confirmer');
 
                     if (messageConfirmation) {
-                        // On crée l'url de la requete à envoyer.
-                        const url = Routing.generate('app_modifier_franchise', { id: idElement})
+                        //ON CRÉE L'URL DE LA REQUETE
+                        //On récupère le path de l'url pour vérifier quelle page est appelée.
+                        const pathname = window.location.pathname;
+                        let url = '';
+
+                        // On crée l'url de la requete en fonction de le page appelée.
+                        if (pathname.includes('/structures/')) {
+                            url = Routing.generate('app_modifier_structure', { id: idElement })
+                        } else if (pathname.includes('/franchises/')) {
+                            url = Routing.generate('app_modifier_franchise', { id: idElement })
+                        }
 
                         // On formate les données à envoyer.
                         const data = nameRequest + '=' + newContent;
@@ -260,6 +290,10 @@ if (contentsEditable) {
                                     // On supprime le loader et on affiche une popup de succes.
                                     loader.remove();
                                     displayPopup(successMessage);
+                                    // On redirige si le changement a été effectué.
+                                    setTimeout(() => {
+                                        window.location.replace(window.location);
+                                    }, 4000);
                                 }, 2000)
                                 // Si la nouvelle valeur existe deja en BDD
                             } else if (this.readyState == 4 && this.status == 409) {
@@ -282,8 +316,78 @@ if (contentsEditable) {
                 } else {
                     e.preventDefault()
                 }
-            }, { once: true })
+
+            }
+
         }
+    })
+}
+
+
+/**
+ * LIER UNE STRUCTURE À UNE NOUVELLE FRANCHISE.
+ * 
+ * Se fait en deux requetes : la première sert à afficher le select des franchises, la seconde envoi la nouvelle franchise pour le traitement PHP.
+ * 
+ */
+const btnChangeFranchise = document.querySelector('.change-franchise');
+
+if (btnChangeFranchise) {
+    btnChangeFranchise.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // On récupère l'id de la structure courante.
+        const dataStructureId = document.querySelector('.structure-id');
+        const id = dataStructureId.dataset.structureId;
+
+        // L'url de la requete Ajax pour afficher la liste des franchises.
+        const url = Routing.generate('app_lier_structure', { id: id });
+
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            const resultat = this.response;
+
+            // On affiche un loader le temps du traitement de la requete
+            if (this.readyState == 3) {
+
+                // Si la requete c'est bien passée, on affiche un message.
+            } else if (this.readyState == 4 && this.status == 200) {
+                // L'url pour la requete qui va modifier la franchise.
+                const urlAjax = url + '?ajax=1';
+
+                // On récupère la balise qui va recevoir le nouveau contenu.
+                const newContentSelect = document.querySelector('.block-select-franchise');
+
+                //  On insère le nouveau contenu HTML.
+                newContentSelect.innerHTML = resultat.content;
+
+                // On récupère les informations du selecteur.
+                const select = document.querySelector('#select-franchise');
+                select.addEventListener('change', () => {
+                    // On récupère l'id de la franchise.
+                    const idFranchise = select.value;
+                    const param = 'idfr=' + idFranchise;
+
+                    // L'url de redirection si le changement a été effectué.
+                    const redirect = window.location;
+
+                    // On appel la fonction qui va traiter la requete Ajax.
+                    changeStateElement(e, urlAjax, param, redirect);
+                })
+
+                // Pour fermer le selecteur.
+                const cancelEdit = document.querySelector('.cancel-edit');
+                cancelEdit.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    newContentSelect.innerHTML = '';
+                })
+
+            }
+        };
+        xhr.open('POST', url, true);
+        xhr.responseType = 'json';
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send();
     })
 }
 

@@ -6,6 +6,7 @@ use App\Entity\Permission;
 use App\Form\Permission\AddPermissionType;
 use App\Service\LoggerService;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -62,7 +63,7 @@ class CrudPermissionController extends AbstractController
                         'La permission à bien été créée'
                     );
                     return $this->redirectToRoute('app_ajouter_permission');
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $loggerService->logGeneric($e, 'Erreur fichier télécharger');
 
                     $this->addFlash(

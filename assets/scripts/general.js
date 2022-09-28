@@ -179,7 +179,7 @@ export function changeStateElement(event, queryUrl, data = '', redirect = null) 
 
         // Le loader à afficher si la requete échoue.
         const loader = document.createElement('div');
-
+        
         // On commence le traitement de la requete Ajax.
         const xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
@@ -208,7 +208,8 @@ export function changeStateElement(event, queryUrl, data = '', redirect = null) 
 
         xhr.open('POST', queryUrl, true);
         xhr.responseType = 'json';
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+        //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.send(data);
     } else {
         event.preventDefault();

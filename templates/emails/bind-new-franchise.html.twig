@@ -1,0 +1,7 @@
+{% extends "base-email.html.twig" %}
+
+{% block titre %}Liaison avec une nouvelle structure{% endblock %}
+
+{% block content %}
+    <p>Bonjour {{ user.getFirstname }}, nous vous confirmons la liaison avec une nouvelle structure : {{ structure.name }}, elle est gérée par {{ structure.userAdmin.getLastname }} {{ structure.userAdmin.getFirstname }}</p>
+{% endblock %}

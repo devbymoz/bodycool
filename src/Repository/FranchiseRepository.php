@@ -75,8 +75,8 @@ class FranchiseRepository extends ServiceEntityRepository
         // Si nous avons un recherche par id de franchise.
         if (!empty($paramSearchId)) {
             $query = $query
-                ->andWhere('f.id = :sid')
-                ->setParameter('sid', $paramSearchId);
+                ->andWhere('f.id LIKE :sid')
+                ->setParameter('sid', "%$paramSearchId%");
         }
 
         // Si nous avons un recherche par nom de franchise.

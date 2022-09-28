@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Exception;
 
 
 /**
@@ -73,7 +74,7 @@ class CreateUserController extends AbstractController
                             'success',
                             'L\'utilisateur a bien été créée'
                         );
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $loggerService->logGeneric($e, 'Erreur persistance des données');
     
                         $this->addFlash(

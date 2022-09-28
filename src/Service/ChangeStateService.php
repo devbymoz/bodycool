@@ -5,6 +5,8 @@ namespace App\Service;
 use App\Service\LoggerService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Exception;
+
 
 /**
  * Gère le changement d'état (activé / Désactivé)
@@ -44,7 +46,7 @@ class ChangeStateService
         // On sauvegarder le nouvel état de l'objet en BDD
         try {
             $this->em->flush();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->logGeneric($e, 'Erreur persistance des données');
 
             return New JsonResponse([

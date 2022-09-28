@@ -5,6 +5,7 @@ namespace App\Controller\Franchise;
 use App\Entity\Franchise;
 use App\Entity\Permission;
 use App\Entity\User;
+use Exception;
 use App\Form\Franchise\AddFranchiseType;
 use App\Repository\FranchiseRepository;
 use App\Service\ChangeStateService;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
@@ -92,7 +92,7 @@ class CudFranchiseController extends AbstractController
                         'success',
                         'La franchise a bien été créée'
                     );
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $loggerService->logGeneric($e, 'Erreur persistance des données');
 
                     $this->addFlash(
@@ -155,7 +155,7 @@ class CudFranchiseController extends AbstractController
         // On récupère l'email du propriétaire, pour envoyer le mail.
         $emailUserOwner = $franchise->getUserOwner()->getEmail();
 
-        // On appel la méthode pour changer l'état de la franchise.
+        // On appel le service pour changer l'état d'un objet.
         $changeStateService->changeStateObject($franchise);
 
         // On envoi un email au franchisé pour lui indiquer le nouvel état de sa franchise.
@@ -240,7 +240,7 @@ class CudFranchiseController extends AbstractController
             array_push($arrayGlobalPermissionFranchise, $value->getId());
         }
 
-        // Permet de voir quelle est la permission globale qui a été modifiée.
+        // Permet de savoir quelle permission globale a été modifiée.
         $whatChange = null;
 
         // Si la permission est présente dans la liste des permissions globales de la franchise, alors on la supprime, sinon on l'ajoute.
@@ -255,7 +255,7 @@ class CudFranchiseController extends AbstractController
         // On persist les nouvelles données de la franchise
         try {
             $em->flush();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $loggerService->logGeneric($e, 'Erreur persistance des données');
 
             return $this->json([
@@ -349,7 +349,7 @@ class CudFranchiseController extends AbstractController
                 'success',
                 'La franchise a bien été supprimée'
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $loggerService->logGeneric($e, 'Erreur persistance des données');
 
             return $this->json([
@@ -402,7 +402,7 @@ class CudFranchiseController extends AbstractController
 
     /**
      * PERMET DE MODIFIER UNE FRANCHISE :
-     * - Le nom de la franchise
+     * - Modifie le nom de la franchise
      * 
      * @return Response Json
      */
@@ -431,31 +431,36 @@ class CudFranchiseController extends AbstractController
             $checkValue = $franchiseRepo->findOneBy(['name' => $paramNameFranchise]);
 
             if (!empty($checkValue)) {
-                return new JsonResponse([
+                return $this->json([
                     'alreadyExists' => 'Ce nom existe déjà'
                 ], 409);
             }
             $franchise->setName($paramNameFranchise);
             $em->persist($franchise);
+
+            // On persist les nouvelles données.
+            try {
+                $em->flush();
+
+                return $this->json([
+                    'code' => 200,
+                    'message' => 'Franchise modifiée avec succès'
+                ], 200);
+            } catch (Exception $e) {
+                $loggerService->logGeneric($e, 'Erreur persistance des données');
+    
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de suppression de la franchise',
+                    'idFranchise' => $franchise->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
         }
 
-        // On modifie la franchise.
-        try {
-            $em->flush();
-        } catch (\Exception $e) {
-            $loggerService->logGeneric($e, 'Erreur persistance des données');
-
-            return $this->json([
-                'code' => 500,
-                'message' => 'Erreur de suppression de la franchise',
-                'idFranchise' => $franchise->getId(),
-                'errorNumber' => $loggerService->getErrorNumber(),
-            ], 500);
-        }
-
-        return new JsonResponse([
+        return $this->json([
             'code' => 200,
-            'message' => 'Franchise modifiée avec succès'
+            'message' => 'Connexion OK'
         ], 200);
     }
 }
