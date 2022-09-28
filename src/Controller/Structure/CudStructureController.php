@@ -407,7 +407,6 @@ class CudStructureController extends AbstractController
                     'form' => $form->createView(),
                 ]),
                 'idFranchise' =>  $idFranchise,
-                'newFranchise' => $newFranchise,
             ], 200);
         } else {
             return $this->json([

@@ -98,9 +98,9 @@ class DisplayFranchiseController extends AbstractController
         $nbPage = $paginationService->getNbPage();
 
         // On redigire si le numéro de page est superieur au nombre de page disponible.
-        if(!empty($numpage) && $numpage > $nbPage) {
+        /* if(!empty($numpage) && $numpage > $nbPage) {
             return $this->redirectToRoute('app_list_franchise');
-        }
+        } */
 
         // On assigne le tableau de franchises dans la clé list.
         $data = ['list' => $franchises];
