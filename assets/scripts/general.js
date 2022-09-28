@@ -172,11 +172,6 @@ export function changeStateElement(event, queryUrl, data = '', redirect = null) 
     const messageConfirmation = confirm('Merci de cliquer sur OK pour confirmer');
 
     if (messageConfirmation) {
-        // Récupération des données du formulaire à traiter.
-        if (data != '') {
-            data = new FormData(data);
-        }
-
         // Le loader à afficher si la requete échoue.
         const loader = document.createElement('div');
         

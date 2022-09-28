@@ -13,6 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 /**
@@ -41,7 +42,7 @@ class DisplayStructureController extends AbstractController
         if ($numpage === 0) {
             return $this->redirectToRoute($request->get('_route'));
         }
-
+        
         // Les paramètres GET de la recherche.
         $paramActive = $request->get('active');
         $paramId = $request->get('id');
@@ -95,10 +96,10 @@ class DisplayStructureController extends AbstractController
         $nbPage = $paginationService->getNbPage();
 
         // On redigire si le numéro de page est superieur au nombre de page disponible.
-        if (!empty($numpage) && $numpage > $nbPage) {
-            return $this->redirectToRoute('app_list_franchise');
+        /* if ($numpage > $nbPage && $numpage <= 1) {
+            return $this->redirectToRoute('app_list_structure');
         }
-
+ */
         // On assigne le tableau de franchises dans la clé list.
         $data = ['list' => $structures];
 
@@ -243,11 +244,24 @@ class DisplayStructureController extends AbstractController
             throw $this->createAccessDeniedException('Cette structure est désactivée');
         }
 
+        // On récupère le formulaire des permissions et de l'état de la structure.
+        $form = $this->createFormBuilder($structure)
+            ->add('active', CheckboxType::class, [
+                'label'    => 'active',
+                'required' => false,
+                'mapped' => true,
+            ])
+            ->getForm();
+        $form->handleRequest($request);
+
+
+
 
         return $this->renderForm('structure/single-structure.html.twig', [
             'structure' => $structure,
             'franchise' => $franchise,
-            'userAdminStructure' => $userAdminStructure
+            'userAdminStructure' => $userAdminStructure,
+            'form' => $form,
         ]);
     }
 }

@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-   {#  {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}   #}
+    {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}  
         <section class="block-top-page-single structure-id" data-structure-id="{{ structure.id }}">
             <div class="block-left">
                 <div class="content-editable">
@@ -32,14 +32,14 @@
             </div>
             <div class="dividing-border"></div>
             <div class="block-right">
-                {% if franchise.active %}
+                {% if structure.active %}
                     <h3>La structure est active</h3>
                 {% else %}
                     <h3>La structure est désactivée</h3>
                 {% endif %}
-                <div class="check-toggle{{ noAccess }} state-franchise">
-                   {#  {{ form_widget(form.active, {'id': franchise.id, 'attr': {'class': 'form-add-franchise', 'value': franchise.id} })}} #}
-                    <label class="toggle-label" for="{{ franchise.id }}">
+                <div class="check-toggle{{ noAccess }} state-structure">
+                    {{ form_widget(form.active, {'id': structure.id, 'attr': {'value': structure.id} })}}
+                    <label class="toggle-label" for="{{ structure.id }}">
                         <span class="btn-toggle"></span>
                     </label>
                 </div>
@@ -97,6 +97,6 @@
                     <h3>Aucune permission disponible</h3>
                 {% endfor %}
             </div>
-        </section>   
-    {{ form_end(form) }}  #}  
+        </section>   #}  
+    {{ form_end(form) }}  
 {% endblock %}

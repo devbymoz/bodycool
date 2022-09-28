@@ -11,7 +11,7 @@
 
 {% block content %}
     {{ form_start(form, { 'attr': {'class': 'form-edit-franchise'} }) }}  
-        <section class="block-top-page-single content-editable">
+        <section class="block-top-page-single">
             <div class="block-left">
                 <div class="content-editable">
                     <h2 data-id="{{ franchise.id }}" data-request="namefranchise">{{ franchise.getName }}</h2>
@@ -32,7 +32,7 @@
                     <h3>La franchise est désactivée</h3>
                 {% endif %}
                 <div class="check-toggle{{ noAccess }} state-franchise">
-                    {{ form_widget(form.active, {'id': franchise.id, 'attr': {'class': 'form-add-franchise', 'value': franchise.id} })}}
+                    {{ form_widget(form.active, {'id': franchise.id, 'attr': {'value': franchise.id} })}}
                     <label class="toggle-label" for="{{ franchise.id }}">
                         <span class="btn-toggle"></span>
                     </label>
