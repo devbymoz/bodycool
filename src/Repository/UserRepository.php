@@ -56,4 +56,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->add($user, true);
     }
 
+
+    /**
+     * Récupère les utilisateur avec le role gestionnaire et qui ne sont liés à aucune structure.
+     */
+    public function findUserWitoutStructure()
+    {
+        return $query = $this->createQueryBuilder('u')
+            ->orderBy('u.id', 'ASC')
+            ->leftjoin('u.structure', 's')
+            ->where('s.id is null')
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', '%ROLE_GESTIONNAIRE%');
+    }
+
+
+
 }

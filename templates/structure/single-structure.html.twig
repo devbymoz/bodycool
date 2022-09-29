@@ -23,9 +23,8 @@
                     {% else %}
                         {{ franchise.getName|capitalize }}
                     {% endif %}
-                 <span class="change-franchise"><i class="fa-regular fa-pen-to-square {{ noAccess }}"></i></span></p>
-                 {# Affiche le selecteur de franchise en JS #}
-                 <div class="block-select-franchise"></div>    
+                    <span class="change-franchise edit-js"><i class="fa-regular fa-pen-to-square {{ noAccess }}"></i></span>
+                </p>
                 {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_supprimer_structure', {id: structure.id}) }}" class="delete-partner">Supprimer la structure</a>
                 {% endif %}
@@ -54,7 +53,10 @@
                 <p><strong>Adresse : </strong> {{ structure.address }}</p>
             </div>
             <div class="block-right">
-                <p><strong>Gestionnaire : </strong> {{ userAdminStructure.getFirstname|capitalize }} {{ userAdminStructure.getLastname|capitalize }}</p>
+                <p>
+                    <strong>Gestionnaire : </strong> {{ userAdminStructure.getFirstname|capitalize }} {{ userAdminStructure.getLastname|capitalize }}
+                    <span class="change-structure-admin edit-js"><i class="fa-regular fa-pen-to-square {{ noAccess }}"></i></span>
+                </p>
                 <p><strong>Téléphone : </strong> <a href="tel:{{ structure.phone }}">{{ structure.phone }}</a></p>
             </div>
         </section>
@@ -102,8 +104,6 @@
                             </div>
                         </div>
                     </article>
-                {% else %}
-                    <h3>Aucune permission disponible</h3>
                 {% endfor %}
             </div>
         </section>    

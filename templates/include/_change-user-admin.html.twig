@@ -1,12 +1,13 @@
-{# Affiche un selecteur de franchises #}
+{# Affiche un selecteur des gestionnaires qui sont reliés à aucune structure #}
 <div class="popup-edit-content">
     <div class="form-edit">
-        <h3>Choisissez une nouvelle franchise</h3>
+        <h3>Choisissez un nouveau gestionnaire</h3>
         {{ form_start(form) }}
             <div class="block-input">
-                {{ form_widget(form.name, {'id': 'select-new-value'}) }}
+                {{ form_widget(form.email, {'id': 'select-new-value'}) }}
             </div>
         {{ form_end(form) }}
         <a href="" class="text-xs cancel-edit">Annuler</a>
     </div>
 </div>
+

@@ -16,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class StructureRepository extends ServiceEntityRepository
 {
-    
+
     // Sert à stocker le nombre d'élement renvoyer par une query.
     private array $nbrElement;
 
@@ -55,13 +55,12 @@ class StructureRepository extends ServiceEntityRepository
      * @return array : le resultat de la requete.
      */
     public function findElementFilter(
-        $stateActive, 
-        $paramSearchId, 
+        $stateActive,
+        $paramSearchId,
         $paramSearchName,
         $nbPerPage,
-        $numpage        
-        )
-    {
+        $numpage
+    ) {
         $query = $this
             ->createQueryBuilder('e')
             ->orderBy('e.id', 'ASC');
@@ -89,7 +88,7 @@ class StructureRepository extends ServiceEntityRepository
 
         // On renvoi la query sans la limiation, pour pouvoir faire notre pagination et l'envoyer au PaginationService.
         $this->setNbrElement($query->getQuery()->getResult());
-        
+
         // On limite le nombre d'élément à afficher.
         $query = $query
             ->setMaxResults($nbPerPage)
@@ -110,5 +109,4 @@ class StructureRepository extends ServiceEntityRepository
 
         return $this;
     }
-
 }

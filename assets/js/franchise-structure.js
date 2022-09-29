@@ -132,7 +132,7 @@ if (tagSearchElement) {
             const pathname = window.location.pathname;
             let baseUrl = '';
 
-              // On crée l'url de la requete en fonction de le page appelée.
+            // On crée l'url de la requete en fonction de le page appelée.
             if (pathname.includes('/structures')) {
                 baseUrl = Routing.generate('app_list_structure')
             } else if (pathname.includes('/franchises')) {
@@ -332,78 +332,6 @@ if (contentsEditable) {
 
 
 /**
- * LIER UNE STRUCTURE À UNE NOUVELLE FRANCHISE.
- * 
- * Se fait en deux requetes : la première sert à afficher le select des franchises, la seconde envoi la nouvelle franchise pour le traitement PHP.
- * 
- */
-const btnChangeFranchise = document.querySelector('.change-franchise');
-
-if (btnChangeFranchise) {
-    btnChangeFranchise.addEventListener('click', (e) => {
-        if (!hasAccess) {
-
-            
-        } else {
-            // On récupère l'id de la structure courante.
-            const dataStructureId = document.querySelector('.structure-id');
-            const id = dataStructureId.dataset.structureId;
-
-            // L'url de la requete Ajax pour afficher la liste des franchises.
-            const url = Routing.generate('app_lier_structure', { id: id });
-
-            const xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                const resultat = this.response;
-
-                // On affiche un loader le temps du traitement de la requete
-                if (this.readyState == 3) {
-
-                    // Si la requete c'est bien passée, on affiche un message.
-                } else if (this.readyState == 4 && this.status == 200) {
-                    // L'url pour la requete qui va modifier la franchise.
-                    const urlAjax = url + '?ajax=1';
-
-                    // On récupère la balise qui va recevoir le nouveau contenu.
-                    const newContentSelect = document.querySelector('.block-select-franchise');
-
-                    //  On insère le nouveau contenu HTML.
-                    newContentSelect.innerHTML = resultat.content;
-
-                    // On récupère les informations du selecteur.
-                    const select = document.querySelector('#select-franchise');
-                    select.addEventListener('change', () => {
-                        // On récupère l'id de la franchise.
-                        const idFranchise = select.value;
-                        const param = 'idfr=' + idFranchise;
-
-                        // L'url de redirection si le changement a été effectué.
-                        const redirect = window.location;
-
-                        // On appel la fonction qui va traiter la requete Ajax.
-                        changeStateElement(e, urlAjax, param, redirect);
-                    })
-
-                    // Pour fermer le selecteur.
-                    const cancelEdit = document.querySelector('.cancel-edit');
-                    cancelEdit.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        newContentSelect.innerHTML = '';
-                    })
-
-                }
-            };
-            xhr.open('POST', url, true);
-            xhr.responseType = 'json';
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send();
-        }
-    })
-}
-
-
-
-/**
  * CHANGEMENT D'ÉTAT DES PERMISSIONS D'UNE STRUCTURE (EN AJAX).
  * 
  */
@@ -440,4 +368,112 @@ if (stateStructurePermission) {
             }
         })
     });
+}
+
+
+/**
+ * LIER UNE STRUCTURE À UNE NOUVELLE FRANCHISE.
+ * 
+ * Se fait en deux requetes : la première sert à afficher le select des franchises, la seconde envoi la nouvelle franchise pour le traitement PHP.
+ * 
+ */
+const btnChangeFranchise = document.querySelector('.change-franchise');
+if (btnChangeFranchise) {
+    btnChangeFranchise.addEventListener('click', (e) => {
+        const route = 'app_lier_structure';
+        const param = 'idfr=';
+
+        if (!hasAccess) {
+
+        } else {
+            editStructure(e, route, param);
+        }
+    })
+}
+
+
+/**
+ * LIER UN NOUVEAU GESTIONNAIRE À UNE STRUCTURE EXISTANTE
+ * 
+ */
+const btnChangeStructureAdmin = document.querySelector('.change-structure-admin');
+
+if (btnChangeStructureAdmin) {
+    btnChangeStructureAdmin.addEventListener('click', (e) => {
+        const route = 'app_lier_gestionnaire';
+        const param = 'iduser=';
+
+        if (!hasAccess) {
+
+        } else {
+            editStructure(e, route, param);
+        }
+    })
+}
+
+
+/**
+ * MODIFICATION D'UNE STRUCTURE 
+ *
+ * Se fait en deux requetes : la première sert à afficher le select des gestionnaire, la seconde envoi le nouveau gestionnaire pour le traitement PHP.
+ * 
+ * 
+ * @param {*} e event du listener
+ * @param {*} route Route qui permet de modifier l'élément.
+ * @param {*} param Le parameètre sans la valeur qui sera récupéré pour le traitement PHP
+ */
+function editStructure(e, route, param) {
+    // On récupère l'id de la structure courante.
+    const dataStructureId = document.querySelector('.structure-id');
+    const id = dataStructureId.dataset.structureId;
+
+    // L'url de la requete Ajax pour afficher la liste des franchises.
+    const url = Routing.generate(route, { id: id });
+
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        const resultat = this.response;
+
+        // On affiche un loader le temps du traitement de la requete
+        if (this.readyState == 3) {
+
+            // Si la requete c'est bien passée, on affiche un message.
+        } else if (this.readyState == 4 && this.status == 200) {
+            // L'url pour la requete qui va modifier la franchise.
+            const urlAjax = url + '?ajax=1';
+
+            // On ajoute le selecteur à la page.
+            document.body.insertAdjacentHTML('afterbegin', resultat.content);
+
+            // On récupère les informations du nouveau selecteur.
+            const popupEdit = document.querySelector('.popup-edit-content');
+            const select = document.querySelector('#select-new-value');
+
+            select.addEventListener('change', () => {
+                // On récupère l'id du nouveau gestionnaire.
+                const valueParam = select.value;
+                const params = param + valueParam;
+
+                // L'url de redirection si le changement a été effectué.
+                const redirect = window.location;
+
+                // On appel la fonction qui va traiter la requete Ajax.
+                changeStateElement(e, urlAjax, params, redirect);
+            })
+
+            // Pour fermer le selecteur.
+            popupEdit.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (e.target.className == 'popup-edit-content') {
+                    popupEdit.remove()
+                } else if (e.target.tagName == 'A') {
+                    popupEdit.remove()
+                }
+            })
+        }
+    };
+    xhr.open('POST', url, true);
+    xhr.responseType = 'json';
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send();
 }
