@@ -14,7 +14,7 @@
         <section class="block-top-page-single structure-id" data-structure-id="{{ structure.id }}">
             <div class="block-left">
                 <div class="content-editable">
-                    <h2 data-id="{{ structure.id }}" data-request="namestructure">{{ structure.getName }}</h2>
+                    <h2 data-id="{{ structure.id }}" data-request="namestructure">{{ structure.getName|capitalize }}</h2>
                     <i class="fa-regular fa-pen-to-square {{ noAccess }}"></i>
                 </div>
                 <p><strong>Franchise : </strong>
@@ -50,44 +50,53 @@
 
         <section class="block-info-page-single">
             <div class="block-left">
-                <p><strong>Contrat n° : </strong> {{ structure.contractNumber }}</p>
+                <p><strong>Contrat n° : </strong> {{ structure.contractNumber|capitalize }}</p>
                 <p><strong>Adresse : </strong> {{ structure.address }}</p>
             </div>
             <div class="block-right">
                 <p><strong>Gestionnaire : </strong> {{ userAdminStructure.getFirstname|capitalize }} {{ userAdminStructure.getLastname|capitalize }}</p>
-                <p><strong>Téléphone : </strong> {{ structure.phone }}</p>
+                <p><strong>Téléphone : </strong> <a href="tel:{{ structure.phone }}">{{ structure.phone }}</a></p>
             </div>
         </section>
 
         <div class="dividing-border"></div>
 
-        {# <section class="add-global-permission">
-            <h2>Permissions globales</h2>
-            <p class="text-light">Sélectionnez les permissions globales quepourrontavoir les structures appartenant à cette franchise.</p>
-            <div class="block-cards-permission state-global-permission">
-                {% for globalPermission in form.globalPermissions %}
-                    {% set index = globalPermission.vars.value %}
-                    {% set entity = form.globalPermissions.vars.choices[index].data%}
-                    <article class="card-permission">
+        <section class="add-global-permission">
+            <h2>Permissions accordées</h2>
+            <p class="text-light">Cette structure a accès à 
+            {{ mixedPermissions|length == 0 ? 'aucune fonctionnalité' : mixedPermissions|length ~ ' fonctionnalités' }}</p>
+            <div class="block-cards-permission state-structure-permission">
+                {% for structurePermission in form.structurePermissions %}
+                    {% set index = structurePermission.vars.value %}
+                    {% set permission = form.structurePermissions.vars.choices[index].data%}
+
+                    {% if permission.id in idGlobalPermissions %}
+                        <article class="card-permission global">
+                    {% else %}
+                        <article class="card-permission structure-permission">
+                    {% endif %}
                         <div class="permission-top-card">
-                            <h3>{{ entity.name }}</h3>
-                            <p class="text-light">{{ entity.description }}</p>
+                            <h3>{{ permission.name|capitalize  }}</h3>
+                            <p class="text-light">{{ permission.description|capitalize  }}</p>
+                            {% if permission.id in idGlobalPermissions %}    
+                                <span>Permission globale</span>
+                            {% endif %}
                         </div>
                         <div class="permission-bottom-card">
                             <span class="state-checkbox-text {{ noAccess }}">
-                                {% if entity.id in idGlobalPermissions %}
+                                {% if permission.id in mixedPermissions %}
                                     Active
                                 {% else %}   
                                     Inactive
                                 {% endif %} 
                             </span>
                             <div class="check-toggle {{ noAccess }}">
-                                {% if entity.id in idGlobalPermissions %}
-                                    {{ form_widget(globalPermission, {'id': entity.id,'attr': {'checked': 'checked', 'class': 'state-checkbox', 'data-id-franchise': franchise.id} }) }}
+                                {% if permission.id in mixedPermissions %}
+                                    {{ form_widget(structurePermission, {'id': permission.id,'attr': {'checked': 'checked', 'class': 'state-checkbox', 'data-id-structure': structure.id} }) }}
                                 {% else %}   
-                                    {{ form_widget(globalPermission, {'id': entity.id,'attr': {'class': 'state-checkbox', 'data-id-franchise': franchise.id} }) }}
+                                    {{ form_widget(structurePermission, {'id': permission.id,'attr': {'class': 'state-checkbox', 'data-id-structure': structure.id} }) }}
                                 {% endif %}   
-                                <label class="toggle-label" for="{{ entity.id }}">
+                                <label class="toggle-label" for="{{ permission.id }}">
                                     <span class="btn-toggle"></span>
                                 </label>
                             </div>
@@ -97,6 +106,6 @@
                     <h3>Aucune permission disponible</h3>
                 {% endfor %}
             </div>
-        </section>   #}  
+        </section>    
     {{ form_end(form) }}  
 {% endblock %}

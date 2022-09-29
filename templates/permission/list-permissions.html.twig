@@ -9,8 +9,8 @@
         <div class="block-cards-lists-permissions">
             {% for permission in permissions %}
                 <article class="card-permission-list">
-                    <h3>{{ permission.name }}</h3>
-                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                    <h3>{{ permission.name|capitalize }}</h3>
+                    <p>{{ permission.description|capitalize }}</p>
                 </article>
             {% else %}
                 <h3>Aucune permission disponible</h3>

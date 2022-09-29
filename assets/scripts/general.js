@@ -96,9 +96,9 @@ const hasAccess = userRole.dataset.hasAccess;
 for (let i = 0; i < noAccess.length; i++) {
     noAccess[i].addEventListener('click', (e) => {
 
-        if (hasAccess === 'false') {
+        if (!hasAccess) {
             const messagePopup = 'Vous n\'êtes pas autorisé à effectuer cette action';
-            displayPopup(messagePopup, 'notice');
+            displayPopup(messagePopup, 'notice', 4000);
 
             e.preventDefault();
         }

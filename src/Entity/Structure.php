@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\StructureRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -44,6 +46,9 @@ class Structure
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
+    #[ORM\ManyToMany(targetEntity: Permission::class, inversedBy: 'structures', fetch: 'EAGER')]
+    private Collection $structurePermissions;
+
 
     /**
      * À l'instanciation d'une nouvelle structure, on initialise :
@@ -54,6 +59,7 @@ class Structure
     {
         $this->createAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
         $this->active = 1;
+        $this->structurePermissions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -165,6 +171,30 @@ class Structure
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Permission>
+     */
+    public function getStructurePermissions(): Collection
+    {
+        return $this->structurePermissions;
+    }
+
+    public function addStructurePermission(Permission $structurePermission): self
+    {
+        if (!$this->structurePermissions->contains($structurePermission)) {
+            $this->structurePermissions->add($structurePermission);
+        }
+
+        return $this;
+    }
+
+    public function removeStructurePermission(Permission $structurePermission): self
+    {
+        $this->structurePermissions->removeElement($structurePermission);
 
         return $this;
     }

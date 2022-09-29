@@ -3,6 +3,7 @@
 namespace App\Controller\Structure;
 
 use App\Entity\Franchise;
+use App\Entity\Permission;
 use App\Entity\Structure;
 use App\Entity\User;
 use App\Form\Structure\AddStructureType;
@@ -362,7 +363,7 @@ class CudStructureController extends AbstractController
                 $structure->setFranchise($newFranchise);
 
                 $em->persist($structure);
-                $em->flush();    
+                $em->flush();
 
                 $this->addFlash(
                     'success',
@@ -392,7 +393,7 @@ class CudStructureController extends AbstractController
                 );
             } catch (TransportExceptionInterface $e) {
                 $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
-    
+
                 return $this->json([
                     'code' => 500,
                     'message' => 'Erreur de distribution du mail.',
@@ -400,7 +401,7 @@ class CudStructureController extends AbstractController
                     'errorNumber' => $loggerService->getErrorNumber(),
                 ], 500);
             }
-            
+
             return $this->json([
                 'code' => 200,
                 'content' => $this->renderView('include/_change-structure.html.twig', [
@@ -435,7 +436,7 @@ class CudStructureController extends AbstractController
         StructureRepository $structureRepo,
         Request $request,
         ManagerRegistry $doctrine,
-    ) {
+    ): Response {
         $em = $doctrine->getManager();
 
         // On récupère la franchise à modifier
@@ -462,7 +463,7 @@ class CudStructureController extends AbstractController
             // On persist les nouvelles données.
             try {
                 $em->flush();
-                
+
                 $this->addFlash(
                     'success',
                     'La structure à bien été modifiée'
@@ -473,7 +474,7 @@ class CudStructureController extends AbstractController
                 ], 200);
             } catch (Exception $e) {
                 $loggerService->logGeneric($e, 'Erreur persistance des données');
-    
+
                 return $this->json([
                     'code' => 500,
                     'message' => 'Erreur de suppression de la structure',
@@ -491,6 +492,133 @@ class CudStructureController extends AbstractController
 
 
 
+    /**
+     * PERMET DE MODIFIER LES PERMISSIONS DE LA STRUCTURE
+     * 
+     * Permet de changer uniquement les permissions classiques, pas les globales.
+     * Si la structure à accès à une P globale elle ne pourra pas être modifiée depuis la structure.
+     * 
+     * @return Response Json
+     */
+    #[Route('/changer-permission-classique-{id<\d+>}-{idP<\d+>}', options: ['expose' => true], name: 'app_changer_permission_classique')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function changePermissionStructure(
+        $id,
+        $idP,
+        ManagerRegistry $doctrine,
+        EmailService $emailService,
+        LoggerService $loggerService
+    ): Response {
+        $em = $doctrine->getManager();
+        $repo = $doctrine->getRepository(Structure::class);
 
+        // On récupère la structure correspondant à l'id en paramètre et on vérifie qu'elle existe
+        $structure = $repo->findOneBy(['id' => $id]);
+        if (empty($structure)) {
+            throw $this->createNotFoundException('Cette structure n\'existe pas.');
 
+            return $this->json([
+                'code' => 404,
+                'message' => 'La structure n\'existe pas'
+            ], 404);
+        }
+
+        // On vérifie que le paramètre idP est bien une permissions
+        $repoPermissions = $doctrine->getRepository(Permission::class);
+        $permission = $repoPermissions->findOneBy(['id' => $idP]);
+
+        if (empty($permission)) {
+            throw $this->createNotFoundException('Cette permission n\'existe pas.');
+
+            return $this->json([
+                'code' => 404,
+                'message' => 'La permission n\'existe pas'
+            ], 404);
+        }
+
+        // On vérifie que la permission n'est pas une globale
+        $franchise = $structure->getFranchise();
+        $arrGlobalPermissions = $franchise->getGlobalPermissions()->toArray();
+
+        foreach ($arrGlobalPermissions as $value) {
+            if ($value->getId() == $idP) {
+                return $this->json([
+                    'code' => 409,
+                    'message' => 'Il s\'agit d\'une permission globale'
+                ], 409);
+            }
+        }
+
+        // On vérifie si la structure a déja accès à la permission.
+        $structurePermission = $structure->getStructurePermissions()->toArray();
+        // On crée un tableau avec juste les id des permissions de la structure.
+        $arrIdPermission = [];
+        foreach ($structurePermission as $value) {
+            array_push($arrIdPermission, $value->getId());
+        }
+
+        // Permet de savoir quelle permission  a été modifiée.
+        $whatChange = null;
+
+        // On vérifie si la permission à modifié est présente les permissions de la structure, si présente alors on la supprime, sinon on l'ajoute.
+        if (in_array($idP, $arrIdPermission)) {
+            $structure->removeStructurePermission($permission);
+            $whatChange = "Suppression de la permission : " . $permission->getName();
+        } else {
+            $structure->addStructurePermission($permission);
+            $whatChange = "Ajout de la permission : " . $permission->getName();
+        }
+
+        // On persist les nouvelles données de la structure
+        try {
+            $em->flush();
+        } catch (Exception $e) {
+            $loggerService->logGeneric($e, 'Erreur persistance des données');
+
+            return $this->json([
+                'code' => 500,
+                'message' => 'Erreur de persistance des données',
+                'structureName' => $structure->getName(),
+                'errorNumber' => $loggerService->getErrorNumber()
+            ], 500);
+        }
+
+        // On envoi un email au franchisé et au gestionnaire pour indiquer quelle permission a été modifée.
+        try {
+            $emailService->sendEmail(
+                $franchise->getUserOwner()->getEmail(),
+                'Une permission a été modifiée',
+                [
+                    'user' => $franchise->getUserOwner(),
+                    'changePermission' => $whatChange
+                ],
+                'emails/edit-structure.html.twig'
+            );
+            $emailService->sendEmail(
+                $structure->getUserAdmin()->getEmail(),
+                'Une permission a été modifiée',
+                [
+                    'user' => $structure->getUserAdmin(),
+                    'changePermission' => $whatChange
+                ],
+                'emails/edit-structure.html.twig'
+            );
+
+        } catch (TransportExceptionInterface $e) {
+            $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
+
+            return $this->json([
+                'code' => 500,
+                'message' => 'Erreur de distribution du mail.',
+                'idStructure' => $structure->getId(),
+                'errorNumber' => $loggerService->getErrorNumber(),
+            ], 500);
+        }
+
+        return $this->json([
+            'code' => 200,
+            'message' => 'Permission modifiée avec success',
+            'changePermission' => $whatChange
+        ], 200);
+    }
 }

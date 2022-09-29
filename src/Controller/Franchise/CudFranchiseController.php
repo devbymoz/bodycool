@@ -200,7 +200,7 @@ class CudFranchiseController extends AbstractController
         ManagerRegistry $doctrine,
         EmailService $emailService,
         LoggerService $loggerService
-    ) {
+    ): Response {
         $em = $doctrine->getManager();
         $repo = $doctrine->getRepository(Franchise::class);
 
@@ -208,6 +208,11 @@ class CudFranchiseController extends AbstractController
         $franchise = $repo->findOneBy(['id' => $id]);
         if (empty($franchise)) {
             throw $this->createNotFoundException('Cette franchise n\'existe pas.');
+
+            return $this->json([
+                'code' => 404,
+                'message' => 'La structure n\'existe pas'
+            ], 404);
         }
 
         // On vérifie que le paramètre idGP est bien une permissions

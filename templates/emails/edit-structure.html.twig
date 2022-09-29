@@ -1,0 +1,10 @@
+{% extends "base-email.html.twig" %}
+
+{% block titre %}Votre structure a été modifiée{% endblock %}
+
+{% block content %}
+    <p>Bonjour {{ user.getFirstname }}, votre structure a été modifiée, voici la modification apportée : </p>
+        <li><strong>{{ changePermission }}</strong></li>
+    <p>Merci de nous contacter si vous avez des questions.</p> 
+{% endblock %}
+

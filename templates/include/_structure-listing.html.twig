@@ -8,11 +8,12 @@
                     <div>
                         <div class="card-my-structure-name">
                             <a href="{{ path('app_structure_unique', {slug: entity.slug, id: entity.id}) }}">
-                                <h3>{{ entity.name }}</h3>
+                                <h3>{{ entity.name|capitalize }}</h3>
                             </a>
                         </div>
+                        <span class="text-m">{{ entity.franchise.name|capitalize }}</span>
                         <div class="card-info-my-structure">
-                            <p class="text-light">Contrat n° : {{ entity.contractNumber }}</p>
+                            <p class="text-light">Contrat n° : {{ entity.contractNumber|capitalize }}</p>
                             <p class="text-light">Adresse : {{ entity.address }}</p>
                         </div>
                     </div>
