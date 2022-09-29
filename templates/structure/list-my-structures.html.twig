@@ -6,11 +6,11 @@
 {% block content %}
     <div class="page-my-structures">
         <h2>{{ user.franchise.name }}</h2>
-        <p class="text-light">Vous possédez {{ mesStructures|length }} structures dont {{ nbrDtructureDisable }} inactives</p>
+        <p class="text-light">Vous possédez {{ structures|length }} structures dont {{ nbrDtructureDisable }} inactives</p>
 
         <div class="dividing-border"></div>
         <section class="block-cards-my-structures">
-             {% for structure in mesStructures %}
+             {% for structure in structures %}
                 <article class="card-my-structures">
                     <div>
                         <div class="card-my-structure-name">
@@ -19,14 +19,16 @@
                             {% else %}  
                                 <span class="disable"></span>
                             {% endif %}
-                            <h3> {{ structure.name }} </h3>
+                            <a href="{{ path('app_structure_unique', {slug: structure.slug, id: structure.id}) }}">
+                                <h3> {{ structure.name }}</h3>
+                            </a>
                         </div>
                         <div class="card-info-my-structure">
                             <p class="text-light">Contrat n° : {{ structure.contractNumber }}</p>
                             <p class="text-light">Adresse : {{ structure.address }}</p>
                         </div>
                     </div>
-                    <a href="{{ path('app_structure_unique', {id: structure.id}) }}">
+                    <a href="{{ path('app_structure_unique', {slug: structure.slug, id: structure.id}) }}">
                         <button class="btn-xs">Plus de détails</button>
                     </a>
                  </article>

@@ -6,6 +6,11 @@ import { changeStateElement } from './general.js';
 import { displayPopup } from './general.js';
 import { loadNewContent } from './general.js';
 
+// Permet de savoir si l'utilisateur est un admin.
+const userRole = document.querySelector('.js-user-access');
+const hasAccess = userRole.dataset.hasAccess;
+
+
 
 /**
  * CHANGEMENT D'ÉTAT D'UNE FRANCHISE (EN AJAX).
@@ -89,9 +94,9 @@ if (tagSearchElement) {
             let baseUrl = '';
 
             // On crée l'url de la requete en fonction de le page appelée.
-            if (pathname == '/structures') {
+            if (pathname.includes('/structures')) {
                 baseUrl = Routing.generate('app_list_structure')
-            } else if (pathname == '/franchises') {
+            } else if (pathname.includes('/franchises')) {
                 baseUrl = Routing.generate('app_list_franchise')
             }
 
@@ -108,7 +113,7 @@ if (tagSearchElement) {
 
         } else if (input.id == 'id') {
             e.preventDefault();
-            // Si le champs ID comporte du texte, on le supprime.
+            // Si le champs Name comporte du texte, on le supprime.
             if (inputName.value != '') {
                 inputName.value = '';
             }
@@ -127,17 +132,16 @@ if (tagSearchElement) {
             const pathname = window.location.pathname;
             let baseUrl = '';
 
-            // On crée l'url de la requete en fonction de le page appelée.
-            if (pathname == '/structures') {
+              // On crée l'url de la requete en fonction de le page appelée.
+            if (pathname.includes('/structures')) {
                 baseUrl = Routing.generate('app_list_structure')
-            } else if (pathname == '/franchises') {
+            } else if (pathname.includes('/franchises')) {
                 baseUrl = Routing.generate('app_list_franchise')
             }
 
             // On crée l'url de la requete.
             const paramName = '?id=' + valueInput;
             let urlFinal = baseUrl + paramName;
-
 
             // On supprime le paramID de l'url si l'utilisateur efface toute sa saisie.
             if (valueInput === '') {
@@ -220,105 +224,108 @@ if (linkDeletePartner) {
 const contentsEditable = document.querySelector('.content-editable');
 if (contentsEditable) {
     contentsEditable.addEventListener('click', (e) => {
-        // On agit uniquement les icones editables
-        const iconEditable = e.target.closest('i')
+        // Si l'utilisateur n'est pas un admin
+        if (!hasAccess) {
+            e.preventDefault();
+        } else {
+            // On agit uniquement les icones editables
+            const iconEditable = e.target.closest('i')
 
-        if (iconEditable) {
-            // On récupère le champ à éditer et son contenu.
-            const contentEditable = iconEditable.previousElementSibling;
-            const oldContent = contentEditable.innerText;
+            if (iconEditable) {
+                // On récupère le champ à éditer et son contenu.
+                const contentEditable = iconEditable.previousElementSibling;
+                const oldContent = contentEditable.innerText;
 
-            // On récupère la valeur de l'attribut data id.
-            const idElement = contentEditable.dataset.id;
+                // On récupère la valeur de l'attribut data id.
+                const idElement = contentEditable.dataset.id;
 
-            // On récupère la valeur de l'attribut data request.
-            const nameRequest = contentEditable.dataset.request;
+                // On récupère la valeur de l'attribut data request.
+                const nameRequest = contentEditable.dataset.request;
 
-            // Au clic sur l'icon, on rend le champ editable et on lui met le focus.
-            contentEditable.setAttribute('contenteditable', true);
-            contentEditable.focus();
-            contentEditable.style.padding = '8px 16px'
+                // Au clic sur l'icon, on rend le champ editable et on lui met le focus.
+                contentEditable.setAttribute('contenteditable', true);
+                contentEditable.focus();
+                contentEditable.style.padding = '8px 16px'
 
-            // On traite la demande lorsque l'élément perd le focus.
-            contentEditable.addEventListener('blur', sendQuery, { once: true });
+                // On traite la demande lorsque l'élément perd le focus.
+                contentEditable.addEventListener('blur', sendQuery, { once: true });
 
-            function sendQuery() {
-                contentEditable.removeAttribute('contenteditable');
-                contentEditable.blur();
-                contentEditable.style.padding = ''
+                function sendQuery() {
+                    contentEditable.removeAttribute('contenteditable');
+                    contentEditable.blur();
+                    contentEditable.style.padding = ''
 
-                // On compare la nouvelle valeur a l'ancienne.
-                const newContent = contentEditable.innerText;
+                    // On compare la nouvelle valeur a l'ancienne.
+                    const newContent = contentEditable.innerText;
 
-                if (oldContent !== newContent) {
-                    const messageConfirmation = confirm('Merci de cliquer sur OK pour confirmer');
+                    if (oldContent !== newContent) {
+                        const messageConfirmation = confirm('Merci de cliquer sur OK pour confirmer');
 
-                    if (messageConfirmation) {
-                        //ON CRÉE L'URL DE LA REQUETE
-                        //On récupère le path de l'url pour vérifier quelle page est appelée.
-                        const pathname = window.location.pathname;
-                        let url = '';
+                        if (messageConfirmation) {
+                            //ON CRÉE L'URL DE LA REQUETE
+                            //On récupère le path de l'url pour vérifier quelle page est appelée.
+                            const pathname = window.location.pathname;
+                            let url = '';
 
-                        // On crée l'url de la requete en fonction de le page appelée.
-                        if (pathname.includes('/structures/')) {
-                            url = Routing.generate('app_modifier_structure', { id: idElement })
-                        } else if (pathname.includes('/franchises/')) {
-                            url = Routing.generate('app_modifier_franchise', { id: idElement })
-                        }
-
-                        // On formate les données à envoyer.
-                        const data = nameRequest + '=' + newContent;
-
-                        // Le loader à afficher si la requete échoue.
-                        const loader = document.createElement('div');
-
-                        // On commence le traitement de la requete Ajax.
-                        const xhr = new XMLHttpRequest();
-                        xhr.onreadystatechange = function () {
-                            const resultat = this.response;
-
-                            // On affiche un loader le temps du traitement de la requete
-                            if (this.readyState == 3) {
-                                loader.classList.add('loader');
-                                document.body.prepend(loader);
-                                // Si la requete c'est bien passée, on affiche un message.
-                            } else if (this.readyState == 4 && this.status == 200) {
-                                const successMessage = 'Changement effectué avec succès'
-
-                                // On simule un temps de traitement de 2sec.
-                                setTimeout(() => {
-                                    // On supprime le loader et on affiche une popup de succes.
-                                    loader.remove();
-                                    displayPopup(successMessage);
-                                    // On redirige si le changement a été effectué.
-                                    setTimeout(() => {
-                                        window.location.replace(window.location);
-                                    }, 4000);
-                                }, 2000)
-                                // Si la nouvelle valeur existe deja en BDD
-                            } else if (this.readyState == 4 && this.status == 409) {
-                                loader.remove();
-                                displayPopup(resultat.alreadyExists, 'notice', 5000);
-                                // On remet l'ancienne valeur dans le contenu.
-                                contentEditable.innerText = oldContent;
+                            // On crée l'url de la requete en fonction de le page appelée.
+                            if (pathname.includes('/structures')) {
+                                url = Routing.generate('app_modifier_structure', { id: idElement })
+                            } else if (pathname.includes('/franchises')) {
+                                url = Routing.generate('app_modifier_franchise', { id: idElement })
                             }
 
-                        };
-                        xhr.open('POST', url, true);
-                        xhr.responseType = 'json';
-                        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                        xhr.send(data);
+                            // On formate les données à envoyer.
+                            const data = nameRequest + '=' + newContent;
+
+                            // Le loader à afficher si la requete échoue.
+                            const loader = document.createElement('div');
+
+                            // On commence le traitement de la requete Ajax.
+                            const xhr = new XMLHttpRequest();
+                            xhr.onreadystatechange = function () {
+                                const resultat = this.response;
+
+                                // On affiche un loader le temps du traitement de la requete
+                                if (this.readyState == 3) {
+                                    loader.classList.add('loader');
+                                    document.body.prepend(loader);
+                                    // Si la requete c'est bien passée, on affiche un message.
+                                } else if (this.readyState == 4 && this.status == 200) {
+                                    const successMessage = 'Changement effectué avec succès'
+
+                                    // On simule un temps de traitement de 2sec.
+                                    setTimeout(() => {
+                                        // On supprime le loader et on affiche une popup de succes.
+                                        loader.remove();
+                                        displayPopup(successMessage);
+                                        // On redirige si le changement a été effectué.
+                                        setTimeout(() => {
+                                            window.location.replace(window.location);
+                                        }, 4000);
+                                    }, 2000)
+                                    // Si la nouvelle valeur existe deja en BDD
+                                } else if (this.readyState == 4 && this.status == 409) {
+                                    loader.remove();
+                                    displayPopup(resultat.alreadyExists, 'notice', 5000);
+                                    // On remet l'ancienne valeur dans le contenu.
+                                    contentEditable.innerText = oldContent;
+                                }
+
+                            };
+                            xhr.open('POST', url, true);
+                            xhr.responseType = 'json';
+                            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                            xhr.send(data);
+                        } else {
+                            e.preventDefault();
+                            // On remet l'ancienne valeur dans le contenu.
+                            contentEditable.innerText = oldContent;
+                        }
                     } else {
-                        e.preventDefault();
-                        // On remet l'ancienne valeur dans le contenu.
-                        contentEditable.innerText = oldContent;
+                        e.preventDefault()
                     }
-                } else {
-                    e.preventDefault()
                 }
-
             }
-
         }
     })
 }
@@ -334,61 +341,103 @@ const btnChangeFranchise = document.querySelector('.change-franchise');
 
 if (btnChangeFranchise) {
     btnChangeFranchise.addEventListener('click', (e) => {
-        e.preventDefault();
+        if (!hasAccess) {
 
-        // On récupère l'id de la structure courante.
-        const dataStructureId = document.querySelector('.structure-id');
-        const id = dataStructureId.dataset.structureId;
+            
+        } else {
+            // On récupère l'id de la structure courante.
+            const dataStructureId = document.querySelector('.structure-id');
+            const id = dataStructureId.dataset.structureId;
 
-        // L'url de la requete Ajax pour afficher la liste des franchises.
-        const url = Routing.generate('app_lier_structure', { id: id });
+            // L'url de la requete Ajax pour afficher la liste des franchises.
+            const url = Routing.generate('app_lier_structure', { id: id });
 
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            const resultat = this.response;
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                const resultat = this.response;
 
-            // On affiche un loader le temps du traitement de la requete
-            if (this.readyState == 3) {
+                // On affiche un loader le temps du traitement de la requete
+                if (this.readyState == 3) {
 
-                // Si la requete c'est bien passée, on affiche un message.
-            } else if (this.readyState == 4 && this.status == 200) {
-                // L'url pour la requete qui va modifier la franchise.
-                const urlAjax = url + '?ajax=1';
+                    // Si la requete c'est bien passée, on affiche un message.
+                } else if (this.readyState == 4 && this.status == 200) {
+                    // L'url pour la requete qui va modifier la franchise.
+                    const urlAjax = url + '?ajax=1';
 
-                // On récupère la balise qui va recevoir le nouveau contenu.
-                const newContentSelect = document.querySelector('.block-select-franchise');
+                    // On récupère la balise qui va recevoir le nouveau contenu.
+                    const newContentSelect = document.querySelector('.block-select-franchise');
 
-                //  On insère le nouveau contenu HTML.
-                newContentSelect.innerHTML = resultat.content;
+                    //  On insère le nouveau contenu HTML.
+                    newContentSelect.innerHTML = resultat.content;
 
-                // On récupère les informations du selecteur.
-                const select = document.querySelector('#select-franchise');
-                select.addEventListener('change', () => {
-                    // On récupère l'id de la franchise.
-                    const idFranchise = select.value;
-                    const param = 'idfr=' + idFranchise;
+                    // On récupère les informations du selecteur.
+                    const select = document.querySelector('#select-franchise');
+                    select.addEventListener('change', () => {
+                        // On récupère l'id de la franchise.
+                        const idFranchise = select.value;
+                        const param = 'idfr=' + idFranchise;
 
-                    // L'url de redirection si le changement a été effectué.
-                    const redirect = window.location;
+                        // L'url de redirection si le changement a été effectué.
+                        const redirect = window.location;
 
-                    // On appel la fonction qui va traiter la requete Ajax.
-                    changeStateElement(e, urlAjax, param, redirect);
-                })
+                        // On appel la fonction qui va traiter la requete Ajax.
+                        changeStateElement(e, urlAjax, param, redirect);
+                    })
 
-                // Pour fermer le selecteur.
-                const cancelEdit = document.querySelector('.cancel-edit');
-                cancelEdit.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    newContentSelect.innerHTML = '';
-                })
+                    // Pour fermer le selecteur.
+                    const cancelEdit = document.querySelector('.cancel-edit');
+                    cancelEdit.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        newContentSelect.innerHTML = '';
+                    })
 
-            }
-        };
-        xhr.open('POST', url, true);
-        xhr.responseType = 'json';
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.send();
+                }
+            };
+            xhr.open('POST', url, true);
+            xhr.responseType = 'json';
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.send();
+        }
     })
 }
 
 
+
+/**
+ * CHANGEMENT D'ÉTAT DES PERMISSIONS D'UNE STRUCTURE (EN AJAX).
+ * 
+ */
+// On interdit le changement pour les permissions globales de la structure
+const isGPermissionsStructure = document.querySelectorAll('.card-permission.global input');
+if (isGPermissionsStructure) {
+    isGPermissionsStructure.forEach(input => {
+        input.addEventListener('click', (e) => {
+            const message = 'Il n\'est pas possible de désactiver une permission globale depuis la structure'
+            displayPopup(message, 'notice', 4000);
+
+            e.preventDefault();
+        })
+    });
+}
+// On récupère le noeud qui contient les inputs pour changer l'état des permissions.
+const stateStructurePermission = document.querySelectorAll('.structure-permission');
+
+if (stateStructurePermission) {
+    stateStructurePermission.forEach(input => {
+        input.addEventListener('click', (e) => {
+            if (e.target.tagName === 'INPUT') {
+                // On récupere la valeur des checkbox pour savoir quelle permission modifiée.
+                const input = e.target.getAttribute('value');
+
+                // On récupere la valeur des checkbox qui sera le parametre de la route à exécuter.
+                const idStructure = e.target.dataset.idStructure;
+
+                // On créer l'url de la route qui permet de modifier l'état de la permission globale.
+                const urlAjax = Routing.generate('app_changer_permission_classique', { id: idStructure, idP: input })
+
+                // On appel la fonction pour changer l'état.
+                changeStateElement(e, urlAjax)
+            }
+        })
+    });
+}

@@ -13,6 +13,7 @@ class PaginationService extends AbstractController
 
     private int $nbPage;
     private array $pagination;
+    private bool $dot = false; // Pour avoir les 3 petits points dans la pagination.
 
     /**
      * Permet d'avoir une pagination. Calcule le nombre de page en prenant le nombre d'élément renvoyé par la query avant la limitation.
@@ -42,6 +43,7 @@ class PaginationService extends AbstractController
             // On coupe le tableau pour garder les 3 pages + la derniere.
             $this->pagination = range($numpage, $this->nbPage);
             array_splice($this->pagination, 3, -1);
+            $this->dot = true;
         }
 
         return $this->pagination;
@@ -56,6 +58,11 @@ class PaginationService extends AbstractController
     public function getPagination()
     {
         return $this->pagination;
+    }
+
+    public function getDot()
+    {
+        return $this->dot;
     }
 
     

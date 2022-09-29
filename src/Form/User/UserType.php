@@ -59,7 +59,8 @@ class UserType extends AbstractType
                 'label' => 'Numéro de téléphone',
                 'attr' => [
                     'placeholder' => 'Entrez son numéro de téléphone',
-                    'class' => 'input'
+                    'class' => 'input',
+                    'maxlength' => 10
                 ],
                 'constraints' => [
                     new NotBlank(),

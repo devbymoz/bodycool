@@ -45,6 +45,10 @@ ul {
     font-size: 12px;
     margin-top: 4px;
 }
+.text-m {
+    font-size: 14px;
+    margin-top: 4px;
+}
 .text-light {
     color: #7a8290;
 }
@@ -78,9 +82,6 @@ ul {
     }
     .container {
         padding: 0 32px 32px;
-    }
-    button {
-        max-width: 450px;
     }
 }
 
@@ -164,6 +165,13 @@ button:hover,
     justify-content: center;
     align-items: center;
 }
+@media screen and (min-width: 620px) {
+    button,
+    .style-btn {
+        padding: 0 64px;
+        width: auto;
+    }
+}
 
 /* Donne le style d'un bouton à un input de type file */
 .input-file input {
@@ -202,7 +210,6 @@ button:hover,
     max-height: 32px;
     min-width: 56px;
     max-width: 56px;
-    background-color: rgba(255, 255, 255, 0.109);
 }
 .toggle-label {
     position: absolute;
@@ -339,6 +346,9 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 .close-menu,
 .logout-mobile {
     display: none;
+}
+.logout button {
+    width: 100%;
 }
 
 /* Liste des menus */
@@ -498,6 +508,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     position: fixed;
     top: 0;
     right: 0;
+    z-index: 10000;
 }
 
 /**
@@ -653,24 +664,33 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
  * LOADER *******************************************
  */
 .loader {
-    position: absolute;
-    background-color: #ffffff4d;
+    position: fixed;
+    background-color: #00296b61;
     height: 100vh;
     width: 100vw;
     z-index: 10000;
 }
 .loader::before {
     content: "";
-    background-image: url("/public/images/others/loader.gif");
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-size: contain;
+    width: 58px;
+    height: 58px;
+    border: 8px dotted #ff5a1f;
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    box-sizing: border-box;
+    animation: rotation 2s linear infinite;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    position: absolute;
-    height: 100px;
-    width: 100px;
+}
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /**
@@ -761,7 +781,11 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     margin-top: 32px;
     display: grid;
     gap: 16px;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+}
+@media screen and (min-width: 670px) {
+    .block-cards-permission {
+        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    }
 }
 
 /**
@@ -770,10 +794,12 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
  */
 .card-permission {
     border: 1px solid #dee1e6;
-    border-radius: 8px;
+    background-color: #FFF;
+    border-radius: 9px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-shadow: 0 5px 10px rgb(0 0 0 / 12%);
 }
 .permission-top-card {
     padding: 16px 16px 0;
@@ -794,6 +820,24 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     justify-content: space-between;
     align-items: center;
 }
+.card-permission.global {
+    background-color: #00296b;
+    border: none;
+}
+.card-permission.global .permission-top-card span {
+    background-color: #ff5a1f;
+    display: inline-block;
+    margin-top: 16px;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    padding: 2px 16px;
+    font-size: 0.9rem;
+}
+.card-permission.global h3,
+.card-permission.global p {
+    color: #fff;
+}
 
 /**
  * PAGE LISTE DES PERMISSIONS *******************************************
@@ -802,7 +846,11 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     margin: 16px 0;
     display: grid;
     gap: 16px;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+}
+@media screen and (min-width: 670px) {
+    .block-cards-lists-permissions {
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    }
 }
 
 /**
@@ -814,6 +862,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     padding: 32px 16px;
     color: #fff;
     border-radius: 8px;
+    box-shadow: 0 5px 10px rgb(0 0 0 / 12%);
 }
 .card-permission-list h3 {
     font-size: 18px;
@@ -871,19 +920,23 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
  */
 .block-search {
     margin: 16px 0;
-}
-@media screen and (min-width: 670px) {
-    .block-search {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        column-gap: 16px;
-    }
+    display: grid;
+    gap: 8px;
+
 }
 .block-cards-franchise {
     margin: 16px 0 32px;
     display: grid;
     gap: 16px;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+@media screen and (min-width: 670px) {
+    .block-search {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        column-gap: 16px;
+    }
+    .block-cards-franchise {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
 }
 
 /* Nav pour selectionner les cartes actives ou inactives */
@@ -915,6 +968,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-shadow: 0 5px 10px rgb(0 0 0 / 12%);
 }
 .card-franchise h3 {
     font-size: 18px;
@@ -956,6 +1010,17 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     color: #fff;
     transform: scale(1.1);
 }
+.dot-page + ul:nth-last-child(1)::after{
+    content: '...';
+    font-size: 22px;
+    color: #00296b;
+    align-self: baseline;
+}
+.dot-page + ul > a:nth-last-child(1){
+    order: 2;
+    transform: scale(0.9);
+
+}
 
 /**
  * PAGE MES STRUCTURES *******************************************
@@ -986,6 +1051,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-shadow: 0 5px 10px rgb(0 0 0 / 12%);
 }
 .card-my-structure-name {
     display: flex;
@@ -1002,7 +1068,6 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     background-color: #ac1d10;
 }
 .card-my-structures button {
-    width: 150px;
     background: #fff;
     color: #00171f;
     border: 1px solid #dee1e6;
@@ -1022,18 +1087,22 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     display: flex;
     align-items: center;
 }
-.content-editable i, .change-franchise i {
+.content-editable i,
+.change-franchise i {
     margin-left: 16px;
     cursor: pointer;
 }
-
+.content-editable i:hover, .change-franchise i:hover {
+    color: #ff5a1f;
+}
 
 
 /**
  * INPUT AUTOCOMPLETE *******************************************
  * Surcharge le style par defaut
  */
- .ts-control, .dropdown-active .ts-control {
+.ts-control,
+.dropdown-active .ts-control {
     background-color: #fff !important;
     background-image: none !important;
     box-shadow: none !important;
@@ -1041,24 +1110,26 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     border: 2px solid #dee1e6 !important;
     border-radius: 8px;
     margin-top: 8px;
- }
+}
 .dropdown-active .ts-control {
-    border-bottom: none!important;
+    border-bottom: none !important;
     border-radius: 8px 8px 0 0;
- } 
- .ts-dropdown, .ts-control, .ts-control input {
+}
+.ts-dropdown,
+.ts-control,
+.ts-control input {
     color: #00171f;
     font-family: inherit;
     font-size: inherit;
     line-height: 32px;
- }
- .ts-dropdown {
+}
+.ts-dropdown {
     margin: 0 !important;
     border-bottom: 2px solid;
     border-left: 2px solid;
     border-right: 2px solid;
     border-color: #dee1e6 !important;
- }
- .plugin-clear_button .clear-button {
+}
+.plugin-clear_button .clear-button {
     font-size: 32px;
- }
+}

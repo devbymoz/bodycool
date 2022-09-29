@@ -25,9 +25,13 @@ class Permission
     #[ORM\ManyToMany(targetEntity: Franchise::class, mappedBy: 'globalPermissions')]
     private Collection $franchises;
 
+    #[ORM\ManyToMany(targetEntity: Structure::class, mappedBy: 'structurePermissions')]
+    private Collection $structures;
+
     public function __construct()
     {
         $this->franchises = new ArrayCollection();
+        $this->structures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,6 +85,33 @@ class Permission
     {
         if ($this->franchises->removeElement($franchise)) {
             $franchise->removeGlobalPermission($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Structure>
+     */
+    public function getStructures(): Collection
+    {
+        return $this->structures;
+    }
+
+    public function addStructure(Structure $structure): self
+    {
+        if (!$this->structures->contains($structure)) {
+            $this->structures->add($structure);
+            $structure->addStructurePermission($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStructure(Structure $structure): self
+    {
+        if ($this->structures->removeElement($structure)) {
+            $structure->removeStructurePermission($this);
         }
 
         return $this;

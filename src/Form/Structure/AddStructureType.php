@@ -39,7 +39,8 @@ class AddStructureType extends AbstractType
                 'label' => 'Numéro de téléphone de la structure',
                 'attr' => [
                     'placeholder' => 'Entrez le numéro de téléphone',
-                    'class' => 'input'
+                    'class' => 'input',
+                    'maxlength' => 10
                 ],
                 'constraints' => [
                     new NotBlank(),

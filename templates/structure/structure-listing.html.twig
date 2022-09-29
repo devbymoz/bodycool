@@ -5,7 +5,9 @@
 
 {% block content %}
     <div class="list-structure ajax-content">
-        <h2>Recherchez une structure</h2>
+        <h2>Recherchez une structure
+            {{ totalStructure > 1 ? 'parmis vos ' ~ totalStructure ~ ' structures': '' }}
+        </h2>
         <p class="text-light">Recherchez une structure avec son nom ou son ID.</p>
 
         <div class="block-search">

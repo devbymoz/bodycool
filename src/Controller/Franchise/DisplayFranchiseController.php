@@ -4,6 +4,7 @@ namespace App\Controller\Franchise;
 
 use App\Entity\Franchise;
 use App\Entity\Permission;
+use App\Entity\Structure;
 use App\Service\PaginationService;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Form\Franchise\ActiveFranchiseType;
@@ -64,7 +65,7 @@ class DisplayFranchiseController extends AbstractController
         $totalFranchise = count($franchiseRepo->findAll());
 
         // Nombre d'éléments à afficher par page.
-        $nbPerPage = 1;
+        $nbPerPage = 5;
 
         // On récupère les franchises en fonction des paramètres de la requete.
         $franchises = $franchiseRepo->findFranchisesFilter(
@@ -98,9 +99,9 @@ class DisplayFranchiseController extends AbstractController
         $nbPage = $paginationService->getNbPage();
 
         // On redigire si le numéro de page est superieur au nombre de page disponible.
-        /* if(!empty($numpage) && $numpage > $nbPage) {
+        if ($numpage > $nbPage && $numpage != 1) {
             return $this->redirectToRoute('app_list_franchise');
-        } */
+        }
 
         // On assigne le tableau de franchises dans la clé list.
         $data = ['list' => $franchises];
@@ -124,6 +125,7 @@ class DisplayFranchiseController extends AbstractController
                 ]),
                 'pagination' => $this->renderView('include/_pagination.html.twig', [
                     'pagination' => $pagination,
+                    'paginationService' => $paginationService,
                     'numpage' => $numpage,
                     'nbPage' => $nbPage,
                     'paramActive' => $paramActive,
@@ -144,6 +146,7 @@ class DisplayFranchiseController extends AbstractController
             return $this->renderForm('franchise/franchise-listing.html.twig', [
                 'form' => $form,
                 'pagination' => $pagination,
+                'paginationService' => $paginationService,
                 'paramActive' => $paramActive,
                 'paramName' => $paramName,
                 'paramId' => $paramId,
@@ -152,7 +155,7 @@ class DisplayFranchiseController extends AbstractController
                 'nbrAllElement' => $nbrFranchise,
                 'nbrElementEnable' => $nbrFranchiseEnable,
                 'nbrElementDisable' => $nbrFranchiseDisable,
-                'totalFranchise' => $totalFranchise
+                'totalFranchise' => $totalFranchise,
             ]);
         }
     }
@@ -171,7 +174,8 @@ class DisplayFranchiseController extends AbstractController
     #[Route('/{slug}/{id<\d+>}', name: 'app_franchise_unique')]
     #[IsGranted('ROLE_FRANCHISE')]
     public function singleFranchise(
-        $id, $slug,
+        $id,
+        $slug,
         Request $request,
         ManagerRegistry $doctrine,
     ): Response {
@@ -186,14 +190,14 @@ class DisplayFranchiseController extends AbstractController
         // On récupère le propriétaire de la franchise.
         $userOwner = $franchise->getUserOwner();
 
-        // On récupère l'utilisateur connecté.
-        $userConnected = $this->getUser();
+        // On récupère l'id de l'utilisateur connecté.
+        $idUserConnected = $this->getUser()->getId();
 
         // On vérifie si l'utilisateur connecté est un admin.
-        $isAdmin = in_array('ROLE_ADMIN', $userConnected->getRoles());
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
 
         // Si l'utilisateur connecté n'est pas le propriétaire de la franchise et n'est pas un admin on interdit l'accès à la page.
-        if ($userConnected != $userOwner && !$isAdmin) {
+        if ($idUserConnected != $userOwner->getId() && !$isAdmin) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à cette page');
         }
 
@@ -224,7 +228,7 @@ class DisplayFranchiseController extends AbstractController
 
         $form->handleRequest($request);
 
-        // Récupère un tableau des id des permissions dont la franchise déjà accès. 
+        // Récupère un tableau des id des permissions dont la franchise a déjà accès. 
         $idGlobalPermissions = $form['globalPermissions']->getViewData();
 
         // On crée un tableau qui va contenir uniquement les noms des permissions déjà acquis.
@@ -237,6 +241,57 @@ class DisplayFranchiseController extends AbstractController
             'franchise' => $franchise,
             'form' => $form,
             'idGlobalPermissions' => $idGlobalPermissions,
+        ]);
+    }
+
+
+
+
+    /**
+     * LISTE DES STRUCTURES APPARTENANT À UNE FRANCHISE.
+     * 
+     * @return Response
+     */
+    #[Route('/{slug}/{id<\d+>}/structures', name: 'app_mes_structures')]
+    #[IsGranted('ROLE_FRANCHISE')]
+    public function myStructures(
+        ManagerRegistry $doctrine,
+        $id, // id franchise
+        $slug,
+    ): Response {
+        // On récupère la franchise correspond à l'id.
+        $repoFranchise = $doctrine->getRepository(Franchise::class);
+        $franchise = $repoFranchise->findOneBy(['id' => $id]);
+
+        if (empty($franchise)) {
+            throw $this->createNotFoundException('Cette franchise n\'existe pas.');
+        }
+
+        // On récupère les structures appartenant à la franchise demandée.
+        $repoStructure = $doctrine->getRepository(Structure::class);
+        $structures = $repoStructure->findBy(['franchise' => $id]);
+
+        // On récupère le propriétaire de la franchise.
+        $userOwner = $franchise->getUserOwner();
+
+        // On récupère l'utisateur connecté.
+        $user = $this->getUser();
+
+        // On vérifie si l'utilisateur connecté est un admin.
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+
+        // Si l'utilisateur connecté n'est pas le propriétaire de la franchise et n'est pas un admin on interdit l'accès à la page.
+        if ($user->getId() != $userOwner->getId() && !$isAdmin) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à cette page');
+        }
+
+        // On récupère le nombre de structure désactivée.
+        $nbrDtructureDisable = count($repoStructure->findBy(['active' => false]));
+
+        return $this->render('structure/list-my-structures.html.twig', [
+            'structures' => $structures,
+            'user' => $user,
+            'nbrDtructureDisable' => $nbrDtructureDisable
         ]);
     }
 }

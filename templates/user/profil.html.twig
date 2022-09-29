@@ -5,7 +5,7 @@
 
 {% block content %}
     <section class="block-simple-form">
-        <h2>Inscrit en tant que : {{ app.user.roles|first|slice(5)|capitalize}}</h2>
+        <h2>Inscrit en tant que : {{ app.user.roles|first|slice(5)|replace({'_': ' '})|capitalize}}</h2>
         {{ form_start(formEditUser) }}
             <section class="change-avatar-profil">
                 <div>
@@ -30,11 +30,11 @@
                 <p class="light-text text-light">Merci de contacter l’équipe technique pour modifier les informations suivantes</p>
                 <div class="block-input">
                     <label for="firstname">Prénom</label>
-                    <input class="input" type="text" name="" value="{{ user.firstname}}" disabled>
+                    <input class="input" type="text" name="" value="{{ user.firstname|capitalize}}" disabled>
                 </div>
                 <div class="block-input">
                     <label for="lastname">Nom</label>
-                    <input class="input" type="text" name="" value="{{ user.lastname}}" disabled>
+                    <input class="input" type="text" name="" value="{{ user.lastname|capitalize}}" disabled>
                 </div>
                 <div class="block-input">
                     <label for="lastname">Numéro de téléphone</label>

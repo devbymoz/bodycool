@@ -60,18 +60,18 @@
                     {% for globalPermission in formFranchise.globalPermissions %}
                         {% set index = globalPermission.vars.value %}
                         {# Récupération de l'objet permission #}
-                        {% set entity = formFranchise.globalPermissions.vars.choices[index].data %}
+                        {% set permission = formFranchise.globalPermissions.vars.choices[index].data %}
 
                         <article class="card-permission">
                             <div class="permission-top-card">
-                                <h3>{{ entity.name }}</h3>
-                                <p class="text-light">{{ entity.description }}</p>
+                                <h3>{{ permission.name|capitalize }}</h3>
+                                <p class="text-light">{{ permission.description|capitalize }}</p>
                             </div>
                             <div class="permission-bottom-card">
                                 <span class="state-checkbox-text">Inactive</span>
                                 <div class="check-toggle">
-                                    {{ form_widget(globalPermission, {'id': 'gp-' ~ entity.id}) }}
-                                    <label class="toggle-label" for="gp-{{ entity.id }}">
+                                    {{ form_widget(globalPermission, {'id': 'gp-' ~ permission.id}) }}
+                                    <label class="toggle-label" for="gp-{{ permission.id }}">
                                         <span class="btn-toggle"></span>
                                     </label>
                                 </div>
@@ -84,7 +84,7 @@
             </section>   
             {{ form_widget(formFranchise._token) }}
             {{ form_errors(formFranchise._token) }}              
-            <button class="btn-primary form-btn" type="submit">Créer une franchise</button>
+            <button class="btn-primary form-btn" type="submit">Créer la franchise</button>
         {{ form_end(formFranchise, {'render_rest': false}) }}
     </div>
 {% endblock %} 
