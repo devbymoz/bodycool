@@ -1,0 +1,7 @@
+{% extends "base-email.html.twig" %}
+
+{% block titre %}Nouveau gestionnaire{% endblock %}
+
+{% block content %}
+    <p>Bonjour {{ user.getFirstname }}, vous êtes le nouveau getionnaire de la structure : {{ structure.name }}</p>
+{% endblock %}

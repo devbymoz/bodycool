@@ -1,9 +1,9 @@
-const routes = require('../js/routes.json');
+const routes = require('./routes.json');
 import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
 Routing.setRoutingData(routes);
 
-import { changeStateElement } from './general';
-import { displayPopup } from './general';
+import { changeStateElement } from '../js/general';
+import { displayPopup } from '../js/general';
 
 
 /**

@@ -8,6 +8,7 @@ use App\Entity\Structure;
 use App\Entity\User;
 use App\Form\Structure\AddStructureType;
 use App\Repository\StructureRepository;
+use App\Repository\UserRepository;
 use App\Service\ChangeStateService;
 use Exception;
 use App\Service\EmailService;
@@ -331,6 +332,12 @@ class CudStructureController extends AbstractController
         // On récupère la structure correspondant à l'id.
         $repoStructure = $doctrine->getRepository(Structure::class);
         $structure = $repoStructure->findOneBy(['id' => $id]);
+        if (empty($structure)) {
+            return $this->json([
+                'code' => 404,
+                'message' => 'Aucune structure ne correspond à cette id'
+            ], 404);
+        }
 
         // Selection de la nouvelle franchise.
         $form = $this->createFormBuilder()
@@ -339,6 +346,9 @@ class CudStructureController extends AbstractController
                 'choice_label' => 'name',
                 'autocomplete' => true,
                 'placeholder' => 'Choisissez une nouvelle franchise',
+                'choice_label' => function (Franchise $franchise) {
+                    return 'ID-' . $franchise->getId() . ' | ' . $franchise->getName();
+                },
             ])
             ->getForm();
 
@@ -442,7 +452,10 @@ class CudStructureController extends AbstractController
         // On récupère la franchise à modifier
         $structure =  $structureRepo->findOneBy(['id' => $id]);
         if (empty($structure)) {
-            throw $this->createNotFoundException('Cette structure n\'existe pas.');
+            return $this->json([
+                'code' => 404,
+                'message' => 'Aucune structure ne correspond à cette id'
+            ], 404);
         }
 
         // On récupère les params de la requete Ajax, le nom est celui indiqué dans l'attribut data-request de la balise HTML.
@@ -515,7 +528,6 @@ class CudStructureController extends AbstractController
         // On récupère la structure correspondant à l'id en paramètre et on vérifie qu'elle existe
         $structure = $repo->findOneBy(['id' => $id]);
         if (empty($structure)) {
-            throw $this->createNotFoundException('Cette structure n\'existe pas.');
 
             return $this->json([
                 'code' => 404,
@@ -603,7 +615,6 @@ class CudStructureController extends AbstractController
                 ],
                 'emails/edit-structure.html.twig'
             );
-
         } catch (TransportExceptionInterface $e) {
             $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
 
@@ -621,4 +632,154 @@ class CudStructureController extends AbstractController
             'changePermission' => $whatChange
         ], 200);
     }
+
+
+
+    /**
+     * PERMET DE LIER UN GESTIONNAIRE À UNE STRUCTURE EXISTANTE.
+     * 
+     * Le gestionnaire ne doit pas déjà etre rattaché à une structure et doit avoir le role Gestionnaire.
+     * 
+     * @return Response Json
+     */
+    #[Route('/lier-gestionnaire-{id<\d+>}', options: ['expose' => true], name: 'app_lier_gestionnaire')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function linkStructureWithUserAdmin(
+        $id,
+        EmailService $emailService,
+        LoggerService $loggerService,
+        ManagerRegistry $doctrine,
+        Request $request,
+    ): Response {
+        $em = $doctrine->getManager();
+
+        // On récupère la structure correspondant à l'id.
+        $repoStructure = $doctrine->getRepository(Structure::class);
+        $structure = $repoStructure->findOneBy(['id' => $id]);
+
+        if (empty($structure)) {
+            return $this->json([
+                'code' => 404,
+                'message' => 'Aucune structure ne correspond à cette id'
+            ], 404);
+        }
+
+        // Selection du nouveau gestionnaire, l'utilisateur doit avoir un role de gestionnaire et ne doit pas déjà etre relié à une structure.
+        $form = $this->createFormBuilder()
+            ->add('email', EntityType::class, [
+                'class' => User::class,
+                'choice_label' => 'email',
+                'autocomplete' => true,
+                'placeholder' => 'Choisissez un nouveau gestionnaire',
+                'choice_label' => function (User $user) {
+                    return 'ID-' . $user->getId() . ' | ' . $user->getEmail();
+                },
+                'query_builder' => function (UserRepository $repoUser) {
+                    return $repoUser->findUserWitoutStructure();
+                },
+            ])
+            ->getForm();
+
+        // On vérifie que les paramètres pour traiter la requete sont bien présents.
+        if ($request->get('ajax') && (!empty($request->get('iduser')))) {
+            // On récupère la valeur du paramètre de l'id de l'utilisateur.
+            $idUser = $request->get('iduser');
+
+            // On vérifie que l'id correspond bien à une utilisateur en BDD
+            $repoUser = $doctrine->getRepository(User::class);
+            $newUserAdmin = $repoUser->findOneBy(['id' => $idUser]);
+
+            if (empty($newUserAdmin) || !isset($newUserAdmin)) {
+                return $this->json([
+                    'code' => 404,
+                    'message' => 'Aucune utilisateur ne correspond à cette id'
+                ], 404);
+            }
+
+            // Si l'utilisateur n'a pas le role gestionnaire.
+            if (!in_array('ROLE_GESTIONNAIRE', $newUserAdmin->getRoles())) {
+                return $this->json([
+                    'code' => 409,
+                    'message' => 'Cette utilisateur ne peut pas gérer de structure'
+                ], 409);
+            }
+
+            // Si l'utilisateur gère déjà une structure.
+            $structures = $repoStructure->findAll();
+            foreach ($structures as $structure) {
+                if ($idUser === $structure->getUserAdmin()->getId()) {
+                    return $this->json([
+                        'code' => 409,
+                        'message' => 'Cette utilisateur gère déjà une autre structure',
+                    ], 409);
+                }
+            }
+            
+            // On persist la nouvelle franchise en BDD. 
+            try {
+                $structure->setUserAdmin($newUserAdmin);
+
+                $em->persist($structure);
+                $em->flush();
+
+                $this->addFlash(
+                    'success',
+                    'Le gestionnaire à bien été modifiée'
+                );
+            } catch (Exception $e) {
+                $loggerService->logGeneric($e, 'Erreur persistance des données');
+
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de modification de la structure',
+                    'idStructure' => $structure->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
+
+            // On envoi un mail au nouveau gestionnaire.
+            try {
+                $emailService->sendEmail(
+                    $newUserAdmin->getEmail(),
+                    'Votre nouvelle structure',
+                    [
+                        'user' => $newUserAdmin,
+                        'structure' => $structure
+                    ],
+                    'emails/bind-new-user-admin.html.twig'
+                );
+            } catch (TransportExceptionInterface $e) {
+                $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
+
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de distribution du mail.',
+                    'idNewUserAdmin' => $newUserAdmin->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
+
+            return $this->json([
+                'code' => 200,
+                'content' => $this->renderView('include/_change-user-admin.html.twig', [
+                    'form' => $form->createView(),
+                ]),
+                'idUser' =>  $idUser,
+            ], 200);
+        } else {
+            return $this->json([
+                'code' => 200,
+                'Message' =>  'Connexion ok',
+                'content' => $this->renderView('include/_change-user-admin.html.twig', [
+                    'form' => $form->createView(),
+                ]),
+            ], 200);
+        }
+    }
+
+
+
+
+    
+
 }

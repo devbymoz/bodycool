@@ -13,8 +13,8 @@ import './styles/app.css';
 import './bootstrap';
 
 // fichiers Javascript
-import './scripts/general';
-import './scripts/franchise-structure';
-import './scripts/user-profil';
+import './js/general';
+import './js/franchise-structure';
+import './js/user-profil';
 
 
