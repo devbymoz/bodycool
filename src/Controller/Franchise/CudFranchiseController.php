@@ -150,6 +150,10 @@ class CudFranchiseController extends AbstractController
         $franchise = $repo->findOneBy(['id' => $id]);
         if (empty($franchise)) {
             throw $this->createNotFoundException('Cette franchise n\'existe pas.');
+            return $this->json([
+                'code' => 404,
+                'message' => 'Cette franchise n\'existe pas.',
+            ], 404);
         }
 
         // On récupère l'email du propriétaire, pour envoyer le mail.
@@ -225,7 +229,10 @@ class CudFranchiseController extends AbstractController
         }
 
         if (!in_array($idGP, $arrayExistPermissions)) {
-            throw $this->createNotFoundException('Cette permission n\'existe pas.');
+            return $this->json([
+                'code' => 404,
+                'message' => 'Cette permission n\'existe pas.'
+            ], 404);
         }
 
         // On récupère l'objet permission correspondant à l'id passé en paramètre.
@@ -319,10 +326,13 @@ class CudFranchiseController extends AbstractController
         EmailService $emailService,
         LoggerService $loggerService,
         FranchiseRepository $franchiseRepo,
-    ) {
+    ): Response {
         $franchise =  $franchiseRepo->findOneBy(['id' => $id]);
         if (empty($franchise)) {
-            throw $this->createNotFoundException('Cette franchise n\'existe pas.');
+            return $this->json([
+                'code' => 404,
+                'message' => 'Cette franchise n\'existe pas.',
+            ], 404);
         }
 
         // On récupère l'avatar du propriétaire puis on ajoute les avatars des gestionnaires.
@@ -419,13 +429,16 @@ class CudFranchiseController extends AbstractController
         FranchiseRepository $franchiseRepo,
         Request $request,
         ManagerRegistry $doctrine,
-    ) {
+    ): Response {
         $em = $doctrine->getManager();
 
         // On récupère la franchise à modifier
         $franchise =  $franchiseRepo->findOneBy(['id' => $id]);
         if (empty($franchise)) {
-            throw $this->createNotFoundException('Cette franchise n\'existe pas.');
+            return $this->json([
+                'code' => 404,
+                'message' => 'Cette franchise n\'existe pas.',
+            ], 404);
         }
 
         // On récupère les params de la requete Ajax, le nom est celui indiqué dans l'attribut data-request de la balise HTML.
@@ -437,7 +450,8 @@ class CudFranchiseController extends AbstractController
 
             if (!empty($checkValue)) {
                 return $this->json([
-                    'alreadyExists' => 'Ce nom existe déjà'
+                    'code' => 409,
+                    'message' => 'Ce franchise existe déjà',
                 ], 409);
             }
             $franchise->setName($paramNameFranchise);

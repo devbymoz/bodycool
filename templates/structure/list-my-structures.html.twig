@@ -1,12 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Mes structures{% endblock %}
-{% block title_h1 %}Mes structures{% endblock %}
+
+{% block title_h1 %}
+    {% if is_granted('ROLE_ADMIN') %}
+        Liste des structures 
+    {% else %}
+        Mes structures
+    {% endif %}
+{% endblock %}
 
 {% block content %}
     <div class="page-my-structures">
-        <h2>{{ user.franchise.name }}</h2>
-        <p class="text-light">Vous possédez {{ structures|length }} structures dont {{ nbrDtructureDisable }} inactives</p>
+        <h2>Franchise : {{ userOwner.franchise.name }}</h2>
+        <p class="text-light">Nombre de structure reliée à votre franchise : {{ structures|length }}</p>
 
         <div class="dividing-border"></div>
         <section class="block-cards-my-structures">

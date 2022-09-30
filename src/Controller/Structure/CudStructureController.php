@@ -174,7 +174,10 @@ class CudStructureController extends AbstractController
         // On récupère la structure correspondant à l'id en paramètre.
         $structure = $repo->findOneBy(['id' => $id]);
         if (empty($structure)) {
-            throw $this->createNotFoundException('Cette structure n\'existe pas.');
+            return $this->json([
+                'code' => 404,
+                'message' => 'Ce structure existe déjà',
+            ], 404);
         }
 
         // On récupère le gestionnaire et le franchisé.
@@ -205,7 +208,7 @@ class CudStructureController extends AbstractController
 
             return $this->json([
                 'code' => 500,
-                'message' => 'Erreur de distribution du mail.',
+                'message' => 'Erreur de distribution du mail',
                 'idStructure' => $structure->getId(),
                 'errorNumber' => $loggerService->getErrorNumber(),
             ], 500);
@@ -234,10 +237,13 @@ class CudStructureController extends AbstractController
         EmailService $emailService,
         LoggerService $loggerService,
         StructureRepository $structureRepo,
-    ) {
+    ): Response {
         $structure =  $structureRepo->findOneBy(['id' => $id]);
         if (empty($structure)) {
-            throw $this->createNotFoundException('Cette structure n\'existe pas.');
+            return $this->json([
+                'code' => 404,
+                'message' => 'Ce structure existe déjà',
+            ], 404);
         }
 
         // On récupère l'avatar du gestionnaire.
@@ -253,7 +259,7 @@ class CudStructureController extends AbstractController
             if (file_exists($pathAvatar)) {
                 unlink($pathAvatar);
             }
-        }
+        } 
 
         // On supprime la structure est tous ce qui est en lien avec.
         try {
@@ -299,7 +305,7 @@ class CudStructureController extends AbstractController
 
             return $this->json([
                 'code' => 500,
-                'message' => 'Erreur de distribution du mail.',
+                'message' => 'Erreur de distribution du mail',
                 'idStructure' => $structure->getId(),
                 'errorNumber' => $loggerService->getErrorNumber(),
             ], 500);
@@ -335,7 +341,7 @@ class CudStructureController extends AbstractController
         if (empty($structure)) {
             return $this->json([
                 'code' => 404,
-                'message' => 'Aucune structure ne correspond à cette id'
+                'message' => 'Cette structure n\'existe pas'
             ], 404);
         }
 
@@ -364,7 +370,7 @@ class CudStructureController extends AbstractController
             if (empty($newFranchise) || !isset($newFranchise)) {
                 return $this->json([
                     'code' => 404,
-                    'message' => 'Aucune franchise ne correspond à cette id'
+                    'message' => 'Cette structure n\'existe pas'
                 ], 404);
             }
 
@@ -406,7 +412,7 @@ class CudStructureController extends AbstractController
 
                 return $this->json([
                     'code' => 500,
-                    'message' => 'Erreur de distribution du mail.',
+                    'message' => 'Erreur de distribution du mail',
                     'idNewFranchise' => $newFranchise->getId(),
                     'errorNumber' => $loggerService->getErrorNumber(),
                 ], 500);
@@ -422,7 +428,7 @@ class CudStructureController extends AbstractController
         } else {
             return $this->json([
                 'code' => 200,
-                'Message' =>  'Connexion ok',
+                'message' =>  'Connexion ok',
                 'content' => $this->renderView('include/_change-structure.html.twig', [
                     'form' => $form->createView(),
                 ]),
@@ -454,7 +460,7 @@ class CudStructureController extends AbstractController
         if (empty($structure)) {
             return $this->json([
                 'code' => 404,
-                'message' => 'Aucune structure ne correspond à cette id'
+                'message' => 'Cette structure n\'existe pas'
             ], 404);
         }
 
@@ -467,7 +473,8 @@ class CudStructureController extends AbstractController
 
             if (!empty($checkValue)) {
                 return $this->json([
-                    'alreadyExists' => 'Ce nom existe déjà'
+                    'code' => 409,
+                    'message' => 'Ce nom est déjà pris'
                 ], 409);
             }
             $structure->setName($paramNameStructure);
@@ -528,20 +535,16 @@ class CudStructureController extends AbstractController
         // On récupère la structure correspondant à l'id en paramètre et on vérifie qu'elle existe
         $structure = $repo->findOneBy(['id' => $id]);
         if (empty($structure)) {
-
             return $this->json([
                 'code' => 404,
-                'message' => 'La structure n\'existe pas'
+                'message' => 'Cette structure n\'existe pas'
             ], 404);
         }
 
         // On vérifie que le paramètre idP est bien une permissions
         $repoPermissions = $doctrine->getRepository(Permission::class);
         $permission = $repoPermissions->findOneBy(['id' => $idP]);
-
         if (empty($permission)) {
-            throw $this->createNotFoundException('Cette permission n\'existe pas.');
-
             return $this->json([
                 'code' => 404,
                 'message' => 'La permission n\'existe pas'
@@ -620,7 +623,7 @@ class CudStructureController extends AbstractController
 
             return $this->json([
                 'code' => 500,
-                'message' => 'Erreur de distribution du mail.',
+                'message' => 'Erreur de distribution du mail',
                 'idStructure' => $structure->getId(),
                 'errorNumber' => $loggerService->getErrorNumber(),
             ], 500);
@@ -660,7 +663,7 @@ class CudStructureController extends AbstractController
         if (empty($structure)) {
             return $this->json([
                 'code' => 404,
-                'message' => 'Aucune structure ne correspond à cette id'
+                'message' => 'Cette structure n\'existe pas'
             ], 404);
         }
 
@@ -692,7 +695,7 @@ class CudStructureController extends AbstractController
             if (empty($newUserAdmin) || !isset($newUserAdmin)) {
                 return $this->json([
                     'code' => 404,
-                    'message' => 'Aucune utilisateur ne correspond à cette id'
+                    'message' => 'Cet utilisateur n\'existe pas'
                 ], 404);
             }
 
@@ -700,7 +703,7 @@ class CudStructureController extends AbstractController
             if (!in_array('ROLE_GESTIONNAIRE', $newUserAdmin->getRoles())) {
                 return $this->json([
                     'code' => 409,
-                    'message' => 'Cette utilisateur ne peut pas gérer de structure'
+                    'message' => 'Cet utilisateur ne peut pas gérer de structure'
                 ], 409);
             }
 
@@ -710,7 +713,7 @@ class CudStructureController extends AbstractController
                 if ($idUser === $structure->getUserAdmin()->getId()) {
                     return $this->json([
                         'code' => 409,
-                        'message' => 'Cette utilisateur gère déjà une autre structure',
+                        'message' => 'Cet utilisateur gère déjà une autre structure',
                     ], 409);
                 }
             }
@@ -731,7 +734,7 @@ class CudStructureController extends AbstractController
 
                 return $this->json([
                     'code' => 500,
-                    'message' => 'Erreur de modification de la structure',
+                    'message' => 'Erreur persistance des données',
                     'idStructure' => $structure->getId(),
                     'errorNumber' => $loggerService->getErrorNumber(),
                 ], 500);
@@ -753,7 +756,7 @@ class CudStructureController extends AbstractController
 
                 return $this->json([
                     'code' => 500,
-                    'message' => 'Erreur de distribution du mail.',
+                    'message' => 'Erreur de distribution du mail',
                     'idNewUserAdmin' => $newUserAdmin->getId(),
                     'errorNumber' => $loggerService->getErrorNumber(),
                 ], 500);
@@ -769,7 +772,7 @@ class CudStructureController extends AbstractController
         } else {
             return $this->json([
                 'code' => 200,
-                'Message' =>  'Connexion ok',
+                'message' =>  'Connexion ok',
                 'content' => $this->renderView('include/_change-user-admin.html.twig', [
                     'form' => $form->createView(),
                 ]),

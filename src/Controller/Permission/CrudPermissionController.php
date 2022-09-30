@@ -80,7 +80,6 @@ class CrudPermissionController extends AbstractController
     }
 
 
-
     
     /**
      * AFFICHE TOUTES LES PERMISSIONS

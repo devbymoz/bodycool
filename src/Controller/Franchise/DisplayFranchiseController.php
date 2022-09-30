@@ -285,13 +285,9 @@ class DisplayFranchiseController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à cette page');
         }
 
-        // On récupère le nombre de structure désactivée.
-        $nbrDtructureDisable = count($repoStructure->findBy(['active' => false]));
-
         return $this->render('structure/list-my-structures.html.twig', [
             'structures' => $structures,
-            'user' => $user,
-            'nbrDtructureDisable' => $nbrDtructureDisable
+            'userOwner' => $userOwner,
         ]);
     }
 }

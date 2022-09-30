@@ -24,5 +24,7 @@
                 </div>
             </article>  
         {% endfor %}
+        {{ form_widget(form._token) }}
+        {{ form_errors(form._token) }}
     </section>
- {{ form_end(form.list) }} 
+{{ form_end(form.list) }} 

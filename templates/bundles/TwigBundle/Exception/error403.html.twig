@@ -1,0 +1,16 @@
+{% extends 'base-error.html.twig' %}
+
+{% block title %}Accès interdit{% endblock %}
+
+{% block content %}
+    <h3>Erreur 403</h3>
+    <h1>Accès interdit !</h1>
+
+    <div class="dividing-border"></div>
+
+    <h2>Vous n'êtes pas autorisé à accéder à cette page.</h2>
+    
+    <p>Il se peut que vous tentiez d'accéder à une franchise ou structure désactivée.</p>
+
+    <a href="{{ path('app_profil') }}">< Retournez sur votre profil</a>
+{% endblock %} 

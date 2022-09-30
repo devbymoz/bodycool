@@ -27,6 +27,8 @@ if (iconHbrgMenu) {
     })
 }
 
+
+
 /**
  * PERMET DE FERMER LE MENU ET SUPPRIMER L'OVERLAY.
  */
@@ -98,7 +100,7 @@ for (let i = 0; i < noAccess.length; i++) {
 
         if (!hasAccess) {
             const messagePopup = 'Vous n\'êtes pas autorisé à effectuer cette action';
-            displayPopup(messagePopup, 'notice', 4000);
+            displayPopup(messagePopup, 'notice', 2000);
 
             e.preventDefault();
         }
@@ -109,8 +111,10 @@ for (let i = 0; i < noAccess.length; i++) {
 
 /**
  * AFFICHGAGE D'UNE POPUP.
- * @param {Message à afficher dans la popup} message 
- * @param {success, notice} typePopup 
+ * 
+ * @param {Message à afficher dans la popup} message message à afficher
+ * @param {success, notice} typePopup type de message
+ * @param {time = 8000} time temps d'affichage de la popup 
  * 
  */
 export function displayPopup(message, typePopup = 'success', time = 8000) {
@@ -141,7 +145,6 @@ const checkboxHasStateText = document.querySelectorAll('.state-checkbox-text + *
 
 for (let i = 0; i < checkboxHasStateText.length; i++) {
     checkboxHasStateText[i].addEventListener('change', () => {
-
         if (checkboxHasStateText[i].checked) {
             stateCheckboxText[i].innerText = 'Active';
         } else {
@@ -152,19 +155,20 @@ for (let i = 0; i < checkboxHasStateText.length; i++) {
 
 
 
-
 /**
- * ACTIVER OU DÉSACTIVER UN ÉLÉMENT EN AJAX.
+ * ACTIVER OU DÉSACTIVER UN OBJET EN AJAX.
  * - Franchises
  * - Permissions globales 
  * - Suppression de la photo de profil de l'utilisateur
  * - Suppression d'un partenaire
  * 
+ * Demande la confirmation avant d'envoyer la requete.
  * Affiche un loader le temps du traitement.
  * Affiche une popup de success avec un message.
- * @param {*} event 
+ * 
+ * @param {*} event l'event de l'écouteur.
  * @param {*} queryUrl : l'url de la requete à envoyée.
- * @param {*} data : les données d'un formulaire, on passe le formulaire directement.
+ * @param {*} data : les données à envoyer.
  * @param {*} redirect : un lien de redirection si la requete c'est bien passée.
  * 
  */
@@ -174,16 +178,17 @@ export function changeStateElement(event, queryUrl, data = '', redirect = null) 
     if (messageConfirmation) {
         // Le loader à afficher si la requete échoue.
         const loader = document.createElement('div');
-        
-        // On commence le traitement de la requete Ajax.
+
         const xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
-            // On affiche un loader le temps du traitement de la requete
-            if (this.readyState != 4) {
-                loader.classList.add('loader');
-                document.body.prepend(loader);
-            } else if (this.readyState == 4 && this.status == 200) {
-                // Si la requete c'est bien passée, on affiche un message.
+            const resultat = this.response;
+
+            // On affiche le loader.
+            loader.classList.add('loader');
+            document.body.prepend(loader);
+            
+            // Si la requete c'est bien passée, on affiche un message.
+            if (this.readyState == 4 && this.status == 200) {
                 const successMessage = 'Changement effectué avec succès'
 
                 // On simule un temps de traitement de 2sec.
@@ -195,15 +200,21 @@ export function changeStateElement(event, queryUrl, data = '', redirect = null) 
                     if (redirect != null) {
                         setTimeout(() => {
                             window.location.replace(redirect);
-                        }, 4000); 
+                        }, 4000);
                     }
                 }, 2000)
+            } else if (this.readyState == 4) {
+                loader.remove();
+                let message = resultat.message;
+                if (message == undefined) {
+                    message = 'Une erreur s\'est produite';
+                }
+                displayPopup(message, 'notice', 5000)
             }
         };
 
         xhr.open('POST', queryUrl, true);
         xhr.responseType = 'json';
-        //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.send(data);
     } else {
@@ -213,17 +224,17 @@ export function changeStateElement(event, queryUrl, data = '', redirect = null) 
 
 
 
-
 /**
- * CHANGEMENT DE CONTENU AU SANS RECHARGER LA PAGE.
+ * CHANGEMENT DE CONTENU SANS RECHARGER LA PAGE.
  * 
- * Au clic sur une balise avec une class link-js, on exécute la fonction qui va récupérer les nouveaux éléments en JSON et qui va les afficher à la place des anciens.
+ * Au clic sur une balise avec une class link-js, on appel la fonction loadNewContent qui 
+ * va afficher le nouveau contenu sur la page.
  * 
  */
 // On va agir sur les pages qui contiennent une classe ajax-content.
 const ajaxContent = document.querySelector('.ajax-content');
 
-// On met l'event sur la page, pour éviter de perdre l'event sur le nouveau contenu à afficher.
+// On met l'écouteur sur la page, pour éviter de le perdre sur le nouveau contenu à afficher.
 if (ajaxContent) {
     ajaxContent.addEventListener('click', (e) => {
         // On séléctionne l'élement ou le parent qui à la classe link-js
@@ -303,10 +314,8 @@ export function loadNewContent(url) {
     xhr.onreadystatechange = function () {
         const resultat = this.response;
 
-        if (this.readyState == 3) {
-
-        } else if (this.readyState == 4 && this.status == 200) {
-            // Si la requete c'est bien passée on remplace notre contenu.
+        // Si la requete c'est bien passée on remplace notre contenu.
+        if (this.readyState == 4 && this.status == 200) {
             contentJS.innerHTML = resultat.content;
             paginationJS.innerHTML = resultat.pagination;
             filterJS.innerHTML = resultat.filterState;
@@ -324,6 +333,12 @@ export function loadNewContent(url) {
             } else {
                 nbrResultatFilter.textContent = ''
             }
+        } else if (this.readyState == 4) {
+            let message = resultat.message;
+            if (message == undefined) {
+                message = 'Une erreur s\'est produite';
+            }
+            displayPopup(message, 'notice', 5000)
         }
     };
     xhr.open('GET', urlAjax, true);
