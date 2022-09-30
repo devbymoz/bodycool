@@ -25,7 +25,6 @@ if (btnDeleteAvatar) {
         if (userPicture.getAttribute('src') == avatarByDefault) {
             const message = 'Impossible de supprimer la photo par defaut';
             displayPopup(message, 'notice');
-    
             return false
         }
     

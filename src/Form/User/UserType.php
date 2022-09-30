@@ -90,7 +90,6 @@ class UserType extends AbstractType
                 'multiple' => false,
                 'choices'  => [
                     'Gestionnaire' => 'ROLE_GESTIONNAIRE',
-                    'Franchisé' => 'ROLE_FRANCHISE',
                     'Technicien' => 'ROLE_ADMIN',
                     'Super Admin' => 'ROLE_SUPER_ADMIN'
                 ],

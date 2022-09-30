@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Page non trouvée{% endblock %}</title>
+    {% block stylesheets %}{{ encore_entry_link_tags('app') }}{% endblock %}
+</head>
+<body class="error-page">
+    <header>
+        <a href="{{ path('app_profil') }}" class="logo">
+            <img src="{{ asset('/images/others/logo-bodycool.svg') }}" alt="Logo bodycool" height=42>
+        </a>
+    </header>
+
+    {% block content %}{% endblock %} 
+</body>
+</html>
+

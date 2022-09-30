@@ -1,0 +1,18 @@
+{% extends 'base-error.html.twig' %}
+
+{% block title %}Page non trouvée{% endblock %}
+
+{% block content %}
+    <h3>Erreur 404</h3>
+    <h1>Page non trouvée !</h1>
+
+    <div class="dividing-border"></div>
+
+    <h2>La page que vous recherchez semble introuvable.</h2>
+    
+    <p>Il se peut que l'URL saisie soit mal orthographiée ou que la page que vous recherchez n'existe plus.</p>
+
+    <a href="{{ path('app_profil') }}">< Retournez sur votre profil</a>
+{% endblock %} 
+
+

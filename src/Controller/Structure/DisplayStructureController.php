@@ -168,6 +168,10 @@ class DisplayStructureController extends AbstractController
      * En lecture seul pour le role Franchise et Gestionnaire.
      * En écriture pour le role Admin
      * 
+     * - Le franchisé peut accéder à toutes les structures de sa franchise.
+     * - Le gestionnaire peut accéder à la structure qu'il gere.
+     * - Le technicien peut accéder à toutes les structures.
+     * 
      * @return Response
      */
     #[Route('/{slug}/{id<\d+>}', name: 'app_structure_unique')]
@@ -178,12 +182,7 @@ class DisplayStructureController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
     ): Response {
-        // Le franchisé peut accéder à toutes les structures de sa franchise.
-        // Le gestionnaire peut accéder à la structure qu'il gere.
-        // le technicien peut accéder à toutes les structures
-
         $repo = $doctrine->getRepository(Structure::class);
-        $repoFranchise = $doctrine->getRepository(Franchise::class);
 
         $structure = $repo->findOneBy(['id' => $id]);
         if (empty($structure)) {

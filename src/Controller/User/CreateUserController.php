@@ -27,6 +27,9 @@ class CreateUserController extends AbstractController
     /**
      * PAGE POUR CREÉR UN NOUVEL UTILISATEUR.
      * 
+     * Il n'est pas possible de créer un role franchise, comme un franchise ne peut appartenir qu'à un 
+     * seul propriétaire et que ce propriétaire ne peut pas être modifié, il n'est donc pas possible de 
+     * créer un utilisateur franchise.
      *
      * @return Response
      */
@@ -49,11 +52,16 @@ class CreateUserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
 
-            // Si l'utilisateur qui n'est pas un super admin, il ne peut pas créer de super admin.
+            // Si l'utilisateur n'est pas un super admin, il ne peut pas créer de super admin.
             if (in_array('ROLE_SUPER_ADMIN', $user->getRoles()) && !$this->isGranted('ROLE_SUPER_ADMIN')) {
                 $this->addFlash(
                     'notice',
                     'Seul un Super Admin peut créer un compte Super Admin'
+                );
+            } else if (in_array('ROLE_FRANCHISE', $user->getRoles())) {
+                $this->addFlash(
+                    'notice',
+                    'Il n\'est pas possible de créer un utilisateur avec le role Franchise'
                 );
             } else {
                 // Vérifie si l'email existe déja en BDD.

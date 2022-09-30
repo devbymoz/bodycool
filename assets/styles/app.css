@@ -11,6 +11,7 @@ body {
     font-family: "Lato", sans-serif;
     color: #00171f;
     font-size: 16px;
+    background-color: #fafbfd;
 }
 
 h1,
@@ -532,6 +533,9 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     float: right;
     margin-top: 8px;
 }
+.container-login button {
+    width: 100%;
+}
 @media screen and (min-width: 620px) {
     .container-login,
     .footer-login {
@@ -575,10 +579,8 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
         position: absolute;
         right: 0;
         top: 0;
-        width: 780px;
-        height: 780px;
         z-index: -10;
-        background-image: url("/public/images/others/background-login.jpg");
+        background-image: url("/public/images/others/background-login.svg");
         background-repeat: no-repeat;
         background-position: right;
         background-size: contain;
@@ -665,32 +667,22 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
  */
 .loader {
     position: fixed;
-    background-color: #00296b61;
+    background-color: #0000008a;
     height: 100vh;
     width: 100vw;
     z-index: 10000;
 }
 .loader::before {
     content: "";
-    width: 58px;
-    height: 58px;
-    border: 8px dotted #ff5a1f;
-    border-radius: 50%;
-    display: inline-block;
+    background-image: url("/public/images/others/loader.gif");
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 48px;
+    width: 48px;
     position: absolute;
-    box-sizing: border-box;
-    animation: rotation 2s linear infinite;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-@keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
 }
 
 /**
@@ -990,7 +982,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 .page {
     height: 33px;
     width: 45px;
-    background-color: #f4f7fc;
+    background-color: #c0d3e9;
     border-radius: 8px;
     color: #00296b;
     display: flex;
@@ -1138,7 +1130,7 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
  */
 .popup-edit-content {
     position: fixed;
-    background-color: #00296b61;
+    background-color: #0000008a;
     height: 100vh;
     width: 100vw;
     z-index: 100;
@@ -1161,5 +1153,20 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     color: #ff5a1f;
 }
 .cancel-edit:hover {
-    color:#FFF;
+    color: #fff;
+}
+
+/**
+ * PAGE D'ERREUR *******************************************
+ *
+ */
+.error-page {
+    padding: 32px;
+}
+.error-page header {
+    margin-bottom: 32px;
+}
+.error-page h2,
+.error-page p {
+    margin-bottom: 16px;
 }

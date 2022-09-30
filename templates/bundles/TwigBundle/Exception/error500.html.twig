@@ -1,0 +1,17 @@
+{% extends 'base-error.html.twig' %}
+
+{% block title %}Cette page ne fonctionne pas{% endblock %}
+
+{% block content %}
+    <h3>Erreur 500</h3>
+    <h1>Cette page ne fonctionne pas</h1>
+
+    <div class="dividing-border"></div>
+
+    <h2>Essayez de rafraichir la page ou contactez-nous si le probleme persiste.</h2>
+    
+    <p>Il se peut que le site soit en cours de maintenance.</p>
+
+    <a href="{{ path('app_profil') }}">< Retournez sur votre profil</a>
+{% endblock %} 
+
