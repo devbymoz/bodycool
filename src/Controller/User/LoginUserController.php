@@ -24,8 +24,6 @@ class LoginUserController extends AbstractController
 {
 
 
-
-
     /**
      * CONNEXION DE L'UTILISATEUR
      * Complément de vérification dans la class UserChecker (Security)
@@ -143,13 +141,13 @@ class LoginUserController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         EmailService $emailService,
-        LoggerService $loggerService
+        LoggerService $loggerService,
     ): Response {
         // Si l'utilisateur est connecté, on le redirige vers la page profil
         if ($this->getUser()) {
             return $this->redirectToRoute('app_profil');
         }
-
+      
         $em = $doctrine->getManager();
         $repo = $doctrine->getRepository(User::class);
 
