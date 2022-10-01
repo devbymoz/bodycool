@@ -1,0 +1,16 @@
+{% extends 'base-error.html.twig' %}
+
+{% block title %}Patienter 1 minute{% endblock %}
+
+{% block content %}
+    <h3>Erreur 429</h3>
+    <h1>Patienter 1 minute</h1>
+
+    <div class="dividing-border"></div>
+
+    <h2>Merci de patienter 1 minute avant de relancer la page</h2>
+    
+    <p>Vous avez effectuer trop de requetes sur une courte durée, merci de patienter.</p>
+
+    <a href="{{ path('app_profil') }}">< Retournez sur votre profil</a>
+{% endblock %} 
