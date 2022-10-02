@@ -64,7 +64,7 @@ class DisplayStructureController extends AbstractController
         $totalStructure = count($structureRepo->findAll());
 
         // Nombre d'éléments à afficher par page.
-        $nbPerPage = 1;
+        $nbPerPage = 9;
 
         // On récupère les structures en fonction des paramètres de la requete.
         $structures = $structureRepo->findElementFilter(

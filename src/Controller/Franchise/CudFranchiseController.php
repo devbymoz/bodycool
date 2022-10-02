@@ -43,7 +43,7 @@ class CudFranchiseController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         EmailService $emailService,
-        LoggerService $loggerService 
+        LoggerService $loggerService
     ): Response {
         $em = $doctrine->getManager();
 
@@ -83,7 +83,7 @@ class CudFranchiseController extends AbstractController
                 $slugger = new AsciiSlugger();
                 $slug = $slugger->slug(strtolower($data->getName()));
                 $data->setSlug($slug);
-                
+
                 try {
                     $em->persist($data);
                     $em->flush();
@@ -144,6 +144,7 @@ class CudFranchiseController extends AbstractController
         LoggerService $loggerService,
         ChangeStateService $changeStateService
     ): Response {
+        $em = $doctrine->getManager();
         $repo = $doctrine->getRepository(Franchise::class);
 
         // On récupère la franchise correspondant à l'id en paramètre.
@@ -161,6 +162,31 @@ class CudFranchiseController extends AbstractController
 
         // On appel le service pour changer l'état d'un objet.
         $changeStateService->changeStateObject($franchise);
+
+        // Si la franchise a été désactivée, on désactive aussi ses structures.
+        if ($changeStateService->getNewStateObject() === false) {
+            // On récupère les structures de la franchises.
+            $structures = $franchise->getStructures();
+            if ($structures != []) {
+                foreach ($structures as $structure) {
+                    $structure->setActive(false);
+                    $em->persist($structure);
+                }
+
+                // On sauvegarder le nouvel état des structures en BDD
+                try {
+                    $em->flush();
+                } catch (Exception $e) {
+                    $loggerService->logGeneric($e, 'Erreur persistance des données');
+
+                    return $this->json([
+                        'code' => 500,
+                        'message' => 'Erreur de persistance des données',
+                        'errorNumber' => $loggerService->getErrorNumber(),
+                    ], 500);
+                }
+            }
+        }
 
         // On envoi un email au franchisé pour lui indiquer le nouvel état de sa franchise.
         try {
@@ -467,7 +493,7 @@ class CudFranchiseController extends AbstractController
                 ], 200);
             } catch (Exception $e) {
                 $loggerService->logGeneric($e, 'Erreur persistance des données');
-    
+
                 return $this->json([
                     'code' => 500,
                     'message' => 'Erreur de suppression de la franchise',

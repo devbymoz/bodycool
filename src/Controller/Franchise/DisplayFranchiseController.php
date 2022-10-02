@@ -65,7 +65,7 @@ class DisplayFranchiseController extends AbstractController
         $totalFranchise = count($franchiseRepo->findAll());
 
         // Nombre d'éléments à afficher par page.
-        $nbPerPage = 5;
+        $nbPerPage = 9;
 
         // On récupère les franchises en fonction des paramètres de la requete.
         $franchises = $franchiseRepo->findFranchisesFilter(

@@ -23,7 +23,7 @@ class Structure
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
-    #[ORM\Column(length: 10)]
+    #[ORM\Column(length: 20)]
     private ?string $phone = null;
 
     #[ORM\Column(length: 5, unique: true)]
