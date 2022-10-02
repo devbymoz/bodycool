@@ -1020,7 +1020,6 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     margin: 32px 0;
     display: grid;
     gap: 32px;
-    height: 242px;
 }
 @media screen and (min-width: 670px) {
     .block-cards-my-structures,
