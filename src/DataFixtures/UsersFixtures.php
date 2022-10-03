@@ -23,7 +23,7 @@ class UsersFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Création de SUPER ADMIN
-        for ($i = 0; $i < 1; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $user = $this->createUser();
             $user->setRoles(['ROLE_SUPER_ADMIN']);
             $manager->persist($user);

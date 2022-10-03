@@ -46,7 +46,7 @@ class Structure
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
-    #[ORM\ManyToMany(targetEntity: Permission::class, inversedBy: 'structures', fetch: 'EAGER')]
+    #[ORM\ManyToMany(targetEntity: Permission::class, inversedBy: 'structures', fetch: 'EXTRA_LAZY')]
     private Collection $structurePermissions;
 
 

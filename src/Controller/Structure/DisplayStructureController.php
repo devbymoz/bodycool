@@ -60,9 +60,6 @@ class DisplayStructureController extends AbstractController
             return $this->redirectToRoute('app_list_structure');
         }
 
-        // On récupère le nombre total de structure dans la BDD.
-        $totalStructure = count($structureRepo->findAll());
-
         // Nombre d'éléments à afficher par page.
         $nbPerPage = 9;
 
@@ -81,12 +78,12 @@ class DisplayStructureController extends AbstractController
         $nbrStructureDisable = 0;
 
         // On compte le nombre de structure activée et désactivée pour les envoyer à la vue.
-        foreach ($structureRepo->getNbrElement() as $active) {
-            if ($active->isActive() === true) {
+        foreach ($structureRepo->getNbrElement() as $value) {
+            if ($value['active'] === true) {
                 $nbrStructureEnable++;
             }
-            if ($active->isActive() === false) {
-                $nbrStructureDisable++;
+            if ($value['active'] === false) {
+                $nbrStructureEnable++;
             }
         }
 
@@ -154,7 +151,6 @@ class DisplayStructureController extends AbstractController
                 'nbrAllElement' => $nbrStructure,
                 'nbrElementEnable' => $nbrStructureEnable,
                 'nbrElementDisable' => $nbrStructureDisable,
-                'totalStructure' => $totalStructure,
             ]);
         }
     }
