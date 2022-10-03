@@ -21,11 +21,19 @@
                 <p><strong>Téléphone : </strong> <a href="tel:{{ franchise.userOwner.phone }}">{{ franchise.userOwner.phone }}</a></p>
                 <p><strong>Nombre de structure détenue : </strong>
                     {{ franchise.structures|length }} 
-                    <p class="text-m">
-                        <a href="{{ path('app_mes_structures', {slug: franchise.slug, id: franchise.id}) }}">
-                            {{ franchise.structures|length > 1 ? 'Voir les structures' : 'Voir la structure' }}
-                        </a>
-                    </p>
+                    {% if franchise.structures|length == 1 %}
+                        <p class="text-m">
+                            <a href="{{ path('app_mes_structures', {slug: franchise.slug, id: franchise.id}) }}">
+                                Voir la structure
+                            </a>
+                        </p>
+                    {% elseif franchise.structures|length > 1 %} 
+                        <p class="text-m">
+                            <a href="{{ path('app_mes_structures', {slug: franchise.slug, id: franchise.id}) }}">
+                                Voir les structures
+                            </a>
+                        </p>
+                    {% endif %}
                 </p>
                 {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_supprimer_franchise', {id: franchise.id}) }}" class="delete-partner">Supprimer la franchise</a>

@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+
 /**
  * AFFICHAGE DES FRANCHISES
  * 
@@ -61,11 +62,8 @@ class DisplayFranchiseController extends AbstractController
             return $this->redirectToRoute('app_list_franchise');
         }
 
-        // On récupère le nombre total de franchise dans la BDD.
-        $totalFranchise = count($franchiseRepo->findAll());
-
         // Nombre d'éléments à afficher par page.
-        $nbPerPage = 9;
+        $nbPerPage = 12;
 
         // On récupère les franchises en fonction des paramètres de la requete.
         $franchises = $franchiseRepo->findFranchisesFilter(
@@ -81,12 +79,11 @@ class DisplayFranchiseController extends AbstractController
         $nbrFranchiseEnable = 0;
         $nbrFranchiseDisable = 0;
 
-        // On compte le nombre de franchise activée et désactivée pour les envoyer à la vue.
-        foreach ($franchiseRepo->getNbrElement() as $active) {
-            if ($active->isActive() === true) {
+        foreach ($franchiseRepo->getNbrElement() as $value) {
+            if ($value['active'] === true) {
                 $nbrFranchiseEnable++;
             }
-            if ($active->isActive() === false) {
+            if ($value['active'] === false) {
                 $nbrFranchiseDisable++;
             }
         }
@@ -155,7 +152,6 @@ class DisplayFranchiseController extends AbstractController
                 'nbrAllElement' => $nbrFranchise,
                 'nbrElementEnable' => $nbrFranchiseEnable,
                 'nbrElementDisable' => $nbrFranchiseDisable,
-                'totalFranchise' => $totalFranchise,
             ]);
         }
     }

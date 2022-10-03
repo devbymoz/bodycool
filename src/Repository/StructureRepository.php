@@ -18,7 +18,7 @@ class StructureRepository extends ServiceEntityRepository
 {
 
     // Sert à stocker le nombre d'élement renvoyer par une query.
-    private array $nbrElement;
+    private $nbrElement;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -87,8 +87,8 @@ class StructureRepository extends ServiceEntityRepository
         }
 
         // On renvoi la query sans la limiation, pour pouvoir faire notre pagination et l'envoyer au PaginationService.
-        $this->setNbrElement($query->getQuery()->getResult());
-
+        $this->setNbrElement($query->getQuery()->getArrayResult());
+        
         // On limite le nombre d'élément à afficher.
         $query = $query
             ->setMaxResults($nbPerPage)
@@ -98,12 +98,12 @@ class StructureRepository extends ServiceEntityRepository
     }
 
 
-    public function getNbrElement(): array
+    public function getNbrElement()
     {
         return $this->nbrElement;
     }
 
-    public function setNbrElement(?array $nbrElement): self
+    public function setNbrElement($nbrElement): self
     {
         $this->nbrElement = $nbrElement;
 
