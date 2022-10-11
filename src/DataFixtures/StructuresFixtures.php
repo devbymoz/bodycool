@@ -13,9 +13,10 @@ use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Faker;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 
 
-class StructuresFixtures extends Fixture implements DependentFixtureInterface
+class StructuresFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
     private $doctrine;
     private UserPasswordHasherInterface $hasher;
@@ -99,5 +100,10 @@ class StructuresFixtures extends Fixture implements DependentFixtureInterface
         return [
             FranchisesFixtures::class
         ];
+    }
+
+    public static function getGroups(): array
+    {
+        return ['structure'];
     }
 }

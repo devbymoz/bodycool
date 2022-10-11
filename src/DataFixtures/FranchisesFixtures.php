@@ -11,9 +11,10 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Faker;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 
 
-class FranchisesFixtures extends Fixture
+class FranchisesFixtures extends Fixture implements FixtureGroupInterface
 {
     private $doctrine;
     private UserPasswordHasherInterface $hasher;
@@ -83,7 +84,9 @@ class FranchisesFixtures extends Fixture
         return $permissions;
     }
 
-
-
+    public static function getGroups(): array
+    {
+        return ['franchise'];
+    }
 
 }

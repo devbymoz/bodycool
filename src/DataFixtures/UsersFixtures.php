@@ -7,9 +7,10 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 
 
-class UsersFixtures extends Fixture
+class UsersFixtures extends Fixture implements FixtureGroupInterface
 {
     private User $user;
     private UserPasswordHasherInterface $hasher;
@@ -22,13 +23,6 @@ class UsersFixtures extends Fixture
     // Création de faux utilisateurs
     public function load(ObjectManager $manager): void
     {
-        // Création de SUPER ADMIN
-        for ($i = 0; $i < 3; $i++) {
-            $user = $this->createUser();
-            $user->setRoles(['ROLE_SUPER_ADMIN']);
-            $manager->persist($user);
-        }
-
         // Création d'ADMIN
         for ($i = 0; $i < 5; $i++) {
             $user = $this->createUser();
@@ -66,5 +60,10 @@ class UsersFixtures extends Fixture
         return $this->user;
     }
 
+    
+    public static function getGroups(): array
+    {
+        return ['user'];
+    }
 
 }
