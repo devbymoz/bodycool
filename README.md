@@ -73,7 +73,7 @@ Pour vous connecter, utiliser l'identifiant et le mot de passe suivant :
 
 **7. Création de fixtures (optionnel)**
 
-Si vous souhaitez remplir l'application avec de fausses données, vous pouvez utiliser les commandes suivantes :
+Si vous souhaitez remplir l'application avec de fausses données, vous pouvez utiliser les commandes suivantes dans l'ordre :
 
 Cette commande permet de créer 7 permissions :
 ```bash
@@ -87,12 +87,8 @@ Cette commande permet de créer 93 franchises, 153 structures et 31 utilisateurs
 ```
 ## Documentation
 
-*Bientôt disponible*
-
+- [Manuel d'utilisation ](https://github.com/devbymoz/bodycool/tree/main/assets/pdf/documentation-bodycool.pdf)
 
 ## Auteur
 
-- Mohamed Zaoui [@devbymoz](https://github.com/devbymoz)
-
-
-
+👨🏻‍💻 Mohamed Zaoui [@devbymoz](https://github.com/devbymoz)

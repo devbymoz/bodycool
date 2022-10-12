@@ -37,8 +37,8 @@
                     <h3>La structure est désactivée</h3>
                 {% endif %}
                 <div class="check-toggle{{ noAccess }} state-structure">
-                    {{ form_widget(form.active, {'id': structure.id, 'attr': {'value': structure.id} })}}
-                    <label class="toggle-label" for="{{ structure.id }}">
+                    {{ form_widget(form.active, {'id': 'str_' ~ structure.id, 'attr': {'value': structure.id} })}}
+                    <label class="toggle-label" for="{{ 'str_' ~ structure.id }}">
                         <span class="btn-toggle"></span>
                     </label>
                 </div>

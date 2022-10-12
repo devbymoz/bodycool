@@ -47,8 +47,8 @@
                     <h3>La franchise est désactivée</h3>
                 {% endif %}
                 <div class="check-toggle{{ noAccess }} state-franchise">
-                    {{ form_widget(form.active, {'id': franchise.id, 'attr': {'value': franchise.id} })}}
-                    <label class="toggle-label" for="{{ franchise.id }}">
+                    {{ form_widget(form.active, {'id': 'fr_' ~ franchise.id, 'attr': {'value': franchise.id} })}}
+                    <label class="toggle-label" for="{{ 'fr_' ~ franchise.id }}">
                         <span class="btn-toggle"></span>
                     </label>
                 </div>

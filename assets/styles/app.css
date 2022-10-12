@@ -224,7 +224,7 @@ button:hover,
     position: absolute;
     left: -9999px;
     z-index: -1000;
-}
+} 
 input[type="checkbox"]:checked + .toggle-label {
     background-color: #26b44c;
 }
@@ -242,7 +242,7 @@ input[type="checkbox"]:checked + .toggle-label {
 input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
     left: 50%;
     right: 0;
-}
+} 
 
 /**
  * HEADER *******************************************

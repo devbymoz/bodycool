@@ -477,11 +477,12 @@ class CudStructureController extends AbstractController
                     'message' => 'Ce nom est déjà pris'
                 ], 409);
             }
-            $structure->setName($paramNameStructure);
-            $em->persist($structure);
-
+            
             // On persist les nouvelles données.
             try {
+                $structure->setName($paramNameStructure);
+                
+                $em->persist($structure);
                 $em->flush();
 
                 $this->addFlash(
@@ -698,7 +699,7 @@ class CudStructureController extends AbstractController
                     'message' => 'Cet utilisateur n\'existe pas'
                 ], 404);
             }
-
+            
             // Si l'utilisateur n'a pas le role gestionnaire.
             if (!in_array('ROLE_GESTIONNAIRE', $newUserAdmin->getRoles())) {
                 return $this->json([
@@ -706,11 +707,11 @@ class CudStructureController extends AbstractController
                     'message' => 'Cet utilisateur ne peut pas gérer de structure'
                 ], 409);
             }
-
+            
             // Si l'utilisateur gère déjà une structure.
             $structures = $repoStructure->findAll();
-            foreach ($structures as $structure) {
-                if ($idUser === $structure->getUserAdmin()->getId()) {
+            foreach ($structures as $structureAdmin) {
+                if ($idUser === $structureAdmin->getUserAdmin()->getId()) {
                     return $this->json([
                         'code' => 409,
                         'message' => 'Cet utilisateur gère déjà une autre structure',

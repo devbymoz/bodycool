@@ -80,7 +80,7 @@ class CreateUserController extends AbstractController
     
                         $this->addFlash(
                             'success',
-                            'L\'utilisateur a bien été créée'
+                            'L\'utilisateur a bien été crée'
                         );
                     } catch (Exception $e) {
                         $loggerService->logGeneric($e, 'Erreur persistance des données');
