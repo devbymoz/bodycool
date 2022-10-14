@@ -23,7 +23,7 @@ class PaginationService extends AbstractController
      * @param int $nbrElement : le nombre d'élément de la query sans la limitation. 
      * @return array : le tableau des pages à afficher.
      */
-    public function myPagination($numpage, $nbPerPage, $nbrElement)
+    public function myPagination($numpage, $nbPerPage, $nbrElement): array
     {
         // On calcule le nombre de page total que nous aurons.
         $this->nbPage = intval(ceil($nbrElement / $nbPerPage));

@@ -243,7 +243,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @return  self
      */ 
-    public function setPlainPassword($plainPassword)
+    public function setPlainPassword($plainPassword): \App\Entity\User
     {
         $this->plainPassword = $plainPassword;
 

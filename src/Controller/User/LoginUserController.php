@@ -125,7 +125,7 @@ class LoginUserController extends AbstractController
      * @return void
      */
     #[Route('/deconnexion', name: 'app_logout', methods: ['GET'])]
-    public function logout()
+    public function logout(): void
     {
     }
 
