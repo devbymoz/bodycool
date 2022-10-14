@@ -29,7 +29,7 @@ class LoggerService
      * @param [type] $message (message de l'exception)
      * @return string (numéro d'erreur généré)
      */
-    public function logGeneric($exception, $message)
+    public function logGeneric($exception, $message): string
     {
         $this->errorNumber = uniqid();
         $this->logger->error($message, [
