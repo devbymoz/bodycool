@@ -465,7 +465,7 @@ class CudStructureController extends AbstractController
         }
 
         // On récupère les params de la requete Ajax, le nom est celui indiqué dans l'attribut data-request de la balise HTML.
-        $paramNameStructure = $request->get('namestructure');
+        $paramNameStructure = trim($request->get('namestructure'));
 
         if (!empty($paramNameStructure) && isset($paramNameStructure)) {
             // On vérifie que le nom n'est pas déja pris.
@@ -503,6 +503,11 @@ class CudStructureController extends AbstractController
                     'errorNumber' => $loggerService->getErrorNumber(),
                 ], 500);
             }
+        } else {
+            return $this->json([
+                'code' => 404,
+                'message' => 'Entrez un nom valide'
+            ], 404);
         }
 
         return $this->json([
