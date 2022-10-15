@@ -1169,3 +1169,12 @@ input[type="checkbox"]:checked + .toggle-label > .btn-toggle {
 .error-page p {
     margin-bottom: 16px;
 }
+
+
+/**
+ * PAGE MENTIONS LEGALES *******************************************
+ *
+ */
+ .legal-page h2 {
+    margin-top: 32px;
+}
