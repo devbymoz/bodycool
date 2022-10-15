@@ -14,7 +14,7 @@
         <section class="block-top-page-single">
             <div class="block-left">
                 <div class="content-editable">
-                    <h2 data-id="{{ franchise.id }}" data-request="namefranchise">{{ franchise.getName|capitalize }}</h2>
+                    <h2 data-id="{{ franchise.id }}" data-request="namefranchise">{{ franchise.getName }}</h2>
                     <i class="fa-regular fa-pen-to-square {{ noAccess }}"></i>
                 </div>
                 <p><strong>Propriétaire : </strong>{{ franchise.userOwner.getFirstname|capitalize }} {{ franchise.userOwner.getLastname|capitalize }}</p>

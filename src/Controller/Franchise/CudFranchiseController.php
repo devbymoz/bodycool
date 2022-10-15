@@ -468,7 +468,7 @@ class CudFranchiseController extends AbstractController
         }
 
         // On récupère les params de la requete Ajax, le nom est celui indiqué dans l'attribut data-request de la balise HTML.
-        $paramNameFranchise = $request->get('namefranchise');
+        $paramNameFranchise = trim($request->get('namefranchise'));
 
         if (!empty($paramNameFranchise) && isset($paramNameFranchise)) {
             // On vérifie que le nom n'est pas déja pris.
@@ -501,6 +501,11 @@ class CudFranchiseController extends AbstractController
                     'errorNumber' => $loggerService->getErrorNumber(),
                 ], 500);
             }
+        } else {
+            return $this->json([
+                'code' => 404,
+                'message' => 'Entrez un nom valide'
+            ], 404);
         }
 
         return $this->json([

@@ -14,14 +14,14 @@
         <section class="block-top-page-single structure-id" data-structure-id="{{ structure.id }}">
             <div class="block-left">
                 <div class="content-editable">
-                    <h2 data-id="{{ structure.id }}" data-request="namestructure">{{ structure.getName|capitalize }}</h2>
+                    <h2 data-id="{{ structure.id }}" data-request="namestructure">{{ structure.getName }}</h2>
                     <i class="fa-regular fa-pen-to-square {{ noAccess }}"></i>
                 </div>
                 <p><strong>Franchise : </strong>
                     {% if is_granted('ROLE_FRANCHISE') %}
-                        <a href="{{ path('app_franchise_unique', {slug: franchise.slug, id: franchise.id}) }}">{{ franchise.getName|capitalize }}</a>
+                        <a href="{{ path('app_franchise_unique', {slug: franchise.slug, id: franchise.id}) }}">{{ franchise.getName }}</a>
                     {% else %}
-                        {{ franchise.getName|capitalize }}
+                        {{ franchise.getName }}
                     {% endif %}
                     <span class="change-franchise edit-js"><i class="fa-regular fa-pen-to-square {{ noAccess }}"></i></span>
                 </p>

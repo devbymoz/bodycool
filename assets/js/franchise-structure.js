@@ -420,9 +420,9 @@ if (contentsEditable) {
                     contentEditable.style.padding = ''
 
                     // On compare la nouvelle valeur a l'ancienne.
-                    const newContent = contentEditable.innerText;
+                    const newContent = contentEditable.innerText.trim();
 
-                    if (oldContent !== newContent) {
+                    if (oldContent !== newContent && newContent != '') {
                         const messageConfirmation = confirm('Merci de cliquer sur OK pour confirmer');
 
                         if (messageConfirmation) {
@@ -489,6 +489,7 @@ if (contentsEditable) {
                         }
                     } else {
                         e.preventDefault()
+                        contentEditable.innerText = oldContent;
                     }
                 }
             }
