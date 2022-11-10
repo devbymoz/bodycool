@@ -36,7 +36,7 @@
                     {% endif %}
                 </p>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('app_supprimer_franchise', {id: franchise.id}) }}" class="delete-partner">Supprimer la franchise</a>
+                    <a href="{{ path('app_supprimer_franchise', {id: franchise.id, 'csrf_token':csrf_token('delete-franchise')}) }}" class="delete-partner">Supprimer la franchise</a>
                 {% endif %}
             </div>
             <div class="dividing-border"></div>

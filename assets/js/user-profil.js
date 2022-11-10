@@ -17,10 +17,11 @@ if (btnDeleteAvatar) {
     
         const userPicture = document.querySelector('.change-avatar-profil img');
         const avatarByDefault = '/images/avatar/avatar-defaut.jpg';
-    
+        const token = btnDeleteAvatar.dataset.token;
+
         // On créer l'url de la route à executer avec les paramètre.
-        const urlDeleteAvatar = Routing.generate('app_supprimer_avatar');
-    
+        const urlDeleteAvatar = Routing.generate('app_supprimer_avatar', { 'csrf_token': token });
+
         // Message à afficher si la photo est celle par défaut.
         if (userPicture.getAttribute('src') == avatarByDefault) {
             const message = 'Impossible de supprimer la photo par defaut';
@@ -32,7 +33,6 @@ if (btnDeleteAvatar) {
         changeStateElement(e, urlDeleteAvatar)
     });
 }
-
 
 
 /**

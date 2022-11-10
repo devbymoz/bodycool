@@ -18,7 +18,7 @@
                         {{ form_widget(formEditUser.avatar) }}
                         <span>Séléctionner une photo</span>
                     </div>
-                    <div class="style-btn btn-xs btn-white delete-avatar">Supprimer</div>
+                    <div class="style-btn btn-xs btn-white delete-avatar" data-token="{{ csrf_token('supprimer-avatar') }}">Supprimer</div>
                     <div class="error-form">
                         {{ form_errors(formEditUser.avatar) }}
                     </div>

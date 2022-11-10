@@ -237,78 +237,89 @@ class CudStructureController extends AbstractController
         EmailService $emailService,
         LoggerService $loggerService,
         StructureRepository $structureRepo,
+        Request $request
     ): Response {
-        $structure =  $structureRepo->findOneBy(['id' => $id]);
-        if (empty($structure)) {
-            return $this->json([
-                'code' => 404,
-                'message' => 'Ce structure existe déjà',
-            ], 404);
-        }
+        // Vérification du token
+        $submittedToken = $request->get('csrf_token');
 
-        // On récupère l'avatar du gestionnaire.
-        $avatar = $structure->getUserAdmin()->getAvatar();
-
-        // On vérifie que la photo n'est pas l'avatar par defaut.
-        if ($avatar != 'avatar-defaut.jpg') {
-            // Path de la photo.
-            $directoryAvatar = $this->getParameter('avatar_directory');
-            $pathAvatar = $directoryAvatar . '/' . $avatar;
-
-            // On vérifie que la photo existe bien dans le serveur pour la supprimer.
-            if (file_exists($pathAvatar)) {
-                unlink($pathAvatar);
+        if ($this->isCsrfTokenValid('delete-structure', $submittedToken)) {
+            $structure =  $structureRepo->findOneBy(['id' => $id]);
+            if (empty($structure)) {
+                return $this->json([
+                    'code' => 404,
+                    'message' => 'Ce structure existe déjà',
+                ], 404);
             }
-        } 
 
-        // On supprime la structure est tous ce qui est en lien avec.
-        try {
-            $structureRepo->remove($structure, true);
+            // On récupère l'avatar du gestionnaire.
+            $avatar = $structure->getUserAdmin()->getAvatar();
 
-            $this->addFlash(
-                'success',
-                'La structure a bien été supprimée'
-            );
-        } catch (Exception $e) {
-            $loggerService->logGeneric($e, 'Erreur persistance des données');
+            // On vérifie que la photo n'est pas l'avatar par defaut.
+            if ($avatar != 'avatar-defaut.jpg') {
+                // Path de la photo.
+                $directoryAvatar = $this->getParameter('avatar_directory');
+                $pathAvatar = $directoryAvatar . '/' . $avatar;
 
+                // On vérifie que la photo existe bien dans le serveur pour la supprimer.
+                if (file_exists($pathAvatar)) {
+                    unlink($pathAvatar);
+                }
+            }
+
+            // On supprime la structure est tous ce qui est en lien avec.
+            try {
+                $structureRepo->remove($structure, true);
+
+                $this->addFlash(
+                    'success',
+                    'La structure a bien été supprimée'
+                );
+            } catch (Exception $e) {
+                $loggerService->logGeneric($e, 'Erreur persistance des données');
+
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de suppression de la structure',
+                    'idFranchise' => $structure->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
+
+            // On envoi un email au franchisé et au gestionnaire.
+            try {
+                $emailService->sendEmail(
+                    $structure->getFranchise()->getUserOwner()->getEmail(),
+                    'Votre structure a été supprimée.',
+                    [
+                        'user' => $structure->getFranchise()->getUserOwner(),
+                        'structure' => $structure
+                    ],
+                    'emails/remove-structure.html.twig'
+                );
+                $emailService->sendEmail(
+                    $structure->getUserAdmin()->getEmail(),
+                    'Votre compte a été supprimée',
+                    [
+                        'user' => $structure->getUserAdmin(),
+                        'structure' => $structure
+                    ],
+                    'emails/remove-structure.html.twig'
+                );
+            } catch (TransportExceptionInterface $e) {
+                $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
+
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de distribution du mail',
+                    'idStructure' => $structure->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
+        } else {
             return $this->json([
-                'code' => 500,
-                'message' => 'Erreur de suppression de la structure',
-                'idFranchise' => $structure->getId(),
-                'errorNumber' => $loggerService->getErrorNumber(),
-            ], 500);
-        }
-
-        // On envoi un email au franchisé et au gestionnaire.
-        try {
-            $emailService->sendEmail(
-                $structure->getFranchise()->getUserOwner()->getEmail(),
-                'Votre structure a été supprimée.',
-                [
-                    'user' => $structure->getFranchise()->getUserOwner(),
-                    'structure' => $structure
-                ],
-                'emails/remove-structure.html.twig'
-            );
-            $emailService->sendEmail(
-                $structure->getUserAdmin()->getEmail(),
-                'Votre compte a été supprimée',
-                [
-                    'user' => $structure->getUserAdmin(),
-                    'structure' => $structure
-                ],
-                'emails/remove-structure.html.twig'
-            );
-        } catch (TransportExceptionInterface $e) {
-            $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
-
-            return $this->json([
-                'code' => 500,
-                'message' => 'Erreur de distribution du mail',
-                'idStructure' => $structure->getId(),
-                'errorNumber' => $loggerService->getErrorNumber(),
-            ], 500);
+                'code' => 401,
+                'message' => 'Jeton CSRF invalide',
+            ], 401);
         }
 
         return $this->json([
@@ -477,11 +488,11 @@ class CudStructureController extends AbstractController
                     'message' => 'Ce nom est déjà pris'
                 ], 409);
             }
-            
+
             // On persist les nouvelles données.
             try {
                 $structure->setName($paramNameStructure);
-                
+
                 $em->persist($structure);
                 $em->flush();
 
@@ -704,7 +715,7 @@ class CudStructureController extends AbstractController
                     'message' => 'Cet utilisateur n\'existe pas'
                 ], 404);
             }
-            
+
             // Si l'utilisateur n'a pas le role gestionnaire.
             if (!in_array('ROLE_GESTIONNAIRE', $newUserAdmin->getRoles())) {
                 return $this->json([
@@ -712,7 +723,7 @@ class CudStructureController extends AbstractController
                     'message' => 'Cet utilisateur ne peut pas gérer de structure'
                 ], 409);
             }
-            
+
             // Si l'utilisateur gère déjà une structure.
             $structures = $repoStructure->findAll();
             foreach ($structures as $structureAdmin) {
@@ -723,7 +734,7 @@ class CudStructureController extends AbstractController
                     ], 409);
                 }
             }
-            
+
             // On persist la nouvelle franchise en BDD. 
             try {
                 $structure->setUserAdmin($newUserAdmin);
@@ -785,10 +796,4 @@ class CudStructureController extends AbstractController
             ], 200);
         }
     }
-
-
-
-
-    
-
 }

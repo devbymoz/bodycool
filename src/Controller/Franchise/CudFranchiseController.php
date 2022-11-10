@@ -352,86 +352,96 @@ class CudFranchiseController extends AbstractController
         EmailService $emailService,
         LoggerService $loggerService,
         FranchiseRepository $franchiseRepo,
+        Request $request
     ): Response {
-        $franchise =  $franchiseRepo->findOneBy(['id' => $id]);
-        if (empty($franchise)) {
-            return $this->json([
-                'code' => 404,
-                'message' => 'Cette franchise n\'existe pas.',
-            ], 404);
-        }
+        // Vérification du token
+        $submittedToken = $request->get('csrf_token');
 
-        // On récupère l'avatar du propriétaire puis on ajoute les avatars des gestionnaires.
-        $avatars = [$franchise->getUserOwner()->getAvatar()];
-        foreach ($franchise->getStructures() as $structure) {
-            array_push($avatars, $structure->getUserAdmin()->getAvatar());
-        }
+        if ($this->isCsrfTokenValid('delete-franchise', $submittedToken)) {
+            $franchise =  $franchiseRepo->findOneBy(['id' => $id]);
+            if (empty($franchise)) {
+                return $this->json([
+                    'code' => 404,
+                    'message' => 'Cette franchise n\'existe pas.',
+                ], 404);
+            }
 
-        // On supprime tous les avatars du serveur.
-        foreach ($avatars as $avatar) {
-            // On vérifie que la photo n'est pas l'avatar par defaut.
-            if ($avatar != 'avatar-defaut.jpg') {
-                // Path de la photo.
-                $directoryAvatar = $this->getParameter('avatar_directory');
-                $pathAvatar = $directoryAvatar . '/' . $avatar;
+            // On récupère l'avatar du propriétaire puis on ajoute les avatars des gestionnaires.
+            $avatars = [$franchise->getUserOwner()->getAvatar()];
+            foreach ($franchise->getStructures() as $structure) {
+                array_push($avatars, $structure->getUserAdmin()->getAvatar());
+            }
 
-                // On vérifie que la photo existe bien dans le serveur pour la supprimer.
-                if (file_exists($pathAvatar)) {
-                    unlink($pathAvatar);
+            // On supprime tous les avatars du serveur.
+            foreach ($avatars as $avatar) {
+                // On vérifie que la photo n'est pas l'avatar par defaut.
+                if ($avatar != 'avatar-defaut.jpg') {
+                    // Path de la photo.
+                    $directoryAvatar = $this->getParameter('avatar_directory');
+                    $pathAvatar = $directoryAvatar . '/' . $avatar;
+
+                    // On vérifie que la photo existe bien dans le serveur pour la supprimer.
+                    if (file_exists($pathAvatar)) {
+                        unlink($pathAvatar);
+                    }
                 }
             }
-        }
 
-        // On supprime la franchise est tous ce qui est en lien avec.
-        try {
-            $franchiseRepo->remove($franchise, true);
+            // On supprime la franchise est tous ce qui est en lien avec.
+            try {
+                $franchiseRepo->remove($franchise, true);
 
-            $this->addFlash(
-                'success',
-                'La franchise a bien été supprimée'
-            );
-        } catch (Exception $e) {
-            $loggerService->logGeneric($e, 'Erreur persistance des données');
+                $this->addFlash(
+                    'success',
+                    'La franchise a bien été supprimée'
+                );
+            } catch (Exception $e) {
+                $loggerService->logGeneric($e, 'Erreur persistance des données');
 
-            return $this->json([
-                'code' => 500,
-                'message' => 'Erreur de suppression de la franchise',
-                'idFranchise' => $franchise->getId(),
-                'errorNumber' => $loggerService->getErrorNumber(),
-            ], 500);
-        }
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de suppression de la franchise',
+                    'idFranchise' => $franchise->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
+            }
 
-        // On envoi un email au franchisé et à chaque gestionnaire
-        try {
-            $emailService->sendEmail(
-                $franchise->getUserOwner()->getEmail(),
-                'Votre compte a été supprimée',
-                [
-                    'user' => $franchise->getUserOwner(),
-                ],
-                'emails/remove-account.html.twig'
-            );
-            foreach ($franchise->getStructures() as $structure) {
+            // On envoi un email au franchisé et à chaque gestionnaire
+            try {
                 $emailService->sendEmail(
-                    $structure->getUserAdmin()->getEmail(),
+                    $franchise->getUserOwner()->getEmail(),
                     'Votre compte a été supprimée',
                     [
-                        'user' => $structure->getUserAdmin(),
+                        'user' => $franchise->getUserOwner(),
                     ],
                     'emails/remove-account.html.twig'
                 );
+                foreach ($franchise->getStructures() as $structure) {
+                    $emailService->sendEmail(
+                        $structure->getUserAdmin()->getEmail(),
+                        'Votre compte a été supprimée',
+                        [
+                            'user' => $structure->getUserAdmin(),
+                        ],
+                        'emails/remove-account.html.twig'
+                    );
+                }
+            } catch (TransportExceptionInterface $e) {
+                $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
+
+                return $this->json([
+                    'code' => 500,
+                    'message' => 'Erreur de distribution du mail.',
+                    'idFranchise' => $franchise->getId(),
+                    'errorNumber' => $loggerService->getErrorNumber(),
+                ], 500);
             }
-        } catch (TransportExceptionInterface $e) {
-            $loggerService->logGeneric($e, 'Erreur lors de l\'envoi du mail');
-
+        } else {
             return $this->json([
-                'code' => 500,
-                'message' => 'Erreur de distribution du mail.',
-                'idFranchise' => $franchise->getId(),
-                'errorNumber' => $loggerService->getErrorNumber(),
-            ], 500);
+                'code' => 401,
+                'message' => 'Jeton CSRF invalide',
+            ], 401);
         }
-
         return $this->json([
             'code' => 200,
             'message' => 'Franchise supprimée avec succès',

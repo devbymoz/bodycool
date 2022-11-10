@@ -26,7 +26,7 @@
                     <span class="change-franchise edit-js"><i class="fa-regular fa-pen-to-square {{ noAccess }}"></i></span>
                 </p>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('app_supprimer_structure', {id: structure.id}) }}" class="delete-partner">Supprimer la structure</a>
+                    <a href="{{ path('app_supprimer_structure', {id: structure.id, 'csrf_token':csrf_token('delete-structure')}) }}" class="delete-partner">Supprimer la structure</a>
                 {% endif %}
             </div>
             <div class="dividing-border"></div>
